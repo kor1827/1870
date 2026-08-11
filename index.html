@@ -273,138 +273,28 @@
     .env-label { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
     .env-val { font-family: var(--font-tech); font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 2px; }
 
-    /* ==========================================================================
-       4. Real Community Board UI
-       ========================================================================== */
-    .comm-board-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 25px;
-      margin: 30px 0;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-    }
-
-    .comm-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid var(--accent-red);
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .comm-title {
-      font-family: var(--font-heading);
-      font-size: 1.4rem;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .post-card {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      padding: 18px;
-      margin-bottom: 16px;
-      transition: all 0.2s ease;
-    }
-
-    .post-card:hover {
-      border-color: rgba(255, 82, 82, 0.4);
-    }
-
-    .post-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .post-tag {
-      background: rgba(229, 57, 53, 0.2);
-      color: var(--accent-red-bright);
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-weight: 700;
-    }
-
-    .post-subject {
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .post-content {
-      color: #ccc;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 14px;
-      white-space: pre-line;
-    }
-
-    /* Comment Section Styling */
-    .comment-box {
-      background: rgba(255, 255, 255, 0.03);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 10px 12px;
-      margin-top: 8px;
-      border-radius: 4px;
-    }
-
-    .comment-item {
-      padding: 8px 0;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
-      font-size: 0.88rem;
-    }
-
-    .comment-item:last-child { border-bottom: none; }
-
-    .comment-writer {
-      font-weight: 700;
-      color: var(--accent-yellow);
-      margin-right: 8px;
-    }
-
-    .comment-text {
-      color: #bbb;
-    }
-
-    .comment-time {
-      font-size: 0.75rem;
-      color: #666;
-      margin-left: 8px;
-    }
-
-    /* Action Buttons (External Links) */
+    /* Action Buttons (CTA) */
     .cta-buttons {
       display: flex;
       justify-content: center;
       gap: 15px;
       flex-wrap: wrap;
-      margin-top: 25px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 25px auto 10px;
+      max-width: 850px;
     }
 
     .cta-btn {
-      padding: 12px 22px;
+      padding: 14px 24px;
       font-weight: 700;
       border-radius: 6px;
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       transition: all 0.3s ease;
       cursor: pointer;
       text-decoration: none;
+      border: none;
     }
 
     .cta-kakao { background: #fee500; color: #191919; box-shadow: 0 0 15px rgba(254, 229, 0, 0.3); }
@@ -413,11 +303,11 @@
     .cta-novel { background: var(--accent-red); color: #fff; box-shadow: 0 0 15px rgba(229, 57, 53, 0.4); }
     .cta-novel:hover { transform: translateY(-2px); background: var(--accent-red-bright); }
 
-    .cta-cafe { background: #03cf5d; color: #fff; box-shadow: 0 0 15px rgba(3, 207, 93, 0.3); }
-    .cta-cafe:hover { transform: translateY(-2px); background: #22e279; }
+    .cta-community { background: #03cf5d; color: #fff; box-shadow: 0 0 15px rgba(3, 207, 93, 0.3); }
+    .cta-community:hover { transform: translateY(-2px); background: #22e279; }
 
     /* ==========================================================================
-       5. Tabs & Timeline
+       4. Tabs & Timeline System
        ========================================================================== */
     .container { max-width: 1100px; margin: 0 auto; padding: 20px 20px 60px; }
 
@@ -452,6 +342,12 @@
       color: #fff;
       border-color: var(--accent-red-bright);
       box-shadow: 0 0 15px rgba(229, 57, 53, 0.4);
+    }
+
+    .tab-btn.comm-tab.active {
+      background: #03cf5d;
+      border-color: #22e279;
+      box-shadow: 0 0 15px rgba(3, 207, 93, 0.4);
     }
 
     .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
@@ -549,7 +445,114 @@
 
     .map-node-icon { font-size: 1.3rem; margin-bottom: 6px; color: var(--accent-red-bright); }
 
-    /* Modal */
+    /* ==========================================================================
+       5. Integrated Community Page UI
+       ========================================================================== */
+    .comm-board-container {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-green);
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 0 25px rgba(3, 207, 93, 0.2);
+    }
+
+    .comm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-green);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .comm-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .post-card {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 18px;
+      margin-bottom: 18px;
+      transition: all 0.2s ease;
+    }
+
+    .post-card:hover {
+      border-color: rgba(3, 207, 93, 0.5);
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .post-tag {
+      background: rgba(3, 207, 93, 0.2);
+      color: #22e279;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
+    .post-subject {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .post-content {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    /* Comment Section Styling */
+    .comment-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 12px;
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+
+    .comment-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+
+    .comment-item:last-child { border-bottom: none; }
+
+    .comment-writer {
+      font-weight: 700;
+      color: var(--accent-yellow);
+      margin-right: 8px;
+    }
+
+    .comment-text {
+      color: #bbb;
+    }
+
+    .comment-time {
+      font-size: 0.75rem;
+      color: #666;
+      margin-left: 8px;
+    }
+
+    /* Modals System */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -668,6 +671,20 @@
       <h1 class="hero-title glitch" data-text="화연(禾延) 아포칼립스">화연(禾延) 아포칼립스</h1>
       <p style="color: var(--text-muted); margin-top: 6px;">발병 72시간째, 통신망 두절 임박. 살아남아라.</p>
 
+      <!-- Action Buttons (CTA) -->
+      <div class="cta-buttons">
+        <a href="#" target="_blank" class="cta-btn cta-kakao">
+          <i class="fa-solid fa-comment"></i> 오픈채팅 참여
+        </a>
+        <a href="#" target="_blank" class="cta-btn cta-novel">
+          <i class="fa-solid fa-book-open"></i> 원작 소설 바로가기
+        </a>
+        <!-- 생존자 커뮤니티 버튼 (누르면 지도 탭처럼 해당 탭으로 이동) -->
+        <button class="cta-btn cta-community" onclick="switchTab('community')">
+          <i class="fa-solid fa-users"></i> 생존자 커뮤니티
+        </button>
+      </div>
+
       <!-- Restored Gov Briefing Box -->
       <div class="gov-alert-box">
         <div class="gov-alert-header">
@@ -702,145 +719,23 @@
 
     <div class="container">
 
-      <!-- REAL SURVIVOR COMMUNITY BOARD SECTION -->
-      <div class="comm-board-section">
-        <div class="comm-header">
-          <div class="comm-title">
-            <i class="fa-solid fa-satellite-dish" style="color: var(--accent-red-bright);"></i>
-            <span>화연시 비상 생존자 마이너 갤러리</span>
-          </div>
-          <span class="badge badge-red"><i class="fa-solid fa-wifi"></i> 인트라넷 연결중</span>
-        </div>
-
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
-          * 통신망 마비 전 생존자들이 실시간으로 정보와 일상을 공유하는 비공식 민간 게시판입니다.
-        </p>
-
-        <!-- Post 1 -->
-        <div class="post-card">
-          <div class="post-meta">
-            <span class="post-tag">정보/제보</span>
-            <span>작성자: 마트수색조_04</span>
-            <span>12분 전</span>
-            <span>조회 342</span>
-          </div>
-          <div class="post-subject">야 하나로마트 점거한 패거리 근황 알려준다 (빡침주의)</div>
-          <div class="post-content">오늘 아침에 102동 애들이랑 라면 좀 구하러 갔는데 
-씨발 정문 입구에 쇠파이프 들고 서있더라? 
-들어갈 거면 권총 탄약이나 통조림 3개 통행료로 내놓으라 함ㅋㅋㅋㅋㅋ 
-지들이 뭔데 마트를 독점함? 진짜 미친놈들인가? 
-너네 마트 갈 생각 있으면 무조건 뒤쪽 백화점 연결통로로 가라. 정문은 답 없다.</div>
-          
-          <div class="comment-box">
-            <div class="comment-item">
-              <span class="comment-writer">ㅇㅇ(118.235)</span>
-              <span class="comment-text">거기 대장짓 하는 놈 군복 입고 설치던데 진짜 한패 묶어서 뚝배기 깨고 싶음 ㄹㅇ</span>
-              <span class="comment-time">10분 전</span>
-            </div>
-            <div class="comment-item">
-              <span class="comment-writer">통조림거지</span>
-              <span class="comment-text">통조림 3개면 사흘치 식량인데 미쳤냐 ㅋㅋㅋ 걍 비 산성비 맞으면서 마트 창고 털러 갈란다</span>
-              <span class="comment-time">8분 전</span>
-            </div>
-            <div class="comment-item">
-              <span class="comment-writer">익명_99</span>
-              <span class="comment-text">뒷문도 사냥꾼 한 마리 갤갤대고 있던데 조심해라 방금 지나가다 지릴 뻔함</span>
-              <span class="comment-time">3분 전</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Post 2 -->
-        <div class="post-card">
-          <div class="post-meta">
-            <span class="post-tag">질문/멘붕</span>
-            <span>작성자: 101동주민</span>
-            <span>45분 전</span>
-            <span>조회 512</span>
-          </div>
-          <div class="post-subject">아 씨바 수돗물 목말라서 조금 마셨는데 이거 바이러스냐? ㅋㅋㅋ</div>
-          <div class="post-content">비상 방송에서 수돗물 오염됐다고 계속 난리치길래 안 마시다가 
-진짜 목말라 죽을 거 같아서 정수기 물 살짝 마셨거든?
-근데 지금 약간 열 올라오고 목구멍 침 삼킬 때마다 칼로 찌르는 것 같음...
-나 이거 6시간 뒤에 뜀박이 되는 거냐??? 
-진짜 솔직하게 말해줘라 내 방 문 안에서 잠궈야 됨??? 존나 무섭다 진짜...</div>
-
-          <div class="comment-box">
-            <div class="comment-item">
-              <span class="comment-writer">ㅇㅇ(211.36)</span>
-              <span class="comment-text">잘 가라 ㅋㅋㅋㅋ 문 잠그는 게 문제가 아니라 유서부터 써라 빡통아</span>
-              <span class="comment-time">40분 전</span>
-            </div>
-            <div class="comment-item">
-              <span class="comment-writer">존버만이살길</span>
-              <span class="comment-text">님 몇 동 몇 호임? 4층 아래면 내가 미리 복도에 부비트랩 깔아놓게 방 호수 좀 ㅋㅋㅋ</span>
-              <span class="comment-time">32분 전</span>
-            </div>
-            <div class="comment-item">
-              <span class="comment-writer">의사지망생</span>
-              <span class="comment-text">그냥 단순 감기 증상일 수도 있는데 고열 39도 넘어가면 침대에 손발 묶으세요 진짜임</span>
-              <span class="comment-time">15분 전</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Post 3 -->
-        <div class="post-card">
-          <div class="post-meta">
-            <span class="post-tag">생존/썰</span>
-            <span>작성자: 쇠파이프연금술사</span>
-            <span>1시간 전</span>
-            <span>조회 890</span>
-          </div>
-          <div class="post-subject">방금 3단지 복도에서 뜀박이 하나 머리 뚝배기 깨버림 ㄷㄷ</div>
-          <div class="post-content">복도에 쓰레기 버리러(아니 물자 구하러) 잠깐 나갔는데 
-2단계 헤매기인 줄 알고 지나치려다가 갑자기 눈 마주치자마자 
-짐승 소리 지르면서 나한테 전속력으로 튀어오는 거임 ㄷㄷㄷ
-진짜 살려고 옆에 있던 소화기 찍어 누르고 쇠파이프 풀스윙 때렸는데 
-뇌간 터지니까 바로 픽 쓰러지더라... 
-손 떨려서 지금 담배 태우는 중이다... 다들 복도 나갈 때 소음 절대 내지 마라..</div>
-
-          <div class="comment-box">
-            <div class="comment-item">
-              <span class="comment-writer">아파트경비원</span>
-              <span class="comment-text">피 냄새 퍼지면 다른 사냥꾼이나 뜀박이 몰려옵니다 시체 소독약 뿌리고 얼른 치우세요!</span>
-              <span class="comment-time">55분 전</span>
-            </div>
-            <div class="comment-item">
-              <span class="comment-writer">ㅇㅇ(175.223)</span>
-              <span class="comment-text">풀스윙 찰졌겠노 ㅋㅋㅋ 나중에 나 수색 나갈 때 파티 좀 짜자 보조 맞춰줄게</span>
-              <span class="comment-time">42분 전</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- External Link Buttons -->
-        <div class="cta-buttons">
-          <a href="#" target="_blank" class="cta-btn cta-kakao">
-            <i class="fa-solid fa-comment"></i> 오픈채팅 생존방 참여
-          </a>
-          <a href="#" target="_blank" class="cta-btn cta-novel">
-            <i class="fa-solid fa-book-open"></i> 원작 소설 바로가기
-          </a>
-          <a href="#" target="_blank" class="cta-btn cta-cafe">
-            <i class="fa-solid fa-users"></i> RP 커뮤니티 가입
-          </a>
-        </div>
-      </div>
-
       <!-- Main Content Navigation Tabs -->
       <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('overview')">
+        <button class="tab-btn active" id="tab-btn-overview" onclick="switchTab('overview')">
           <i class="fa-solid fa-earth-americas"></i> 개요 & 배경
         </button>
-        <button class="tab-btn" onclick="switchTab('locations')">
+        <button class="tab-btn" id="tab-btn-locations" onclick="switchTab('locations')">
           <i class="fa-solid fa-map-location-dot"></i> 주요 시설 & 지도
         </button>
-        <button class="tab-btn" onclick="switchTab('infected')">
+        <button class="tab-btn" id="tab-btn-infected" onclick="switchTab('infected')">
           <i class="fa-solid fa-biohazard"></i> 감염자 도감
         </button>
-        <button class="tab-btn" onclick="switchTab('character')">
+        <button class="tab-btn" id="tab-btn-character" onclick="switchTab('character')">
           <i class="fa-solid fa-user-ninja"></i> 등장인물 (한서우)
+        </button>
+        <!-- 커뮤니티 탭 추가 -->
+        <button class="tab-btn comm-tab" id="tab-btn-community" onclick="switchTab('community')">
+          <i class="fa-solid fa-users"></i> 생존자 커뮤니티
         </button>
       </nav>
 
@@ -1025,10 +920,9 @@
       <!-- TAB 4: 등장인물 (한서우) -->
       <section id="character" class="tab-content">
         <div class="card">
-          <div class="profile-header">
-            <div class="profile-avatar">
-              <i class="fa-solid fa-user-gear"></i>
-              <span style="font-size: 0.7rem; color: #fff; margin-top: 4px;">HAN SEO-WOO</span>
+          <div class="profile-header" style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+            <div class="profile-avatar" style="width: 80px; height: 80px; background: rgba(229,57,53,0.2); border: 2px solid var(--accent-red-bright); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <i class="fa-solid fa-user-gear" style="font-size: 2rem; color: var(--accent-red-bright);"></i>
             </div>
             <div style="flex: 1;">
               <h2 style="color: #fff; font-size: 1.8rem; font-family: var(--font-heading);">한서우 (26세)</h2>
@@ -1037,7 +931,7 @@
             </div>
           </div>
 
-          <div class="quote-box">
+          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-left: 3px solid var(--accent-red-bright); margin-bottom: 20px; font-style: italic; color: #ddd;">
             "거짓말 같죠? 하필 생일날 세상이 망할 게 뭡니까. 그래도 쉽게 죽어줄 생각은 없는데요."
           </div>
 
@@ -1053,6 +947,229 @@
           </div>
         </div>
       </section>
+
+      <!-- TAB 5: 생존자 커뮤니티 (새로 바뀐 커뮤니티 페이지) -->
+      <section id="community" class="tab-content">
+        <div class="comm-board-container">
+          <div class="comm-header">
+            <div class="comm-title">
+              <i class="fa-solid fa-satellite-dish" style="color: var(--accent-green);"></i>
+              <span>화연시 비상 생존자 마이너 갤러리</span>
+            </div>
+            <span class="badge badge-green"><i class="fa-solid fa-wifi"></i> 실시간 접속중</span>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
+            * 통신 마비 전 생존자들이 실시간으로 정보를 공유하고 멘탈을 다잡는 비상 안테나 게시판입니다.
+          </p>
+
+          <!-- Post 1: 생필품 실패 썰 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">뻘글/분통</span>
+              <span>작성자: ㅇㅇ(118.235)</span>
+              <span>3분 전</span>
+              <span>조회 524</span>
+            </div>
+            <div class="post-subject">목숨 걸고 GS25 털고 왔는데 가방 까보고 통곡함 ㅋㅋㅋ</div>
+            <div class="post-content">오늘 새벽에 뜀박이들 눈 피해서 목숨 걸고 편의점 유리창 깨고 들어갔거든?
+가방 터질 때까지 손에 잡히는 대로 쓸어 담고 헐떡이면서 아파트 돌아옴.
+식탁에 가방 까봤는데 쌀이나 캔 통조림은커녕...
+[불닭볶음면 5봉지, 캡사이신 소스, 콘돔, 레몬맛 탄산수] 이딴 것만 들어있음 씨발 ㅋㅋㅋㅋㅋ
+수돗물 끊겨서 물도 없는데 불닭을 어떻게 끓여 먹으라고 ㅋㅋㅋ 캡사이신은 감염자 눈에 뿌리는 호신용이냐? 
+배고파서 눈물 나는데 어이가 없어서 웃음만 나온다...</div>
+            
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(220.89)</span>
+                <span class="comment-text">캡사이신 진짜 눈에 뿌리면 시각 반응하는 놈들한테 효과 있을지도 모름 ㅋㅋㅋ 호신무기 획득 개이득</span>
+                <span class="comment-time">2분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">102동주민</span>
+                <span class="comment-text">레몬 탄산수 나랑 생수 반 병이랑 바꾸실? 목말라 죽겠는데 제발...</span>
+                <span class="comment-time">2분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(175.223)</span>
+                <span class="comment-text">콘돔 방수포 만들거나 상처 지혈할 때 유용함 버리지 마라 진짜로</span>
+                <span class="comment-time">1분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 2: 베란다 줄낚시 물물교환 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">생존/훈훈</span>
+              <span>작성자: 301호청년</span>
+              <span>15분 전</span>
+              <span>조회 890</span>
+            </div>
+            <div class="post-subject">5층 아저씨랑 베란다 로프 물물교환 성공함 ㅋㅋㅋ</div>
+            <div class="post-content">1~3층 계단 부숴두고 4층 이상만 고립되어 있으니까 위아래층 소통이 안 됐잖아?
+오늘 5층 아저씨가 창문 밖으로 빨랫줄에 바구니 매달아서 내려보내심 ㅋㅋㅋ
+바구니 안에 [부탄가스 1개 ↔ 건전지 AA 4개 교환 원함] 메모 적혀있길래, 집에 남아도는 건전지 넣고 바구니 두 번 흔드니까 위에서 쓱 올려가더라.
+거래 깔끔하게 성사되고 부탄가스 얻어서 오랜만에 따뜻한 물 끓여 먹음. 수동 베란다 쿠팡 개꿀이다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(121.165)</span>
+                <span class="comment-text">우리 동은 훌라후프에 밧줄 묶어서 교환 중임 ㅋㅋㅋ 인간은 적응의 동물이다</span>
+                <span class="comment-time">12분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.36)</span>
+                <span class="comment-text">중간에 4층 사람이 바구니 낚아채면 어떡함? ㅋㅋㅋ 비대면 신뢰 거래가 생명이네</span>
+                <span class="comment-time">8분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 3: 캔/유리조각 알람 트랩 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">팁/정보</span>
+              <span>작성자: 화연동파수꾼</span>
+              <span>38분 전</span>
+              <span>조회 1120</span>
+            </div>
+            <div class="post-subject">밤에 수색 나갈 때 복도나 계단에 '캔 뚜껑' 깔아두는 이유</div>
+            <div class="post-content">비상계단이나 통로 수색할 때 빈 통조림 캔이나 유리 조각 모아둔 거 계단 길목에 살짝 깔아둬라.
+뜀박이들 시각이 거의 마비돼서 바닥 잘 못 보고 밟는데, 챙그랑 소리 나면 위치랑 거리 바로 파악됨.
+어제도 계단 밑에서 올라오는 소리 들려서 캔 깔아둔 곳으로 소음 유인하고 반대편으로 도망쳤다.
+단점은 나도 도망칠 때 안 밟게 위치 기억해둬야 됨 ㅋㅋㅋ 어제 내가 밟고 자빠질 뻔함.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(59.16)</span>
+                <span class="comment-text">자기가 밟고 자빠지는 게 진짜 아포칼립스 억울사 1위일 듯 ㅋㅋㅋㅋㅋ 조심해라</span>
+                <span class="comment-time">30분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.234)</span>
+                <span class="comment-text">오 조용한 트랩 느낌이네. 나도 방문 앞에 페트병찌그러뜨려서 세워둬야겠다</span>
+                <span class="comment-time">22분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 4: 아포칼립스 레시피 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">정보/생활</span>
+              <span>작성자: ㅇㅇ(220.89)</span>
+              <span>1시간 전</span>
+              <span>조회 740</span>
+            </div>
+            <div class="post-subject">통조림 물려서 못 먹겠다는 사람들 아포칼립스 조합 레시피 공유함</div>
+            <div class="post-content">다들 며칠째 스팸이랑 참치만 생으로 씹다 보니까 속 느끼해서 토할 것 같다는 글 많던데,
+[스팸 + 골뱅이 통조림 국물 + 참치] 한 데 섞어서 미지근한 물 약간 넣고 졸여봐라.
+희한하게 부대찌개 비스무리한 칼칼한 맛 나면서 생 햇반 씹어먹을 때 밥 한 공기 뚝딱임.
+부탄가스 아까워서 촛불 3개 켜놓고 그 위에 통조림 캔 올려서 데워 먹는데 은근 낭만도 있다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(118.235)</span>
+                <span class="comment-text">골뱅이 국물이 치트키였네 ㅋㅋㅋ 오늘 저녁에 바로 해먹어본다 메모...</span>
+                <span class="comment-time">50분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">카페인중독자</span>
+                <span class="comment-text">촛불 데우기 꿀팁이네. 가스 아껴야 나중에 진짜 추울 때 불 땐다</span>
+                <span class="comment-time">41분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 5: 소리 안 나는 도구의 중요성 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">경고/필독</span>
+              <span>작성자: ㅇㅇ(175.223)</span>
+              <span>2시간 전</span>
+              <span>조회 1450</span>
+            </div>
+            <div class="post-subject">수색 나갈 때 '망치'나 '쇠파이프' 함부로 휘두르지 마라 (경험담)</div>
+            <div class="post-content">어제 문 잠긴 상가 털겠다고 망치로 자물쇠 깡- 하고 내려쳤다가 진짜 저승길 하이패스 탈 뻔함.
+쇠 때리는 고음역대 소리가 상가 전체에 울려 퍼지더니 비상계단 쪽에서 뜀박이들 발소리 쏟아져 내리더라...
+겨우 1층 화장실 칸 안에 숨어서 숨 죽이고 살았음.
+문 따거나 기물 부술 때는 무조건 두꺼운 천이나 옷가지로 타격 부위 감싸고 해라. 
+둔기로 머리 칠 때도 소리 죽이는 게 생존 1순위다. 명심해라.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">음향전문가</span>
+                <span class="comment-text">쇠 소리랑 유리 깨지는 소리가 공기 타고 제일 멀리 퍼짐. 빠루 지렛대 원리로 여는 게 제일 조용함</span>
+                <span class="comment-time">1시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.36)</span>
+                <span class="comment-text">진짜 깡 소리 한번 나면 단체로 광란의 댄스파티 열림 ㄷㄷ 조심하자</span>
+                <span class="comment-time">1시간 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 6: 옥상 무전기 소통 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">잡담/감동</span>
+              <span>작성자: ㅇㅇ(39.7)</span>
+              <span>3시간 전</span>
+              <span>조회 980</span>
+            </div>
+            <div class="post-subject">오늘 밤 10시에 옥상 무전 주파수 7번 다들 들었음?</div>
+            <div class="post-content">방 구석에 혼자 갇혀서 멍때리다가 건전지 라디오 겸 무전기 채널 돌려봤거든?
+7번 채널에서 어떤 아저씨가 통기타 치면서 김광석 노래 불러주고 계시더라 ㅋㅋㅋ
+다들 말없이 송신 버튼만 칙- 칙- 누르면서 '잘 듣고 있다'고 신호 보내는데
+전기도 통신도 다 끊긴 어둠 속에서 나 혼자가 아니라는 생각 들면서 울컥함...
+낭만 아저씨 내일도 10시에 부탁드립니다. 방송 접지 마세요.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">102동주민</span>
+                <span class="comment-text">나도 들었음! 칙- 칙- 두 번 누르는 거 우리 끼리 응답 신호로 정하자 ㅋㅋㅋ</span>
+                <span class="comment-time">2시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(121.165)</span>
+                <span class="comment-text">칠흑 같은 어둠 속에서 무전기 소리 들릴 때 진짜 울컥하더라... 다들 살아남읍시다</span>
+                <span class="comment-time">2시간 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 7: 거울/시계 이야기 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">생존/멘탈</span>
+              <span>작성자: ㅇㅇ(211.234)</span>
+              <span>5시간 전</span>
+              <span>조회 1620</span>
+            </div>
+            <div class="post-subject">집에 있는 거울이랑 벽시계 다 치워버렸다. 차라리 편함</div>
+            <div class="post-content">방 안에서 혼자 며칠 동안 갇혀있다 보니까 거울 속에 핼쑥해진 내 얼굴 보는 게 제일 곤욕임.
+내가 아직 사람인지 곧 감염될 놈인지 구분도 안 가고... 초침 소리는 똑딱똑딱 귀를 찌르는데 정신 나갈 것 같더라.
+그래서 오늘 거울은 수건으로 덮어버리고 시계 건전지 뽑아버림.
+시간이 얼마나 지났는지 안 보이니까 차라리 마음이 편하다. 
+다들 몸도 몸인데 정신 건강 잘 챙겨라. 아포칼립스는 멘탈이 먼저 터지면 끝이다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">301호청년</span>
+                <span class="comment-text">진짜 공감함... 날짜 개념 사라지는 게 제일 무서움. 나는 벽에 손톱으로 카운트 세는 중</span>
+                <span class="comment-time">4초 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(59.16)</span>
+                <span class="comment-text">혼자 있을 때 침묵이 제일 무서움. 가끔은 일부러 목소리 내서 혼잣말이라도 해라 멘탈 잡게</span>
+                <span class="comment-time">3시간 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <footer>
@@ -1060,7 +1177,7 @@
     </footer>
   </div>
 
-  <!-- Modal -->
+  <!-- Location Detail Modal -->
   <div class="modal-overlay" id="locationModal">
     <div class="modal-card">
       <span class="modal-close" onclick="closeLocationModal()">&times;</span>
@@ -1105,7 +1222,7 @@
         title: "[진단 Q2]",
         text: "식량을 구하기 위해 하나로마트 수색 중 무장한 적대 생존자 무리를 발견했다면?",
         options: [
-          { text: "A. 서우의 신호에 맞춰 우회로로 은밀히 엄폐한다.", score: 20 },
+          { text: "A. 신호에 맞춰 우회로로 은밀히 엄폐한다.", score: 20 },
           { text: "B. 기선제압을 위해 정면으로 고함을 지르며 돌진한다.", score: 0 },
           { text: "C. 가방에 든 마지막 통조림을 던져주고 협상을 시도한다.", score: 10 }
         ]
@@ -1205,15 +1322,22 @@
       document.getElementById('main-site').style.display = 'block';
     }
 
-    // Tabs
+    // Dynamic Tab Switching (Overview, Locations, Infected, Character, Community)
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
       document.getElementById(tabId).classList.add('active');
-      event.currentTarget.classList.add('active');
+      const targetBtn = document.getElementById('tab-btn-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+      }
+
+      // Smooth scroll back to tabs area
+      document.querySelector('.nav-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Modal Details
+    // Modal Details for Locations Map
     const locationDetails = {
       school: {
         title: "화연고등학교 / 중학교",
