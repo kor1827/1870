@@ -731,7 +731,7 @@
           <i class="fa-solid fa-biohazard"></i> 감염자 도감
         </button>
         <button class="tab-btn" id="tab-btn-character" onclick="switchTab('character')">
-          <i class="fa-solid fa-user-ninja"></i> 등장인물 (한서우)
+          <i class="fa-solid fa-user-ninja"></i> 등장인물
         </button>
         <!-- 커뮤니티 탭 추가 -->
         <button class="tab-btn comm-tab" id="tab-btn-community" onclick="switchTab('community')">
@@ -944,6 +944,57 @@
               <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 성격 포인트 (갭모에)</h4>
               <p style="font-size: 0.9rem; color: var(--text-muted);">평소 농담을 던지며 긴장을 풀어주지만, 적대 세력이나 감염체 앞에서는 장난기가 사라지고 계산적으로 변함.</p>
             </div>
+          </div>
+        </div>
+
+        <!-- 기타 등장인물 목록 (클릭 시 상세 모달) -->
+        <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.3rem; margin: 30px 0 15px; letter-spacing: 1px;">
+          <i class="fa-solid fa-users" style="color: var(--accent-red-bright);"></i> 그 외 생존자 명단
+        </h3>
+        <div class="grid-2" id="characterListGrid">
+          <div class="card" onclick="openCharacterModal('kangdohyun')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강도현</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('imbaekheon')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 임백헌</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('jintaeo')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 진태오</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('jojongcheol')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 조종철</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('songhajin')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 송하진</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('parkareum')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 박아름</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('kangdaesik')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강대식</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('leeeunchae')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 이은채</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('yoonsangha')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 윤상하</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('choitaejin')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 최태진</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('guwonja')">
+            <div class="card-title"><span><i class="fa-solid fa-user-secret" style="color: var(--accent-red-bright);"></i> 구원자</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
           </div>
         </div>
       </section>
@@ -1198,6 +1249,22 @@
     </div>
   </div>
 
+  <!-- Character Detail Modal -->
+  <div class="modal-overlay" id="characterModal">
+    <div class="modal-card">
+      <span class="modal-close" onclick="closeCharacterModal()">&times;</span>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <i class="fa-solid fa-user" style="color: var(--accent-red-bright); font-size: 1.5rem;"></i>
+        <h3 id="charModalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem;">이름</h3>
+      </div>
+      <p id="charModalRole" style="margin-bottom: 15px; font-weight: 700;">역할: -</p>
+      <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; color: #ccc; font-size: 0.95rem; line-height: 1.6;" id="charModalBody">
+        설명 내용
+      </div>
+      <button class="gate-btn" style="width: 100%; margin-top: 20px; padding: 10px;" onclick="closeCharacterModal()">닫기</button>
+    </div>
+  </div>
+
   <!-- JavaScript -->
   <script>
     // Timer
@@ -1398,6 +1465,35 @@
 
     function closeLocationModal() {
       document.getElementById('locationModal').style.display = 'none';
+    }
+
+    // Character Details (등장인물 상세 정보 - 추후 내용 추가 예정)
+    const characterDetails = {
+      kangdohyun:   { title: "강도현", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      imbaekheon:   { title: "임백헌", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      jintaeo:      { title: "진태오", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      jojongcheol:  { title: "조종철", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      songhajin:    { title: "송하진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      parkareum:    { title: "박아름", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      kangdaesik:   { title: "강대식", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      leeeunchae:   { title: "이은채", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      yoonsangha:   { title: "윤상하", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      choitaejin:   { title: "최태진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      guwonja:      { title: "구원자", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." }
+    };
+
+    function openCharacterModal(key) {
+      const data = characterDetails[key];
+      if (data) {
+        document.getElementById('charModalTitle').textContent = data.title;
+        document.getElementById('charModalRole').textContent = data.role;
+        document.getElementById('charModalBody').innerHTML = data.body;
+        document.getElementById('characterModal').style.display = 'flex';
+      }
+    }
+
+    function closeCharacterModal() {
+      document.getElementById('characterModal').style.display = 'none';
     }
   </script>
 </body>
