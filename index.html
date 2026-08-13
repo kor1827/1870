@@ -61,12 +61,12 @@
     }
 
     /* ==========================================================================
-       2. Intro Screen & Creepy Glitch Animation (Eerie Zombie Glitch)
+       2. Intro Gatekeeper & Static Screen
        ========================================================================== */
     #intro-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: #020000;
+      background: #050506;
       z-index: 10000;
       display: flex;
       flex-direction: column;
@@ -74,57 +74,37 @@
       align-items: center;
       padding: 20px;
       text-align: center;
-      animation: crt-turn-on 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    }
-
-    @keyframes crt-turn-on {
-      0% {
-        transform: scale(1, 0.002) scaleX(0);
-        filter: brightness(30) contrast(200%);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1, 0.005) scaleX(1);
-        filter: brightness(10) contrast(150%);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1, 1) scaleX(1);
-        filter: brightness(1) contrast(100%);
-        opacity: 1;
-      }
     }
 
     .static-bg {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.08), rgba(0, 0, 0, 0.95) 2px);
-      animation: static-flicker 0.08s infinite;
+      background: repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), rgba(0,0,0,0.8) 2px);
+      animation: static-flicker 0.15s infinite;
       pointer-events: none;
     }
 
     @keyframes static-flicker {
-      0% { opacity: 0.7; transform: translate(0, 0); }
-      50% { opacity: 0.95; transform: translate(-1px, 1px); }
-      100% { opacity: 0.8; transform: translate(1px, -1px); }
+      0% { opacity: 0.8; }
+      50% { opacity: 0.95; }
+      100% { opacity: 0.85; }
     }
 
     .intro-title-kanji {
       font-family: var(--font-heading);
-      font-size: clamp(3.2rem, 10vw, 6.5rem);
+      font-size: clamp(3rem, 10vw, 6rem);
       color: var(--accent-red-bright);
-      text-shadow: 0 0 30px rgba(229, 57, 53, 0.9);
-      letter-spacing: 6px;
+      text-shadow: 0 0 20px rgba(229, 57, 53, 0.8);
+      letter-spacing: 4px;
       margin-bottom: 10px;
       position: relative;
     }
 
     .intro-sub {
-      color: #ff8a80;
+      color: var(--text-muted);
       font-size: 1.1rem;
       margin-bottom: 30px;
       letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(255,0,0,0.5);
     }
 
     .gate-btn {
@@ -137,7 +117,7 @@
       font-family: var(--font-body);
       border-radius: 4px;
       cursor: pointer;
-      box-shadow: 0 0 25px rgba(229, 57, 53, 0.7);
+      box-shadow: 0 0 20px rgba(229, 57, 53, 0.5);
       transition: all 0.3s ease;
       z-index: 2;
     }
@@ -145,7 +125,20 @@
     .gate-btn:hover {
       background: var(--accent-red-bright);
       transform: scale(1.05);
-      box-shadow: 0 0 40px rgba(255, 82, 82, 0.9);
+      box-shadow: 0 0 30px rgba(255, 82, 82, 0.8);
+    }
+
+    .intro-quiz-box {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-red);
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 650px;
+      width: 100%;
+      z-index: 2;
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      text-align: left;
     }
 
     /* Glitch Animation */
@@ -158,13 +151,13 @@
     }
     .glitch::before {
       left: -2px;
-      text-shadow: 3px 0 var(--accent-red-bright);
-      animation: glitch-anim 1.5s infinite linear alternate-reverse;
+      text-shadow: 2px 0 var(--accent-red-bright);
+      animation: glitch-anim 2.5s infinite linear alternate-reverse;
     }
     .glitch::after {
       left: 2px;
-      text-shadow: -3px 0 #00ffff;
-      animation: glitch-anim2 1.2s infinite linear alternate-reverse;
+      text-shadow: -2px 0 #00bcd4;
+      animation: glitch-anim2 1.8s infinite linear alternate-reverse;
     }
 
     @keyframes glitch-anim {
@@ -307,22 +300,14 @@
       border: none;
     }
 
-    /* 수정: 생존 테스트 바로가기 버튼 */
-    .cta-survival {
-      background: var(--accent-red);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(229, 57, 53, 0.5);
-    }
-    .cta-survival:hover { transform: translateY(-2px); background: var(--accent-red-bright); }
+    .cta-kakao { background: #fee500; color: #191919; box-shadow: 0 0 15px rgba(254, 229, 0, 0.3); }
+    .cta-kakao:hover { transform: translateY(-2px); background: #fff04d; }
 
-    .cta-novel { background: #333; color: #fff; border: 1px solid #555; }
-    .cta-novel:hover { transform: translateY(-2px); background: #444; }
+    .cta-novel { background: var(--accent-red); color: #fff; box-shadow: 0 0 15px rgba(229, 57, 53, 0.4); }
+    .cta-novel:hover { transform: translateY(-2px); background: var(--accent-red-bright); }
 
     .cta-community { background: #03cf5d; color: #fff; box-shadow: 0 0 15px rgba(3, 207, 93, 0.3); }
     .cta-community:hover { transform: translateY(-2px); background: #22e279; }
-
-    .cta-kakao { background: #fee500; color: #191919; box-shadow: 0 0 15px rgba(254, 229, 0, 0.3); }
-    .cta-kakao:hover { transform: translateY(-2px); background: #fff04d; }
 
     /* ==========================================================================
        4. Tabs & Timeline System
@@ -371,34 +356,6 @@
     .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Quiz Box inside Tab */
-    .quiz-box-card {
-      background: var(--bg-card);
-      border: 2px solid var(--accent-red-bright);
-      padding: 30px;
-      border-radius: 8px;
-      max-width: 750px;
-      margin: 0 auto;
-      box-shadow: 0 0 30px rgba(229, 57, 53, 0.25);
-      text-align: left;
-    }
-
-    .option-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-main);
-      padding: 14px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      text-align: left;
-      transition: all 0.2s ease;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .option-btn:hover { background: rgba(229, 57, 53, 0.25); border-color: var(--accent-red-bright); color: #fff; }
 
     /* Timeline Styling */
     .timeline {
@@ -457,7 +414,7 @@
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
 
     /* ==========================================================================
-       5. Leaflet Interactive Map Styling (No-Label Dark Tactical Map)
+       5. Leaflet Interactive Map Styling (Google Map Style Dark Mode)
        ========================================================================== */
     .tactical-map-box {
       background: #090a0c;
@@ -475,6 +432,11 @@
       margin-top: 15px;
       background-color: #0d1117;
       z-index: 10;
+    }
+
+    /* Dark Mode Filter for Map Tiles */
+    .leaflet-tile-pane {
+      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
     }
 
     /* Custom Leaflet Marker Icon Style */
@@ -533,33 +495,9 @@
 
     .map-pop-btn:hover { background: var(--accent-red-bright); }
 
-    /* Modals System */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 20000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-card {
-      background: var(--bg-card);
-      border: 2px solid var(--accent-red-bright);
-      border-radius: 8px;
-      max-width: 600px;
-      width: 100%;
-      padding: 25px;
-      box-shadow: 0 0 30px rgba(229, 57, 53, 0.4);
-      position: relative;
-    }
-
-    .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
-    .modal-close:hover { color: #fff; }
-
-    /* Integrated Community UI */
+    /* ==========================================================================
+       6. Integrated Community Page UI
+       ========================================================================== */
     .comm-board-container {
       background: var(--bg-card);
       border: 2px solid var(--accent-green);
@@ -592,19 +530,119 @@
       border-radius: 6px;
       padding: 18px;
       margin-bottom: 18px;
+      transition: all 0.2s ease;
     }
 
-    .post-meta { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
-    .post-tag { background: rgba(3, 207, 93, 0.2); color: #22e279; padding: 2px 6px; border-radius: 3px; font-weight: 700; }
-    .post-subject { color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
-    .post-content { color: #ccc; font-size: 0.95rem; line-height: 1.6; margin-bottom: 14px; white-space: pre-line; }
+    .post-card:hover {
+      border-color: rgba(3, 207, 93, 0.5);
+    }
 
-    .comment-box { background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 12px; margin-top: 8px; border-radius: 4px; }
-    .comment-item { padding: 8px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.05); font-size: 0.88rem; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .post-tag {
+      background: rgba(3, 207, 93, 0.2);
+      color: #22e279;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
+    .post-subject {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .post-content {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    /* Comment Section Styling */
+    .comment-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 12px;
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+
+    .comment-item {
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+
     .comment-item:last-child { border-bottom: none; }
-    .comment-writer { font-weight: 700; color: var(--accent-yellow); margin-right: 8px; }
-    .comment-text { color: #bbb; }
-    .comment-time { font-size: 0.75rem; color: #666; margin-left: 8px; }
+
+    .comment-writer {
+      font-weight: 700;
+      color: var(--accent-yellow);
+      margin-right: 8px;
+    }
+
+    .comment-text {
+      color: #bbb;
+    }
+
+    .comment-time {
+      font-size: 0.75rem;
+      color: #666;
+      margin-left: 8px;
+    }
+
+    /* Modals System */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 20000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-red-bright);
+      border-radius: 8px;
+      max-width: 600px;
+      width: 100%;
+      padding: 25px;
+      box-shadow: 0 0 30px rgba(229, 57, 53, 0.4);
+      position: relative;
+    }
+
+    .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+    .modal-close:hover { color: #fff; }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-align: left;
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .option-btn:hover { background: rgba(229, 57, 53, 0.2); border-color: var(--accent-red-bright); color: #fff; }
 
     footer {
       text-align: center;
@@ -625,37 +663,48 @@
 <body>
 
   <!-- ==========================================================================
-       1. GATEKEEPER INTRO SCREEN (Glitch & CRT Wake & OpenChat Focus)
+       GATEKEEPER INTRO SCREEN (Glitch Title + Expanded 5-Quiz System)
        ========================================================================== -->
   <div id="intro-screen">
     <div class="static-bg"></div>
 
+    <!-- Step 1: Initial Title Screen -->
     <div id="intro-step1" style="z-index: 2;">
       <div class="intro-title-kanji glitch" data-text="화연 (禾延)">화연 (禾延)</div>
-      <p class="intro-sub"><i class="fa-solid fa-biohazard"></i> 경고: 바이러스 확산 72시간 경과 · 생존자 통신망 신호 감지</p>
-      
-      <!-- 수정 반영: 첫 접속 시 오픈채팅 모달/진입 연결 -->
-      <div style="background: rgba(22, 24, 28, 0.95); border: 1px solid var(--accent-red-bright); padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto 25px; box-shadow: 0 0 30px rgba(229,57,53,0.3);">
-        <p style="color: #fff; font-size: 1rem; margin-bottom: 12px; font-weight: 700;">
-          <i class="fa-solid fa-comments" style="color: #fee500;"></i> 생존자 비상 오픈채팅방 연결
-        </p>
-        <p style="color: #aaa; font-size: 0.88rem; margin-bottom: 15px;">
-          화연시 통신망이 완전히 끊어지기 전, 오픈채팅방에 접속하여 실시간 비상 대책 및 생존 신호를 공유하세요.
-        </p>
-        <a href="#" target="_blank" class="cta-btn cta-kakao" style="justify-content: center; width: 100%; text-decoration: none;">
-          <i class="fa-solid fa-comment"></i> 오픈채팅 카카오톡 진입하기
-        </a>
+      <p class="intro-sub">발병 72시간 경과 · 화연시 생존 가능성 종합 진단</p>
+      <button class="gate-btn" onclick="startIntroQuiz()">
+        <i class="fa-solid fa-shield-halved"></i> 생존 가능성 테스트 시작 (5문항)
+      </button>
+    </div>
+
+    <!-- Step 2: Interactive Quiz Box -->
+    <div id="intro-quiz-box" class="intro-quiz-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.3rem;" id="quizQTitle">[진단 Q1]</h3>
+        <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 0.85rem;" id="quizProgress">1 / 5</span>
       </div>
 
-      <button class="gate-btn" onclick="enterMainSite()">
-        <i class="fa-solid fa-radiation"></i> 비상 위성 네트워크 접속 (메인 이동)
-      </button>
+      <p style="color: #ddd; font-size: 0.95rem; margin-bottom: 15px;" id="quizQText">질문 내용이 표시됩니다.</p>
+
+      <div id="quizOptions"></div>
+
+      <!-- Result Screen -->
+      <div id="quizResult" style="display: none; text-align: center; margin-top: 15px;">
+        <p style="color: var(--text-muted); font-size: 0.85rem;">측정된 화연시 생존 가능성</p>
+        <div id="quizScoreDisplay" style="font-family: var(--font-tech); font-size: 3.2rem; color: var(--accent-red-bright); font-weight: 900;">85%</div>
+        <p id="quizScoreComment" style="color: #ccc; margin: 12px 0 20px; font-size: 0.9rem; line-height: 1.5; word-break: keep-all;">
+          결과 메시지가 여기에 출력됩니다.
+        </p>
+        <button class="gate-btn" onclick="enterMainSite()">
+          <i class="fa-solid fa-right-to-bracket"></i> 화연시 진입하기 (메인 이동)
+        </button>
+      </div>
     </div>
   </div>
 
 
   <!-- ==========================================================================
-       2. MAIN WEBSITE
+       MAIN WEBSITE (Unlocked After Quiz)
        ========================================================================== -->
   <div id="main-site">
     <!-- Top Emergency Bar -->
@@ -673,14 +722,14 @@
       <p style="color: var(--text-muted); margin-top: 6px;">발병 72시간째, 통신망 두절 임박. 살아남아라.</p>
 
       <!-- Action Buttons (CTA) -->
-      <!-- 수정 반영: 오픈채팅 -> 생존 테스트 바로가기 버튼 위치 및 동작 구성 -->
       <div class="cta-buttons">
-        <button class="cta-btn cta-survival" onclick="switchTab('survival-test')">
-          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
-        </button>
+        <a href="#" target="_blank" class="cta-btn cta-kakao">
+          <i class="fa-solid fa-comment"></i> 오픈채팅 참여
+        </a>
         <a href="#" target="_blank" class="cta-btn cta-novel">
           <i class="fa-solid fa-book-open"></i> 원작 소설 바로가기
         </a>
+        <!-- 생존자 커뮤니티 버튼 -->
         <button class="cta-btn cta-community" onclick="switchTab('community')">
           <i class="fa-solid fa-users"></i> 생존자 커뮤니티
         </button>
@@ -720,8 +769,7 @@
 
     <div class="container">
 
-      <!-- Main Navigation Tabs -->
-      <!-- 수정 반영: 요구하신 정확한 탭 순서 적용 (개요배경, 주요시설, 감염자도감, 등장인물, 생존자 커뮤니티, 생존 테스트바로가기) -->
+      <!-- Main Content Navigation Tabs -->
       <nav class="nav-tabs">
         <button class="tab-btn active" id="tab-btn-overview" onclick="switchTab('overview')">
           <i class="fa-solid fa-earth-americas"></i> 개요 & 배경
@@ -738,15 +786,12 @@
         <button class="tab-btn comm-tab" id="tab-btn-community" onclick="switchTab('community')">
           <i class="fa-solid fa-users"></i> 생존자 커뮤니티
         </button>
-        <button class="tab-btn" id="tab-btn-survival-test" onclick="switchTab('survival-test')">
-          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
-        </button>
       </nav>
 
-      <!-- TAB 1: 개요 & 배경 -->
+      <!-- TAB 1: 개요 & 배경 + 타임라인 -->
       <section id="overview" class="tab-content active">
         <div class="grid-2">
-          <div class="card" onclick="playEerieBeep(); alert('화연시 개요: 인구 35만의 차단된 중소도시입니다.')">
+          <div class="card" onclick="alert('화연시 개요: 인구 35만의 차단된 중소도시입니다.')">
             <div class="card-title">
               <span><i class="fa-solid fa-city" style="color: var(--accent-red-bright);"></i> 무대: 경기도 화연시</span>
             </div>
@@ -757,7 +802,7 @@
             </ul>
           </div>
 
-          <div class="card" onclick="playEerieBeep(); alert('원인: 제인바이오 유출 바이러스.')">
+          <div class="card" onclick="alert('원인: 제인바이오 유출 바이러스.')">
             <div class="card-title">
               <span><i class="fa-solid fa-vial-virus" style="color: var(--accent-red-bright);"></i> 발병 원인: 제인바이오 유출</span>
             </div>
@@ -801,8 +846,9 @@
         </div>
       </section>
 
-      <!-- TAB 2: 주요 시설 & 지도 -->
+      <!-- TAB 2: 주요 시설 & 지도 (구글 맵 스타일 Leaflet.js 반영) -->
       <section id="locations" class="tab-content">
+        <!-- Interactive Leaflet Map Container -->
         <div class="tactical-map-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-weight: 700;">
@@ -814,10 +860,11 @@
             * 구글 맵 방식처럼 마우스 드래그로 지도 이동, 휠/터치로 확대 및 축소가 가능합니다. 핀 마커를 클릭해 상세 정보를 확인하세요.
           </p>
 
+          <!-- Real Interactive Map Canvas -->
           <div id="leaflet-map"></div>
         </div>
 
-        <!-- Location Cards Grid -->
+        <!-- Location Cards Grid (전체 카드 목록) -->
         <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.3rem; margin: 25px 0 15px;">
           <i class="fa-solid fa-list-check" style="color: var(--accent-red-bright);"></i> 전체 시설 리스트 (클릭 시 상세 모달)
         </h3>
@@ -886,6 +933,38 @@
             <p style="color: var(--text-muted); font-size: 0.9rem;">소방 장비(방화복, 산소통, 절단기) 풍부. 접근 시 감염 지대를 통과해야 함.</p>
           </div>
 
+          <div class="card" onclick="openLocationModal('mart')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-cart-shopping" style="color: var(--accent-red-bright);"></i> 하나로마트 화연점</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">지하 물류창고에 미개봉 식량 다량 존재. 입구를 무장 세력이 점거함.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('terminal')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-bus" style="color: var(--accent-red-bright);"></i> 시외버스터미널 & 쇼핑몰</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 고위험 위험 구역.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('golf')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-flag" style="color: var(--accent-yellow);"></i> 화연CC 골프장</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">외부와 단절된 준요새 지형. 상류층 출신 생존자들이 폐쇄적으로 점거 중.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('gasstation')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-gas-pump" style="color: var(--accent-red-bright);"></i> 주유소 체인 (화연IC)</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">연료 확보 가치가 매우 높으나 폭발 위험 상존. 차량 이동 핵심 거점.</p>
+          </div>
+
           <div class="card" onclick="openLocationModal('lab')">
             <div class="card-title">
               <span><i class="fa-solid fa-flask" style="color: var(--accent-red-bright);"></i> 제인바이오 연구소</span>
@@ -901,13 +980,109 @@
             </div>
             <p style="color: var(--text-muted); font-size: 0.9rem;">발병 초기 환자 폭주 지점. 3단계 변이체(사냥꾼) 발생 가능성이 가장 높음.</p>
           </div>
+
+          <div class="card" onclick="openLocationModal('sanatorium')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-notes-medical" style="color: var(--accent-yellow);"></i> 하늘요양병원</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">거동 불가 환자 다수 방치. 정서적·윤리적 딜레마를 마주하는 장소.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('school')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-school" style="color: var(--accent-red-bright);"></i> 화연고 / 화연중학교</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">초기 학생들의 바리케이드 봉쇄가 실패하여 거대 좀비 둥지로 변모함.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('stadium')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-trophy" style="color: var(--accent-red-bright);"></i> 화연공설운동장</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">대규모 임시 대피소였으나 붕괴. 수백 명이 몰렸던 만큼 군집 감염체 다수.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('checkpoint')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-shield-cat" style="color: var(--accent-red-bright);"></i> 화연IC 군 통제선</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">도시 차단 군 방어선이 뚫린 곳. 외부의 더 큰 위협이 유입되는 관문.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('prison')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-lock" style="color: var(--accent-red-bright);"></i> 화연교도소</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">탈옥 재소자들이 자체 세력화된 곳으로 감염체보다 사람이 더 위험함.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('prugio')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-building" style="color: var(--accent-red-bright);"></i> 푸르지오 라포레</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">이동이 제한된 '세로형 지옥' 초고층 주상복합. 고층에 고립 생존자 존재.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('villa')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-house-chimney" style="color: var(--accent-yellow);"></i> 성운 빌라촌</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">낮은 건물들이 밀집하여 옥상 공중 이동통로로 활용되는 은둔형 생존 구역.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('subway')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-train-subway" style="color: var(--accent-yellow);"></i> 지하철 네트워크</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">8개 역으로 구성된 지하 이동망. 산성비를 피할 수 있으나 일부 붕괴 위기.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('broadcast')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-tower-cell" style="color: var(--accent-yellow);"></i> 화연방송국</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">단파 통신 핵심 시설. 송신탑 재가동 시 생존자 네트워크 구축 가능.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('church')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-church" style="color: var(--accent-red-bright);"></i> 화연중앙성당</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">종교적 광기와 아포칼립스가 결합된 광신도 집단의 근거지 구역.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('crematory')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-skull-crossbones" style="color: var(--accent-red-bright);"></i> 화연화장장</span>
+              <span class="badge badge-red">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">초기 시신 처리 시도가 실패한 지점. 도시 내 가장 그로테스크한 최악의 지대.</p>
+          </div>
+
+          <div class="card" onclick="openLocationModal('station')">
+            <div class="card-title">
+              <span><i class="fa-solid fa-train" style="color: var(--accent-yellow);"></i> 화연역 (기차역)</span>
+              <span class="badge badge-yellow">상세보기</span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">광역철도 역사. 외부 도시와의 연결 관문으로 탈출 서사의 주요 통로.</p>
+          </div>
         </div>
       </section>
 
       <!-- TAB 3: 감염자 도감 -->
       <section id="infected" class="tab-content">
         <div class="grid-2">
-          <div class="card" onclick="playEerieBeep()">
+          <div class="card">
             <div class="card-title">
               <span><i class="fa-solid fa-person-running" style="color: var(--accent-yellow);"></i> 1단계: 뜀박이</span>
               <span class="badge badge-yellow">위험도 보통</span>
@@ -915,7 +1090,7 @@
             <p style="color: var(--text-muted);">감염 초기 상태. 신체 근육이 마비되지 않아 시각과 청각에 반응해 전속력으로 추격해옴.</p>
           </div>
 
-          <div class="card" onclick="playEerieBeep()">
+          <div class="card">
             <div class="card-title">
               <span><i class="fa-solid fa-person-walking" style="color: var(--accent-green);"></i> 2단계: 헤매기</span>
               <span class="badge badge-green">위험도 낮음</span>
@@ -923,7 +1098,7 @@
             <p style="color: var(--text-muted);">발병 후 관절이 굳어 느리게 배회하는 유형. 단, 무리를 지으면 위협적.</p>
           </div>
 
-          <div class="card" onclick="playEerieBeep()">
+          <div class="card">
             <div class="card-title">
               <span><i class="fa-solid fa-skull" style="color: var(--accent-red-bright);"></i> 3단계: 사냥꾼</span>
               <span class="badge badge-red">위험도 높음</span>
@@ -931,7 +1106,7 @@
             <p style="color: var(--text-muted);">시력을 잃은 대신 청각과 청각 반사가 극도로 발달. 어둠 속에서 벽을 타고 이동하기도 함.</p>
           </div>
 
-          <div class="card" onclick="playEerieBeep()">
+          <div class="card">
             <div class="card-title">
               <span><i class="fa-solid fa-biohazard" style="color: var(--accent-red-bright);"></i> 4단계: 특수 변종</span>
               <span class="badge badge-red">치명적</span>
@@ -965,9 +1140,60 @@
               <p style="font-size: 0.9rem; color: var(--text-muted);">손재주가 비상하여 폐품과 무전기를 조합해 함정이나 임시 무기를 조립함. 사격 및 기계 수리 감각 우수.</p>
             </div>
             <div>
-              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 성격 포인트</h4>
+              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 성격 포인트 (갭모에)</h4>
               <p style="font-size: 0.9rem; color: var(--text-muted);">평소 농담을 던지며 긴장을 풀어주지만, 적대 세력이나 감염체 앞에서는 장난기가 사라지고 계산적으로 변함.</p>
             </div>
+          </div>
+        </div>
+
+        <!-- 기타 등장인물 목록 (클릭 시 상세 모달) -->
+        <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.3rem; margin: 30px 0 15px; letter-spacing: 1px;">
+          <i class="fa-solid fa-users" style="color: var(--accent-red-bright);"></i> 그 외 생존자 명단
+        </h3>
+        <div class="grid-2" id="characterListGrid">
+          <div class="card" onclick="openCharacterModal('kangdohyun')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강도현</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('imbaekheon')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 임백헌</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('jintaeo')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 진태오</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('jojongcheol')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 조종철</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('songhajin')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 송하진</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('parkareum')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 박아름</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('kangdaesik')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강대식</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('leeeunchae')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 이은채</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('yoonsangha')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 윤상하</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('choitaejin')">
+            <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 최태진</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+          </div>
+          <div class="card" onclick="openCharacterModal('guwonja')">
+            <div class="card-title"><span><i class="fa-solid fa-user-secret" style="color: var(--accent-red-bright);"></i> 구원자</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
           </div>
         </div>
       </section>
@@ -984,7 +1210,7 @@
           </div>
 
           <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
-            * 통신 마비 전 생존자들이 실시간으로 정보를 공유하는 비상 안테나 게시판입니다.
+            * 통신 마비 전 생존자들이 실시간으로 정보를 공유하고 멘탈을 다잡는 비상 안테나 게시판입니다.
           </p>
 
           <!-- Post 1 -->
@@ -993,51 +1219,212 @@
               <span class="post-tag">뻘글/분통</span>
               <span>작성자: ㅇㅇ(118.235)</span>
               <span>3분 전</span>
+              <span>조회 524</span>
             </div>
             <div class="post-subject">목숨 걸고 GS25 털고 왔는데 가방 까보고 통곡함 ㅋㅋㅋ</div>
             <div class="post-content">오늘 새벽에 뜀박이들 눈 피해서 목숨 걸고 편의점 유리창 깨고 들어갔거든?
 가방 터질 때까지 손에 잡히는 대로 쓸어 담고 헐떡이면서 아파트 돌아옴.
-식탁에 가방 까봤는데 쌀이나 캔 통조림은커녕... 불닭볶음면 5봉지, 캡사이신 소스 이딴 것만 들어있음 ㅋㅋㅋ</div>
+식탁에 가방 까봤는데 쌀이나 캔 통조림은커녕...
+불닭볶음면 5봉지, 캡사이신 소스, 콘돔 이딴 것만 들어있음 씨발 ㅋㅋㅋㅋㅋ
+수돗물 끊겨서 물도 없는데 불닭을 어떻게 끓여 먹으라고 ㅋㅋㅋ 캡사이신은 감염자 눈에 뿌리는 호신용이냐? 
+배고파서 눈물 나는데 어이가 없어서 웃음만 나온다...</div>
             
             <div class="comment-box">
               <div class="comment-item">
                 <span class="comment-writer">ㅇㅇ(220.89)</span>
-                <span class="comment-text">캡사이신 진짜 눈에 뿌리면 시각 반응하는 놈들한테 효과 있을지도 모름 ㅋㅋㅋ</span>
+                <span class="comment-text">캡사이신 진짜 눈에 뿌리면 시각 반응하는 놈들한테 효과 있을지도 모름 ㅋㅋㅋ </span>
+                <span class="comment-time">2분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">102동주민</span>
+                <span class="comment-text">불닭 하나 나랑 생수 반 병이랑 바꾸실? 매운거 개땡기는데 제발...</span>
+                <span class="comment-time">2분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(175.223)</span>
+                <span class="comment-text">콘돔 방수포 만들거나 상처 지혈할 때 유용함 버리지 마라 진짜로</span>
+                <span class="comment-time">1분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 2 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">생존/훈훈</span>
+              <span>작성자: 301호청년</span>
+              <span>15분 전</span>
+              <span>조회 890</span>
+            </div>
+            <div class="post-subject">5층 아저씨랑 베란다 로프 물물교환 성공함 ㅋㅋㅋ</div>
+            <div class="post-content">1~3층 계단 부숴두고 4층 이상만 고립되어 있으니까 위아래층 소통이 안 됐잖아?
+오늘 5층 아저씨가 창문 밖으로 빨랫줄에 바구니 매달아서 내려보내심 ㅋㅋㅋ
+바구니 안에 부탄가스 1개 ↔ 건전지 AA 4개 교환 원함 메모 적혀있길래, 집에 남아도는 건전지 넣고 바구니 두 번 흔드니까 위에서 쓱 올려가더라.
+거래 깔끔하게 성사되고 부탄가스 얻어서 오랜만에 라면 끓여 먹음. 수동 베란다 쿠팡 개꿀이다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(121.165)</span>
+                <span class="comment-text">우리 동은 훌라후프에 밧줄 묶어서 교환 중임 ㅋㅋㅋ 인간은 적응의 동물이다</span>
+                <span class="comment-time">12분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.36)</span>
+                <span class="comment-text">쿠팡ㅈㄴ그립네 하</span>
+                <span class="comment-time">8분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 3 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">팁/정보</span>
+              <span>작성자: 화연동파수꾼</span>
+              <span>38분 전</span>
+              <span>조회 1120</span>
+            </div>
+            <div class="post-subject">밤에 수색 나갈 때 복도나 계단에 '캔 뚜껑' 깔아두는 이유</div>
+            <div class="post-content">비상계단이나 통로 수색할 때 빈 통조림 캔이나 유리 조각 모아둔 거 계단 길목에 살짝 깔아둬라.
+뜀박이들 시각이 거의 마비돼서 바닥 잘 못 보고 밟는데, 챙그랑 소리 나면 위치랑 거리 바로 파악됨.
+어제도 계단 밑에서 올라오는 소리 들려서 캔 깔아둔 곳으로 소음 유인하고 반대편으로 도망쳤다.
+단점은 나도 도망칠 때 안 밟게 위치 기억해둬야 됨 ㅋㅋㅋ 어제 내가 밟고 자빠질 뻔함.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(59.16)</span>
+                <span class="comment-text">지가 밟고 자빠지는거 개웃기네ㅋㅋㅋㅋㅋ 조심해라</span>
+                <span class="comment-time">30분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.234)</span>
+                <span class="comment-text">오 조용한 트랩 느낌이네. 나도 앞에 페트병찌그러뜨려서 세워둬야겠다</span>
+                <span class="comment-time">22분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 4 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">정보/생활</span>
+              <span>작성자: ㅇㅇ(220.89)</span>
+              <span>1시간 전</span>
+              <span>조회 740</span>
+            </div>
+            <div class="post-subject">통조림 물려서 못 먹겠다는 사람들 아포칼립스 조합 레시피 공유함</div>
+            <div class="post-content">다들 며칠째 스팸이랑 참치만 생으로 씹다 보니까 속 느끼해서 토할 것 같다는 글 많던데,
+[스팸 + 골뱅이 통조림 국물 + 참치] 한 데 섞어서 미지근한 물 약간 넣고 졸여봐라.
+희한하게 부대찌개 비스무리한 칼칼한 맛 나면서 생 햇반 씹어먹을 때 밥 한 공기 뚝딱임.
+부탄가스 아까워서 촛불 3개 켜놓고 그 위에 통조림 캔 올려서 데워 먹는데 은근 낭만도 있다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(118.235)</span>
+                <span class="comment-text">오늘 저녁에 바로 해먹어본다 메모...</span>
+                <span class="comment-time">50분 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">카페인중독자</span>
+                <span class="comment-text">골뱅이 통조림 국물대신 복숭아 통조림 국물 ㄱㄴ? 급함</span>
+                <span class="comment-time">41분 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 5 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">경고/필독</span>
+              <span>작성자: ㅇㅇ(175.223)</span>
+              <span>2시간 전</span>
+              <span>조회 1450</span>
+            </div>
+            <div class="post-subject">수색 나갈 때 망치나 쇠파이프 함부로 휘두르지 마라 (경험담)</div>
+            <div class="post-content">어제 문 잠긴 상가 털겠다고 망치로 자물쇠 내려쳤다가 진짜 저승길 하이패스 탈 뻔함.
+쇠 때리는 고음역대 소리가 상가 전체에 울려 퍼지더니 비상계단 쪽에서 뜀박이들 발소리 쏟아져 내리더라...
+겨우 1층 화장실 칸 안에 숨어서 숨 죽이고 살았음.
+문 따거나 기물 부술 때는 무조건 두꺼운 천이나 옷가지로 타격 부위 감싸고 해라. 
+둔기로 머리 칠 때도 소리 죽이는 게 생존 1순위다. 명심해라.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">음향전문가</span>
+                <span class="comment-text">쇠 소리랑 유리 깨지는 소리가 공기 타고 제일 멀리 퍼짐. 빠루 지렛대 원리로 여는 게 제일 조용함</span>
+                <span class="comment-time">1시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(211.36)</span>
+                <span class="comment-text">어케살았노 ㄷㄷ 조심하자</span>
+                <span class="comment-time">1시간 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 6 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">잡담/감동</span>
+              <span>작성자: ㅇㅇ(39.7)</span>
+              <span>3시간 전</span>
+              <span>조회 980</span>
+            </div>
+            <div class="post-subject">오늘 밤 10시에 옥상 무전 주파수 7번 다들 들었음?</div>
+            <div class="post-content">방 구석에 혼자 갇혀서 멍때리다가 건전지 라디오 겸 무전기 채널 돌려봤거든?
+7번 채널에서 어떤 아저씨가 통기타 치면서 김광석 노래 불러주고 계시더라 ㅋㅋㅋ
+다들 말없이 송신 버튼만 칙칙 누르면서 잘 듣고 있다고 신호 보내는데
+전기도 통신도 다 끊긴 어둠 속에서 나 혼자가 아니라는 생각 들면서 울컥함...
+낭만 아저씨 내일도 10시에 부탁드립니다. 방송 접지 마세요.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">102동주민</span>
+                <span class="comment-text">헐 마음따뜻해 내일 나도 들을래</span>
+                <span class="comment-time">2시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(121.165)</span>
+                <span class="comment-text">칠흑 같은 어둠 속에서 무전기 소리 들릴 때 진짜 울컥하더라... 다들 살아남읍시다</span>
+                <span class="comment-time">2시간 전</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post 7 -->
+          <div class="post-card">
+            <div class="post-meta">
+              <span class="post-tag">생존/멘탈</span>
+              <span>작성자: ㅇㅇ(211.234)</span>
+              <span>5시간 전</span>
+              <span>조회 1620</span>
+            </div>
+            <div class="post-subject">집에 있는 거울이랑 벽시계 다 치워버렸다. 차라리 편함</div>
+            <div class="post-content">방 안에서 혼자 며칠 동안 갇혀있다 보니까 거울 속에 핼쑥해진 내 얼굴 보는 게 제일 곤욕임.
+내가 아직 사람인지 곧 감염될 놈인지 구분도 안 가고... 초침 소리는 똑딱똑딱 귀를 찌르는데 정신 나갈 것 같더라.
+그래서 오늘 거울은 수건으로 덮어버리고 시계 건전지 뽑아버림.
+시간이 얼마나 지났는지 안 보이니까 차라리 마음이 편하다. 
+다들 몸도 몸인데 정신 건강 잘 챙겨라. 아포칼립스는 멘탈이 먼저 터지면 끝이다.</div>
+
+            <div class="comment-box">
+              <div class="comment-item">
+                <span class="comment-writer">301호청년</span>
+                <span class="comment-text">진짜 공감함... 날짜 개념 사라지는 게 제일 무서움. 나는 벽에 손톱으로 카운트 세는 중</span>
+                <span class="comment-time">3시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(59.16)</span>
+                <span class="comment-text">혼자 있을 때 침묵이 제일 무서움. 가끔은 일부러 목소리 내서 혼잣말이라도 해라 멘탈 잡게</span>
+                <span class="comment-time">2시간 전</span>
+              </div>
+              <div class="comment-item">
+                <span class="comment-writer">ㅇㅇ(321.894)</span>
+                <span class="comment-text">혼잣말 그거 맞냐 개무서운데</span>
+                <span class="comment-time">1시간 전</span>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <!-- TAB 6: 생존 테스트 바로가기 (메인 탭에서 실행) -->
-      <!-- 수정 반영: 인트로 모달 대신 메인 웹사이트 내부에서 5문항 생존테스트 진행 -->
-      <section id="survival-test" class="tab-content">
-        <div class="quiz-box-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-            <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.5rem;" id="tabQuizQTitle">
-              <i class="fa-solid fa-shield-halved" style="color: var(--accent-red-bright);"></i> [생존 가능성 진단 Q1]
-            </h3>
-            <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 1rem;" id="tabQuizProgress">1 / 5</span>
-          </div>
-
-          <p style="color: #ddd; font-size: 1.05rem; margin-bottom: 20px;" id="tabQuizQText">질문 내용이 표시됩니다.</p>
-
-          <div id="tabQuizOptions"></div>
-
-          <!-- Result Screen inside Tab -->
-          <div id="tabQuizResult" style="display: none; text-align: center; margin-top: 20px;">
-            <p style="color: var(--text-muted); font-size: 0.95rem;">측정된 화연시 생존 가능성 종합 분석</p>
-            <div id="tabQuizScoreDisplay" style="font-family: var(--font-tech); font-size: 4rem; color: var(--accent-red-bright); font-weight: 900; text-shadow: 0 0 25px rgba(229,57,53,0.8);">85%</div>
-            <p id="tabQuizScoreComment" style="color: #ccc; margin: 15px 0 25px; font-size: 1rem; line-height: 1.6; word-break: keep-all;">
-              결과 메시지가 출력됩니다.
-            </p>
-            <button class="gate-btn" onclick="resetTabQuiz()">
-              <i class="fa-solid fa-rotate-right"></i> 다시 테스트하기
-            </button>
-          </div>
-        </div>
-      </section>
-
     </div>
 
     <footer>
@@ -1045,7 +1432,7 @@
     </footer>
   </div>
 
-  <!-- Location Detail Modal -->
+  <!-- Location Detail Modal (장소 상세 모달) -->
   <div class="modal-overlay" id="locationModal">
     <div class="modal-card">
       <span class="modal-close" onclick="closeLocationModal()">&times;</span>
@@ -1061,58 +1448,27 @@
     </div>
   </div>
 
+  <!-- Character Detail Modal (등장인물 상세 모달) -->
+  <div class="modal-overlay" id="characterModal">
+    <div class="modal-card">
+      <span class="modal-close" onclick="closeCharacterModal()">&times;</span>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <i class="fa-solid fa-user" style="color: var(--accent-red-bright); font-size: 1.5rem;"></i>
+        <h3 id="charModalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem;">이름</h3>
+      </div>
+      <p id="charModalRole" style="margin-bottom: 15px; font-weight: 700;">역할: -</p>
+      <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; color: #ccc; font-size: 0.95rem; line-height: 1.6;" id="charModalBody">
+        설명 내용
+      </div>
+      <button class="gate-btn" style="width: 100%; margin-top: 20px; padding: 10px;" onclick="closeCharacterModal()">닫기</button>
+    </div>
+  </div>
+
   <!-- Leaflet.js Interactive Map Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <!-- JavaScript Core -->
   <script>
-    // Creepy Apocalypse Web Audio Synthesizer (으스스한 바이러스/경보 소리 생성)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playEerieBeep() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      
-      // Low creepy heartbeat-like drone + glitch noise
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(80, audioCtx.currentTime); // Low creepy freq
-      osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.3);
-
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.3);
-    }
-
-    function playZombieGlitchSound() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      
-      // Radio static noise
-      const bufferSize = audioCtx.sampleRate * 0.25;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const output = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
-
-      const whiteNoise = audioCtx.createBufferSource();
-      whiteNoise.buffer = buffer;
-
-      const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-
-      whiteNoise.connect(gain);
-      gain.connect(audioCtx.destination);
-      whiteNoise.start();
-    }
-
     // Timer
     let seconds = 259200;
     function updateTimer() {
@@ -1125,17 +1481,10 @@
     }
     setInterval(updateTimer, 1000);
 
-    // Enter Main Site
-    function enterMainSite() {
-      playZombieGlitchSound();
-      document.getElementById('intro-screen').style.display = 'none';
-      document.getElementById('main-site').style.display = 'block';
-    }
-
-    // 5-Quiz Questions Data
+    // Quiz Questions Data
     const introQuestions = [
       {
-        title: "[생존 가능성 진단 Q1]",
+        title: "[진단 Q1]",
         text: "밤중에 복도에서 괴상한 발소리와 벽을 긁는 소음이 들릴 때 당신의 행동은?",
         options: [
           { text: "A. 숨을 죽이고 무기를 든 채 문 앞을 경계한다.", score: 20 },
@@ -1144,7 +1493,7 @@
         ]
       },
       {
-        title: "[생존 가능성 진단 Q2]",
+        title: "[진단 Q2]",
         text: "식량을 구하기 위해 하나로마트 수색 중 무장한 적대 생존자 무리를 발견했다면?",
         options: [
           { text: "A. 신호에 맞춰 우회로로 은밀히 엄폐한다.", score: 20 },
@@ -1153,7 +1502,7 @@
         ]
       },
       {
-        title: "[생존 가능성 진단 Q3]",
+        title: "[진단 Q3]",
         text: "어두운 지하철 선로에서 시력을 잃은 3단계 감염자(사냥꾼)를 만났을 때?",
         options: [
           { text: "A. 소리를 내지 않고 소음 발생용 물건을 먼 곳으로 던진다.", score: 20 },
@@ -1162,16 +1511,16 @@
         ]
       },
       {
-        title: "[생존 가능성 진단 Q4]",
+        title: "[진단 Q4]",
         text: "수돗물이 산성 바이러스로 오염되었다는 경고 방송을 들었다. 음수 확보 방법은?",
         options: [
-          { text: "A. 정수기 필터나 빗물을 간이 정화하여 끓여 마신다.", score: 20 },
+          { text: "A. 아파트 내 정수기 필터나 빗물을 간이 정화하여 끓여 마신다.", score: 20 },
           { text: "B. 조금은 괜찮겠지 하며 수돗물을 그냥 마신다.", score: 0 },
           { text: "C. 위험을 무릅쓰고 즉시 가까운 마트의 병음료 코너를 수색한다.", score: 15 }
         ]
       },
       {
-        title: "[생존 가능성 진단 Q5]",
+        title: "[진단 Q5]",
         text: "동행하던 생존자가 감염자에게 물려 6시간 뒤 변이가 시작되려 한다면?",
         options: [
           { text: "A. 침통하지만 그를 격리조치하고 마지막 인사를 나눈다.", score: 20 },
@@ -1181,86 +1530,85 @@
       }
     ];
 
-    let tabQuizCurrent = 0;
-    let tabQuizScore = 0;
+    let currentIntroQ = 0;
+    let userScore = 0;
 
-    function renderTabQuiz() {
-      const q = introQuestions[tabQuizCurrent];
-      document.getElementById('tabQuizQTitle').innerHTML = `<i class="fa-solid fa-shield-halved" style="color: var(--accent-red-bright);"></i> ${q.title}`;
-      document.getElementById('tabQuizProgress').textContent = `${tabQuizCurrent + 1} / 5`;
-      document.getElementById('tabQuizQText').textContent = q.text;
+    function startIntroQuiz() {
+      document.getElementById('intro-step1').style.display = 'none';
+      document.getElementById('intro-quiz-box').style.display = 'block';
+      renderIntroQuestion();
+    }
 
-      const optsContainer = document.getElementById('tabQuizOptions');
+    function renderIntroQuestion() {
+      const q = introQuestions[currentIntroQ];
+      document.getElementById('quizQTitle').textContent = q.title;
+      document.getElementById('quizProgress').textContent = `${currentIntroQ + 1} / 5`;
+      document.getElementById('quizQText').textContent = q.text;
+
+      const optsContainer = document.getElementById('quizOptions');
       optsContainer.innerHTML = '';
 
       q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt.text;
-        btn.onclick = () => selectTabAnswer(opt.score);
+        btn.onclick = () => selectAnswer(opt.score);
         optsContainer.appendChild(btn);
       });
     }
 
-    function selectTabAnswer(score) {
-      playEerieBeep();
-      tabQuizScore += score;
-      tabQuizCurrent++;
+    function selectAnswer(score) {
+      userScore += score;
+      currentIntroQ++;
 
-      if (tabQuizCurrent < introQuestions.length) {
-        renderTabQuiz();
+      if (currentIntroQ < introQuestions.length) {
+        renderIntroQuestion();
       } else {
-        showTabQuizResult();
+        showQuizResult();
       }
     }
 
-    function showTabQuizResult() {
-      playZombieGlitchSound();
-      document.getElementById('tabQuizQTitle').style.display = 'none';
-      document.getElementById('tabQuizProgress').style.display = 'none';
-      document.getElementById('tabQuizQText').style.display = 'none';
-      document.getElementById('tabQuizOptions').style.display = 'none';
+    function showQuizResult() {
+      document.getElementById('quizQTitle').style.display = 'none';
+      document.getElementById('quizProgress').style.display = 'none';
+      document.getElementById('quizQText').style.display = 'none';
+      document.getElementById('quizOptions').style.display = 'none';
 
-      const resultDiv = document.getElementById('tabQuizResult');
+      const resultDiv = document.getElementById('quizResult');
       resultDiv.style.display = 'block';
 
-      document.getElementById('tabQuizScoreDisplay').textContent = `${tabQuizScore}%`;
-      const commentElem = document.getElementById('tabQuizScoreComment');
+      document.getElementById('quizScoreDisplay').textContent = `${userScore}%`;
+      const commentElem = document.getElementById('quizScoreComment');
 
-      if (tabQuizScore >= 90) {
-        commentElem.innerHTML = "<strong style='color: var(--accent-green);'>[베테랑 생존자]</strong><br>냉철한 판단력을 겸비했습니다. 화연시 탈출 성공 확률이 매우 높습니다.";
-      } else if (tabQuizScore >= 70) {
-        commentElem.innerHTML = "<strong style='color: var(--accent-yellow);'>[우수 생존자]</strong><br>기본 수칙을 잘 숙지하고 계시네요. 살아남을 가능성이 높습니다.";
+      if (userScore >= 90) {
+        commentElem.innerHTML = "<strong style='color: var(--accent-green);'>[베테랑 생존자]</strong><br>냉철한 상황 판단력과 대처 능력을 겸비했습니다. 화연시 탈출 성공 확률이 매우 높습니다.";
+      } else if (userScore >= 70) {
+        commentElem.innerHTML = "<strong style='color: var(--accent-yellow);'>[우수 생존자]</strong><br>기본적인 아포칼립스 수칙을 잘 숙지하고 계시네요. 무사히 살아남을 가능성이 높습니다.";
+      } else if (userScore >= 40) {
+        commentElem.innerHTML = "<strong style='color: #ff9800;'>[위험군 생존자]</strong><br>순간적인 감정에 휘둘려 위험한 선택을 내릴 확률이 높습니다. 생존자 그룹의 지시에 철저히 따르세요.";
       } else {
-        commentElem.innerHTML = "<strong style='color: var(--accent-red-bright);'>[초기 감염 확정]</strong><br>아포칼립스 첫날 위험에 노출될 확률이 높습니다. 생존 수칙을 재점검하세요!";
+        commentElem.innerHTML = "<strong style='color: var(--accent-red-bright);'>[초기 감염 확정]</strong><br>아포칼립스 첫날 뜀박이 감염체에게 희생될 확률 99%입니다. 생존 수칙을 다시 익히세요!";
       }
     }
 
-    function resetTabQuiz() {
-      playEerieBeep();
-      tabQuizCurrent = 0;
-      tabQuizScore = 0;
-      document.getElementById('tabQuizQTitle').style.display = 'block';
-      document.getElementById('tabQuizProgress').style.display = 'block';
-      document.getElementById('tabQuizQText').style.display = 'block';
-      document.getElementById('tabQuizOptions').style.display = 'block';
-      document.getElementById('tabQuizResult').style.display = 'none';
-      renderTabQuiz();
+    function enterMainSite() {
+      document.getElementById('intro-screen').style.display = 'none';
+      document.getElementById('main-site').style.display = 'block';
     }
 
     // Dynamic Tab Switching
     let mapInitialized = false;
     function switchTab(tabId) {
-      playEerieBeep();
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      const targetContent = document.getElementById(tabId);
-      if(targetContent) targetContent.classList.add('active');
-      
+      document.getElementById(tabId).classList.add('active');
       const targetBtn = document.getElementById('tab-btn-' + tabId);
-      if (targetBtn) targetBtn.classList.add('active');
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+      }
 
+      // If switching to location map, initialize or resize map
       if (tabId === 'locations') {
         if (!mapInitialized) {
           initLeafletMap();
@@ -1270,56 +1618,67 @@
         }
       }
 
-      if (tabId === 'survival-test') {
-        resetTabQuiz();
-      }
-
       document.querySelector('.nav-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Leaflet Tactical Map Engine
+    // ==========================================================================
+    // LEAFLET INTERACTIVE MAP SYSTEM (Google Map Style Dark Mode)
+    // ==========================================================================
     let leafletMap;
     const mapCoordinates = {
+      // 중심점 근처 및 가상의 화연시 좌표계 (위도, 경도 기반)
       hanbit: { lat: 37.5665, lng: 126.9780, icon: "fa-building-user" },
       grandpark: { lat: 37.5615, lng: 126.9720, icon: "fa-tree" },
       marina: { lat: 37.5580, lng: 126.9650, icon: "fa-ship" },
       univ: { lat: 37.5750, lng: 126.9680, icon: "fa-graduation-cap" },
+
       water: { lat: 37.5720, lng: 126.9850, icon: "fa-faucet-drip" },
       power: { lat: 37.5680, lng: 126.9920, icon: "fa-bolt" },
       cityhall: { lat: 37.5630, lng: 126.9830, icon: "fa-building-flag" },
       firestation: { lat: 37.5590, lng: 126.9890, icon: "fa-fire-extinguisher" },
-      lab: { lat: 37.5780, lng: 126.9600, icon: "fa-flask" },
-      hospital: { lat: 37.5690, lng: 126.9750, icon: "fa-hospital" }
-    };
 
-    const locationDetails = {
-      hanbit: { title: "한빛아파트 101~103동", danger: "생존자 메인 거점", body: "1~3층 계단 철거 완료. 주민 집단 거주 중." },
-      grandpark: { title: "화연대공원역", danger: "지하철 2번역", body: "안전 우회 이동 가능 구역." },
-      marina: { title: "화연천 수상 마리나", danger: "수상 고립 안전지대", body: "수상 이동수단 확보 요충지." },
-      univ: { title: "화연국립대학교", danger: "자생 거점", body: "40여 명의 생존자 농성 중." },
-      water: { title: "화연 수도사업소", danger: "희소 자원지", body: "생존 자원 쟁탈전 구역." },
-      power: { title: "화연 자원회수시설", danger: "발전소", body: "전력 복구 제어 가능 지점." },
-      cityhall: { title: "화연시청", danger: "비대위 폐허", body: "지하 서버실 전력 제어 코드 위치." },
-      firestation: { title: "화연소방서", danger: "장비 확보지", body: "방화복 및 산소통 보관." },
-      lab: { title: "제인바이오 연구소", danger: "Ground Zero", body: "바이러스 유출 발원지." },
-      hospital: { title: "화연중앙병원", danger: "고위험 지대", body: "3단계 변이체 집결 구역." }
+      mart: { lat: 37.5550, lng: 126.9760, icon: "fa-cart-shopping" },
+      terminal: { lat: 37.5520, lng: 126.9820, icon: "fa-bus" },
+      golf: { lat: 37.5800, lng: 126.9950, icon: "fa-flag" },
+      gasstation: { lat: 37.5450, lng: 126.9710, icon: "fa-gas-pump" },
+
+      lab: { lat: 37.5780, lng: 126.9600, icon: "fa-flask" },
+      hospital: { lat: 37.5690, lng: 126.9750, icon: "fa-hospital" },
+      sanatorium: { lat: 37.5820, lng: 126.9730, icon: "fa-notes-medical" },
+      school: { lat: 37.5600, lng: 126.9960, icon: "fa-school" },
+
+      stadium: { lat: 37.5490, lng: 126.9890, icon: "fa-trophy" },
+      checkpoint: { lat: 37.5420, lng: 126.9650, icon: "fa-shield-cat" },
+      prison: { lat: 37.5850, lng: 126.9880, icon: "fa-lock" },
+      prugio: { lat: 37.5645, lng: 126.9740, icon: "fa-building" },
+
+      villa: { lat: 37.5710, lng: 126.9620, icon: "fa-house-chimney" },
+      subway: { lat: 37.5620, lng: 126.9790, icon: "fa-train-subway" },
+      broadcast: { lat: 37.5670, lng: 126.9680, icon: "fa-tower-cell" },
+      church: { lat: 37.5740, lng: 126.9800, icon: "fa-church" },
+
+      crematory: { lat: 37.5880, lng: 126.9620, icon: "fa-skull-crossbones" },
+      station: { lat: 37.5500, lng: 126.9770, icon: "fa-train" }
     };
 
     function initLeafletMap() {
-      leafletMap = L.map('leaflet-map', {
-        zoomControl: true,
-        attributionControl: false
-      }).setView([37.5665, 126.9780], 13);
+      // Center on Hwayeon City
+      leafletMap = L.map('leaflet-map').setView([37.5665, 126.9780], 13);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-        maxZoom: 16, minZoom: 12, subdomains: 'abcd'
+      // OpenStreetMap Base Tiles (Styled with Dark Mode via CSS)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 16,
+        minZoom: 12,
+        attribution: '© OpenStreetMap contributors | Hwayeon Tactical Map'
       }).addTo(leafletMap);
 
-      Object.keys(mapCoordinates).forEach(key => {
-        const item = mapCoordinates[key];
+      // Add Markers for All 26 Locations
+      Object.keys(locationCoordinates).forEach(key => {
+        const item = locationCoordinates[key];
         const detail = locationDetails[key];
 
         if (item && detail) {
+          // Custom Circle Icon
           const customIcon = L.divIcon({
             className: 'custom-map-icon',
             html: `<i class="fa-solid ${item.icon}"></i>`,
@@ -1327,12 +1686,13 @@
             iconAnchor: [16, 16]
           });
 
+          // Marker & Interactive Popup
           const marker = L.marker([item.lat, item.lng], { icon: customIcon }).addTo(leafletMap);
 
           const popupContent = `
             <div style="text-align:center;">
               <div class="map-pop-title">${detail.title}</div>
-              <div style="font-size:0.8rem; color:var(--accent-red-bright); margin-bottom:4px;">${detail.danger}</div>
+              <div style="font-size:0.8rem; margin-bottom:4px;">${detail.danger}</div>
               <button class="map-pop-btn" onclick="openLocationModal('${key}')">상세정보 보기</button>
             </div>
           `;
@@ -1342,20 +1702,187 @@
       });
     }
 
+    // Location Detail Modal Data
+    const locationDetails = {
+      hanbit: {
+        title: "한빛아파트 101~103동",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 생존자 메인 거점</span>",
+        body: "방어 구축 완료. 1~3층 계단을 철거하고 4층 이상에서 주민들이 집단 거주 중. 메인 배경지이자 주인공 및 한서우의 메인 거점입니다."
+      },
+      grandpark: {
+        title: "화연대공원역",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 지하철 2번역</span>",
+        body: "감염자 밀도가 낮아 안전 우회로로 활용 가능한 구간입니다."
+      },
+      marina: {
+        title: "화연천 수상 마리나 & 강변 선착장",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 수상 요충지</span>",
+        body: "육지 접근이 불가능한 지형적 특성으로 고립된 안전지대. 보트나 수상 이동수단 확보 시 전략적 요충지입니다."
+      },
+      univ: {
+        title: "화연국립대학교 캠퍼스",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자생 소도시형 거점</span>",
+        body: "40여 명의 생존자가 자체 농성 중. 실험동에 남은 화학물질로 인한 폭발 잠재 위험이 존재합니다."
+      },
+      water: {
+        title: "화연 수도사업소 (정수장)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 전략 자원지</span>",
+        body: "깨끗한 물이라는 희소 자원 때문에 다른 생존자 집단과의 세력 쟁탈전이 예상되는 구역입니다."
+      },
+      power: {
+        title: "화연 자원회수시설",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 열병합발전소</span>",
+        body: "도시 전력망과 연결된 발전 설비. 제어실 접근 및 재가동 시 특정 구역 전력 복구가 가능합니다."
+      },
+      cityhall: {
+        title: "화연시청 및 임시통제본부",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 비상대책본부 폐허</span>",
+        body: "지하 서버실에 전력망 제어 비상 코드가 보관되어 있습니다. 내부에 변이체가 존재할 가능성이 있습니다."
+      },
+      firestation: {
+        title: "화연소방서",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자원지</span>",
+        body: "방화복, 산소통, 절단기 등 소방 장비가 풍부하나 접근 시 감염 지대를 통과해야 합니다."
+      },
+      mart: {
+        title: "하나로마트 화연점",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 자원 밀집지</span>",
+        body: "1층은 아비규환 상태. 지하 물류창고는 미개봉 식량과 물자가 다량 남아있는 고가치·고위험 지역입니다."
+      },
+      terminal: {
+        title: "화연 시외버스터미널 & 쇼핑몰",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 약탈 구역</span>",
+        body: "약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 위험 구역입니다."
+      },
+      golf: {
+        title: "화연CC 골프장",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 준요새 지형</span>",
+        body: "외부와 단절된 지형. 상류층 출신 생존자들이 먼저 자리를 잡고 텃세를 부리는 장소입니다."
+      },
+      gasstation: {
+        title: "주유소 체인 (화연IC 인근)",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 연료 거점</span>",
+        body: "연료 확보 가치가 매우 높지만 폭발 위험이 상존합니다. 차량 이동 루트 확보 시 핵심 거점."
+      },
+      lab: {
+        title: "제인바이오 (Jane Bio) 연구소",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: Ground Zero] 발원지</span>",
+        body: "사태의 진원지. 신경계 변종 바이러스가 유출된 비밀 연구시설로 백신이나 치료 단서가 남아있을 가능성이 있습니다."
+      },
+      hospital: {
+        title: "화연중앙병원",
+        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 치명적 위험지대</span>",
+        body: "발병 1일차 대규모 환자 폭주 지점. 3단계 변이체(사냥꾼) 발생 가능성이 가장 높은 최악의 장소입니다."
+      },
+      sanatorium: {
+        title: "하늘요양병원",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 방치된 병원</span>",
+        body: "거동이 불편한 채 방치된 환자들이 다수 존재하며, 정서적·윤리적 딜레마를 다루는 장소입니다."
+      },
+      school: {
+        title: "화연고등학교 & 화연중학교",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 좀비 둥지</span>",
+        body: "초기 학생들의 바리케이드 봉쇄가 실패하여 거대 좀비 둥지로 변모한 장소입니다."
+      },
+      stadium: {
+        title: "화연공설운동장/체육관",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 붕괴된 대피소</span>",
+        body: "대규모 임시 대피소였으나 붕괴. 한때 수백 명이 모였던 만큼 규모가 큰 위험지대입니다."
+      },
+      checkpoint: {
+        title: "화연IC 및 대교 통제선",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 군 방어선</span>",
+        body: "도시 차단 군 방어선이 뚫린 곳. 외부의 더 큰 위협이 유입될 수 있는 복선 성격의 장소입니다."
+      },
+      prison: {
+        title: "화연교도소",
+        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 무법지대</span>",
+        body: "탈옥 재소자들이 자체 세력화된 곳으로 감염체보다 사람이 더 위험한 지역입니다."
+      },
+      prugio: {
+        title: "화연 푸르지오 라포레",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 초고층 주상복합</span>",
+        body: "위아래 이동이 극히 제한된 '세로형 지옥'. 고층에 고립된 생존자들이 존재합니다."
+      },
+      villa: {
+        title: "성운 빌라촌 & 구도심 주택가",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 공중 이동통로</span>",
+        body: "낮은 건물들이 다닥다닥 붙어있어 옥상과 옥상을 잇는 이동통로로 배회하는 은둔형 생존자 구역입니다."
+      },
+      subway: {
+        title: "화연 지하철 네트워크 (1~8번역)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 가변] 지하 이동통로</span>",
+        body: "1번(접근불가), 2번(안전 우회로), 3번(시청연결), 4번(감염자 최다), 5번(한빛), 6번(마트연결), 7번(연구소연결), 8번(탈출관문)으로 구성되어 있습니다."
+      },
+      broadcast: {
+        title: "화연방송국/송신탑",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 단파 통신 시설</span>",
+        body: "옥상 무전 7번 채널과 연결되는 열쇠 장소. 송신탑 재가동 시 생존자 네트워크 구축이 가능합니다."
+      },
+      church: {
+        title: "화연중앙성당/메가처치",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 광신도 근거지</span>",
+        body: "종교적 광기와 아포칼립스가 결합된 광신도 집단의 근거지 구역입니다."
+      },
+      crematory: {
+        title: "화연화장장",
+        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 최악의 지대</span>",
+        body: "초기 시신 처리 시도가 실패한 지점. 도시 내에서 가장 그로테스크한 공포 지역입니다."
+      },
+      station: {
+        title: "화연역 (기차역)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 광역철도 역사</span>",
+        body: "외부 도시와의 연결 관문 역할로 탈출 서사나 외부 세력 유입의 통로로 활용되는 곳입니다."
+      }
+    };
+
     function openLocationModal(key) {
-      playEerieBeep();
-      const detail = locationDetails[key];
-      if (detail) {
-        document.getElementById('modalTitle').textContent = detail.title;
-        document.getElementById('modalDanger').innerHTML = `위험도/상태: <span style="color: var(--accent-red-bright);">${detail.danger}</span>`;
-        document.getElementById('modalBody').textContent = detail.body;
+      const data = locationDetails[key];
+      if (data) {
+        document.getElementById('modalTitle').textContent = data.title;
+        document.getElementById('modalDanger').innerHTML = `위험도 상태: ${data.danger}`;
+        document.getElementById('modalBody').innerHTML = data.body;
         document.getElementById('locationModal').style.display = 'flex';
+
+        // Pan map to location if map exists
+        if (leafletMap && locationCoordinates[key]) {
+          const coord = locationCoordinates[key];
+          leafletMap.setView([coord.lat, coord.lng], 15);
+        }
       }
     }
 
     function closeLocationModal() {
-      playEerieBeep();
       document.getElementById('locationModal').style.display = 'none';
+    }
+
+    // Character Details
+    const characterDetails = {
+      kangdohyun:   { title: "강도현", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      imbaekheon:   { title: "임백헌", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      jintaeo:      { title: "진태오", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      jojongcheol:  { title: "조종철", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      songhajin:    { title: "송하진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      parkareum:    { title: "박아름", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      kangdaesik:   { title: "강대식", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      leeeunchae:   { title: "이은채", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      yoonsangha:   { title: "윤상하", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      choitaejin:   { title: "최태진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
+      guwonja:      { title: "구원자", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." }
+    };
+
+    function openCharacterModal(key) {
+      const data = characterDetails[key];
+      if (data) {
+        document.getElementById('charModalTitle').textContent = data.title;
+        document.getElementById('charModalRole').textContent = data.role;
+        document.getElementById('charModalBody').innerHTML = data.body;
+        document.getElementById('characterModal').style.display = 'flex';
+      }
+    }
+
+    function closeCharacterModal() {
+      document.getElementById('characterModal').style.display = 'none';
     }
   </script>
 </body>
