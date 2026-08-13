@@ -414,7 +414,7 @@
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
 
     /* ==========================================================================
-       5. Leaflet Interactive Map Styling (Google Map Style Dark Mode)
+       5. Leaflet Interactive Map Styling (No-Label Dark Tactical Map)
        ========================================================================== */
     .tactical-map-box {
       background: #090a0c;
@@ -432,11 +432,6 @@
       margin-top: 15px;
       background-color: #0d1117;
       z-index: 10;
-    }
-
-    /* Dark Mode Filter for Map Tiles */
-    .leaflet-tile-pane {
-      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
     }
 
     /* Custom Leaflet Marker Icon Style */
@@ -846,7 +841,7 @@
         </div>
       </section>
 
-      <!-- TAB 2: 주요 시설 & 지도 (구글 맵 스타일 Leaflet.js 반영) -->
+      <!-- TAB 2: 주요 시설 & 지도 -->
       <section id="locations" class="tab-content">
         <!-- Interactive Leaflet Map Container -->
         <div class="tactical-map-box">
@@ -1622,11 +1617,10 @@
     }
 
     // ==========================================================================
-    // LEAFLET INTERACTIVE MAP SYSTEM (Google Map Style Dark Mode)
+    // LEAFLET INTERACTIVE MAP SYSTEM (No-Label Dark Tactical Style)
     // ==========================================================================
     let leafletMap;
     const mapCoordinates = {
-      // 중심점 근처 및 가상의 화연시 좌표계 (위도, 경도 기반)
       hanbit: { lat: 37.5665, lng: 126.9780, icon: "fa-building-user" },
       grandpark: { lat: 37.5615, lng: 126.9720, icon: "fa-tree" },
       marina: { lat: 37.5580, lng: 126.9650, icon: "fa-ship" },
@@ -1662,23 +1656,23 @@
     };
 
     function initLeafletMap() {
-      // Center on Hwayeon City
-      leafletMap = L.map('leaflet-map').setView([37.5665, 126.9780], 13);
+      leafletMap = L.map('leaflet-map', {
+        zoomControl: true,
+        attributionControl: false
+      }).setView([37.5665, 126.9780], 13);
 
-      // OpenStreetMap Base Tiles (Styled with Dark Mode via CSS)
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // CartoDB Dark Matter No Labels Tile (지명이 없는 전술 다크 지도)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         maxZoom: 16,
         minZoom: 12,
-        attribution: '© OpenStreetMap contributors | Hwayeon Tactical Map'
+        subdomains: 'abcd'
       }).addTo(leafletMap);
 
-      // Add Markers for All 26 Locations
-      Object.keys(locationCoordinates).forEach(key => {
-        const item = locationCoordinates[key];
+      Object.keys(mapCoordinates).forEach(key => {
+        const item = mapCoordinates[key];
         const detail = locationDetails[key];
 
         if (item && detail) {
-          // Custom Circle Icon
           const customIcon = L.divIcon({
             className: 'custom-map-icon',
             html: `<i class="fa-solid ${item.icon}"></i>`,
@@ -1686,7 +1680,6 @@
             iconAnchor: [16, 16]
           });
 
-          // Marker & Interactive Popup
           const marker = L.marker([item.lat, item.lng], { icon: customIcon }).addTo(leafletMap);
 
           const popupContent = `
@@ -1844,9 +1837,8 @@
         document.getElementById('modalBody').innerHTML = data.body;
         document.getElementById('locationModal').style.display = 'flex';
 
-        // Pan map to location if map exists
-        if (leafletMap && locationCoordinates[key]) {
-          const coord = locationCoordinates[key];
+        if (leafletMap && mapCoordinates[key]) {
+          const coord = mapCoordinates[key];
           leafletMap.setView([coord.lat, coord.lng], 15);
         }
       }
