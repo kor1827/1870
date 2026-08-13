@@ -11,6 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;600;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Leaflet.js CSS (Interactive Map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
   <style>
     /* ==========================================================================
        1. Base & Reset
@@ -410,7 +413,9 @@
     .badge-yellow { background: rgba(255, 179, 0, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
 
-    /* Tactical Map Visualizer (반응형 4열 -> 모바일 확장) */
+    /* ==========================================================================
+       5. Leaflet Interactive Map Styling (Google Map Style Dark Mode)
+       ========================================================================== */
     .tactical-map-box {
       background: #090a0c;
       border: 1px solid rgba(229, 57, 53, 0.4);
@@ -419,34 +424,79 @@
       margin-bottom: 30px;
     }
 
-    .map-grid-visual {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .map-node {
-      background: rgba(22, 24, 28, 0.8);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      padding: 12px;
+    #leaflet-map {
+      width: 100%;
+      height: 480px;
       border-radius: 6px;
-      text-align: center;
-      font-size: 0.85rem;
+      border: 1px solid var(--border-color);
+      margin-top: 15px;
+      background-color: #0d1117;
+      z-index: 10;
+    }
+
+    /* Dark Mode Filter for Map Tiles */
+    .leaflet-tile-pane {
+      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
+    }
+
+    /* Custom Leaflet Marker Icon Style */
+    .custom-map-icon {
+      background: rgba(22, 24, 28, 0.9);
+      border: 2px solid var(--accent-red-bright);
+      border-radius: 50%;
+      color: #fff;
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      box-shadow: 0 0 12px var(--accent-red-bright);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.2s;
     }
 
-    .map-node:hover {
-      border-color: var(--accent-red-bright);
-      background: rgba(229, 57, 53, 0.15);
-      transform: scale(1.03);
+    .custom-map-icon:hover {
+      transform: scale(1.25);
+      background: var(--accent-red);
     }
 
-    .map-node-icon { font-size: 1.3rem; margin-bottom: 6px; color: var(--accent-red-bright); }
+    /* Leaflet Popup Style Override */
+    .leaflet-popup-content-wrapper {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--accent-red-bright);
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.8);
+      font-family: var(--font-body);
+    }
+
+    .leaflet-popup-tip {
+      background: var(--accent-red-bright);
+    }
+
+    .map-pop-title {
+      font-family: var(--font-heading);
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .map-pop-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      background: var(--accent-red);
+      color: #fff;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+    }
+
+    .map-pop-btn:hover { background: var(--accent-red-bright); }
 
     /* ==========================================================================
-       5. Integrated Community Page UI
+       6. Integrated Community Page UI
        ========================================================================== */
     .comm-board-container {
       background: var(--bg-card);
@@ -604,9 +654,9 @@
     }
 
     @media (max-width: 768px) {
-      .map-grid-visual { grid-template-columns: repeat(2, 1fr); }
       .cta-buttons { flex-direction: column; }
       .cta-btn { justify-content: center; }
+      #leaflet-map { height: 380px; }
     }
   </style>
 </head>
@@ -796,130 +846,22 @@
         </div>
       </section>
 
-      <!-- TAB 2: 주요 시설 & 지도 (확장된 26개 전체 장소) -->
+      <!-- TAB 2: 주요 시설 & 지도 (구글 맵 스타일 Leaflet.js 반영) -->
       <section id="locations" class="tab-content">
-        <!-- Tactical Blueprint Map -->
+        <!-- Interactive Leaflet Map Container -->
         <div class="tactical-map-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-weight: 700;">
-              <i class="fa-solid fa-crosshairs"></i> HWAYEON CITY TACTICAL MAP (전체 구역 26개소)
+              <i class="fa-solid fa-map"></i> HWAYEON INTERACTIVE SATELLITE MAP (전체 26개소)
             </span>
-            <span class="badge badge-red">CLICK NODE FOR DETAILS</span>
+            <span class="badge badge-red">DRAG & ZOOM / CLICK MARKER</span>
           </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">
+            * 구글 맵 방식처럼 마우스 드래그로 지도 이동, 휠/터치로 확대 및 축소가 가능합니다. 핀 마커를 클릭해 상세 정보를 확인하세요.
+          </p>
 
-          <!-- 26개 전체 장소 지도 노드 -->
-          <div class="map-grid-visual">
-            <div class="map-node" onclick="openLocationModal('hanbit')">
-              <div class="map-node-icon"><i class="fa-solid fa-building-user"></i></div>
-              <strong>한빛아파트</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('grandpark')">
-              <div class="map-node-icon"><i class="fa-solid fa-tree"></i></div>
-              <strong>화연대공원역</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('marina')">
-              <div class="map-node-icon"><i class="fa-solid fa-ship"></i></div>
-              <strong>수상 마리나</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('univ')">
-              <div class="map-node-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-              <strong>화연국립대학교</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('water')">
-              <div class="map-node-icon"><i class="fa-solid fa-faucet-drip"></i></div>
-              <strong>화연 수도사업소</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('power')">
-              <div class="map-node-icon"><i class="fa-solid fa-bolt"></i></div>
-              <strong>자원회수시설</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('cityhall')">
-              <div class="map-node-icon"><i class="fa-solid fa-building-flag"></i></div>
-              <strong>화연시청</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('firestation')">
-              <div class="map-node-icon"><i class="fa-solid fa-fire-extinguisher"></i></div>
-              <strong>화연소방서</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('mart')">
-              <div class="map-node-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-              <strong>하나로마트</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('terminal')">
-              <div class="map-node-icon"><i class="fa-solid fa-bus"></i></div>
-              <strong>시외버스터미널</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('golf')">
-              <div class="map-node-icon"><i class="fa-solid fa-flag"></i></div>
-              <strong>화연CC 골프장</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('gasstation')">
-              <div class="map-node-icon"><i class="fa-solid fa-gas-pump"></i></div>
-              <strong>화연IC 주유소</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('lab')">
-              <div class="map-node-icon"><i class="fa-solid fa-flask"></i></div>
-              <strong>제인바이오</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('hospital')">
-              <div class="map-node-icon"><i class="fa-solid fa-hospital"></i></div>
-              <strong>화연중앙병원</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('sanatorium')">
-              <div class="map-node-icon"><i class="fa-solid fa-notes-medical"></i></div>
-              <strong>하늘요양병원</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('school')">
-              <div class="map-node-icon"><i class="fa-solid fa-school"></i></div>
-              <strong>화연 고/중학교</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('stadium')">
-              <div class="map-node-icon"><i class="fa-solid fa-trophy"></i></div>
-              <strong>공설운동장</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('checkpoint')">
-              <div class="map-node-icon"><i class="fa-solid fa-shield-cat"></i></div>
-              <strong>화연IC 통제선</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('prison')">
-              <div class="map-node-icon"><i class="fa-solid fa-lock"></i></div>
-              <strong>화연교도소</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('prugio')">
-              <div class="map-node-icon"><i class="fa-solid fa-building"></i></div>
-              <strong>푸르지오 라포레</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('villa')">
-              <div class="map-node-icon"><i class="fa-solid fa-house-chimney"></i></div>
-              <strong>성운 빌라촌</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('subway')">
-              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
-              <strong>지하철 네트워크</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('broadcast')">
-              <div class="map-node-icon"><i class="fa-solid fa-tower-cell"></i></div>
-              <strong>화연방송국</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('church')">
-              <div class="map-node-icon"><i class="fa-solid fa-church"></i></div>
-              <strong>화연중앙성당</strong>
-            </div>
-
-            <div class="map-node" onclick="openLocationModal('crematory')">
-              <div class="map-node-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
-              <strong>화연화장장</strong>
-            </div>
-            <div class="map-node" onclick="openLocationModal('station')">
-              <div class="map-node-icon"><i class="fa-solid fa-train"></i></div>
-              <strong>화연역(기차역)</strong>
-            </div>
-          </div>
+          <!-- Real Interactive Map Canvas -->
+          <div id="leaflet-map"></div>
         </div>
 
         <!-- Location Cards Grid (전체 카드 목록) -->
@@ -1105,7 +1047,7 @@
 
           <div class="card" onclick="openLocationModal('broadcast')">
             <div class="card-title">
-              <span><i class="fa-solid fa-tower-cell" style="color: var(--accent-yellow);"></i> 화연방송국/송신탑</span>
+              <span><i class="fa-solid fa-tower-cell" style="color: var(--accent-yellow);"></i> 화연방송국</span>
               <span class="badge badge-yellow">상세보기</span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.9rem;">단파 통신 핵심 시설. 송신탑 재가동 시 생존자 네트워크 구축 가능.</p>
@@ -1271,7 +1213,7 @@
             * 통신 마비 전 생존자들이 실시간으로 정보를 공유하고 멘탈을 다잡는 비상 안테나 게시판입니다.
           </p>
 
-          <!-- Post 1: 생필품 실패 썰 -->
+          <!-- Post 1 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">뻘글/분통</span>
@@ -1306,7 +1248,7 @@
             </div>
           </div>
 
-          <!-- Post 2: 베란다 줄낚시 물물교환 -->
+          <!-- Post 2 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">생존/훈훈</span>
@@ -1334,7 +1276,7 @@
             </div>
           </div>
 
-          <!-- Post 3: 캔/유리조각 알람 트랩 -->
+          <!-- Post 3 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">팁/정보</span>
@@ -1362,7 +1304,7 @@
             </div>
           </div>
 
-          <!-- Post 4: 아포칼립스 레시피 -->
+          <!-- Post 4 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">정보/생활</span>
@@ -1390,7 +1332,7 @@
             </div>
           </div>
 
-          <!-- Post 5: 소리 안 나는 도구의 중요성 -->
+          <!-- Post 5 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">경고/필독</span>
@@ -1419,7 +1361,7 @@
             </div>
           </div>
 
-          <!-- Post 6: 옥상 무전기 소통 -->
+          <!-- Post 6 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">잡담/감동</span>
@@ -1448,7 +1390,7 @@
             </div>
           </div>
 
-          <!-- Post 7: 거울/시계 이야기 -->
+          <!-- Post 7 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">생존/멘탈</span>
@@ -1522,7 +1464,10 @@
     </div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- Leaflet.js Interactive Map Engine -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- JavaScript Core -->
   <script>
     // Timer
     let seconds = 259200;
@@ -1652,6 +1597,7 @@
     }
 
     // Dynamic Tab Switching
+    let mapInitialized = false;
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1662,12 +1608,102 @@
         targetBtn.classList.add('active');
       }
 
+      // If switching to location map, initialize or resize map
+      if (tabId === 'locations') {
+        if (!mapInitialized) {
+          initLeafletMap();
+          mapInitialized = true;
+        } else if (leafletMap) {
+          setTimeout(() => { leafletMap.invalidateSize(); }, 200);
+        }
+      }
+
       document.querySelector('.nav-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Modal Details for Locations Map (전체 26개 장소 상세 데이터)
+    // ==========================================================================
+    // LEAFLET INTERACTIVE MAP SYSTEM (Google Map Style Dark Mode)
+    // ==========================================================================
+    let leafletMap;
+    const mapCoordinates = {
+      // 중심점 근처 및 가상의 화연시 좌표계 (위도, 경도 기반)
+      hanbit: { lat: 37.5665, lng: 126.9780, icon: "fa-building-user" },
+      grandpark: { lat: 37.5615, lng: 126.9720, icon: "fa-tree" },
+      marina: { lat: 37.5580, lng: 126.9650, icon: "fa-ship" },
+      univ: { lat: 37.5750, lng: 126.9680, icon: "fa-graduation-cap" },
+
+      water: { lat: 37.5720, lng: 126.9850, icon: "fa-faucet-drip" },
+      power: { lat: 37.5680, lng: 126.9920, icon: "fa-bolt" },
+      cityhall: { lat: 37.5630, lng: 126.9830, icon: "fa-building-flag" },
+      firestation: { lat: 37.5590, lng: 126.9890, icon: "fa-fire-extinguisher" },
+
+      mart: { lat: 37.5550, lng: 126.9760, icon: "fa-cart-shopping" },
+      terminal: { lat: 37.5520, lng: 126.9820, icon: "fa-bus" },
+      golf: { lat: 37.5800, lng: 126.9950, icon: "fa-flag" },
+      gasstation: { lat: 37.5450, lng: 126.9710, icon: "fa-gas-pump" },
+
+      lab: { lat: 37.5780, lng: 126.9600, icon: "fa-flask" },
+      hospital: { lat: 37.5690, lng: 126.9750, icon: "fa-hospital" },
+      sanatorium: { lat: 37.5820, lng: 126.9730, icon: "fa-notes-medical" },
+      school: { lat: 37.5600, lng: 126.9960, icon: "fa-school" },
+
+      stadium: { lat: 37.5490, lng: 126.9890, icon: "fa-trophy" },
+      checkpoint: { lat: 37.5420, lng: 126.9650, icon: "fa-shield-cat" },
+      prison: { lat: 37.5850, lng: 126.9880, icon: "fa-lock" },
+      prugio: { lat: 37.5645, lng: 126.9740, icon: "fa-building" },
+
+      villa: { lat: 37.5710, lng: 126.9620, icon: "fa-house-chimney" },
+      subway: { lat: 37.5620, lng: 126.9790, icon: "fa-train-subway" },
+      broadcast: { lat: 37.5670, lng: 126.9680, icon: "fa-tower-cell" },
+      church: { lat: 37.5740, lng: 126.9800, icon: "fa-church" },
+
+      crematory: { lat: 37.5880, lng: 126.9620, icon: "fa-skull-crossbones" },
+      station: { lat: 37.5500, lng: 126.9770, icon: "fa-train" }
+    };
+
+    function initLeafletMap() {
+      // Center on Hwayeon City
+      leafletMap = L.map('leaflet-map').setView([37.5665, 126.9780], 13);
+
+      // OpenStreetMap Base Tiles (Styled with Dark Mode via CSS)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 16,
+        minZoom: 12,
+        attribution: '© OpenStreetMap contributors | Hwayeon Tactical Map'
+      }).addTo(leafletMap);
+
+      // Add Markers for All 26 Locations
+      Object.keys(locationCoordinates).forEach(key => {
+        const item = locationCoordinates[key];
+        const detail = locationDetails[key];
+
+        if (item && detail) {
+          // Custom Circle Icon
+          const customIcon = L.divIcon({
+            className: 'custom-map-icon',
+            html: `<i class="fa-solid ${item.icon}"></i>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+          });
+
+          // Marker & Interactive Popup
+          const marker = L.marker([item.lat, item.lng], { icon: customIcon }).addTo(leafletMap);
+
+          const popupContent = `
+            <div style="text-align:center;">
+              <div class="map-pop-title">${detail.title}</div>
+              <div style="font-size:0.8rem; margin-bottom:4px;">${detail.danger}</div>
+              <button class="map-pop-btn" onclick="openLocationModal('${key}')">상세정보 보기</button>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+        }
+      });
+    }
+
+    // Location Detail Modal Data
     const locationDetails = {
-      // 🏠 생존자 거점
       hanbit: {
         title: "한빛아파트 101~103동",
         danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 생존자 메인 거점</span>",
@@ -1688,8 +1724,6 @@
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자생 소도시형 거점</span>",
         body: "40여 명의 생존자가 자체 농성 중. 실험동에 남은 화학물질로 인한 폭발 잠재 위험이 존재합니다."
       },
-
-      // ⚡ 전략 자원지
       water: {
         title: "화연 수도사업소 (정수장)",
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 전략 자원지</span>",
@@ -1710,8 +1744,6 @@
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자원지</span>",
         body: "방화복, 산소통, 절단기 등 소방 장비가 풍부하나 접근 시 감염 지대를 통과해야 합니다."
       },
-
-      // 🛍️ 자원 밀집지
       mart: {
         title: "하나로마트 화연점",
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 자원 밀집지</span>",
@@ -1732,8 +1764,6 @@
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 연료 거점</span>",
         body: "연료 확보 가치가 매우 높지만 폭발 위험이 상존합니다. 차량 이동 루트 확보 시 핵심 거점."
       },
-
-      // 🏥 의료/연구
       lab: {
         title: "제인바이오 (Jane Bio) 연구소",
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: Ground Zero] 발원지</span>",
@@ -1749,8 +1779,6 @@
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 방치된 병원</span>",
         body: "거동이 불편한 채 방치된 환자들이 다수 존재하며, 정서적·윤리적 딜레마를 다루는 장소입니다."
       },
-
-      // 🏫 붕괴 대피소
       school: {
         title: "화연고등학교 & 화연중학교",
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 좀비 둥지</span>",
@@ -1761,8 +1789,6 @@
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 붕괴된 대피소</span>",
         body: "대규모 임시 대피소였으나 붕괴. 한때 수백 명이 모였던 만큼 규모가 큰 위험지대입니다."
       },
-
-      // 🚧 통제선/군사구역
       checkpoint: {
         title: "화연IC 및 대교 통제선",
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 군 방어선</span>",
@@ -1773,8 +1799,6 @@
         danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 무법지대</span>",
         body: "탈옥 재소자들이 자체 세력화된 곳으로 감염체보다 사람이 더 위험한 지역입니다."
       },
-
-      // 🏙️ 고층/주거
       prugio: {
         title: "화연 푸르지오 라포레",
         danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 초고층 주상복합</span>",
@@ -1785,15 +1809,11 @@
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 공중 이동통로</span>",
         body: "낮은 건물들이 다닥다닥 붙어있어 옥상과 옥상을 잇는 이동통로로 배회하는 은둔형 생존자 구역입니다."
       },
-
-      // 🚇 지하철 네트워크
       subway: {
         title: "화연 지하철 네트워크 (1~8번역)",
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 가변] 지하 이동통로</span>",
         body: "1번(접근불가), 2번(안전 우회로), 3번(시청연결), 4번(감염자 최다), 5번(한빛), 6번(마트연결), 7번(연구소연결), 8번(탈출관문)으로 구성되어 있습니다."
       },
-
-      // ➕ 비밀/신규 구역
       broadcast: {
         title: "화연방송국/송신탑",
         danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 단파 통신 시설</span>",
@@ -1823,6 +1843,12 @@
         document.getElementById('modalDanger').innerHTML = `위험도 상태: ${data.danger}`;
         document.getElementById('modalBody').innerHTML = data.body;
         document.getElementById('locationModal').style.display = 'flex';
+
+        // Pan map to location if map exists
+        if (leafletMap && locationCoordinates[key]) {
+          const coord = locationCoordinates[key];
+          leafletMap.setView([coord.lat, coord.lng], 15);
+        }
       }
     }
 
