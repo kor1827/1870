@@ -60,7 +60,7 @@
     }
 
     /* ==========================================================================
-       2. Intro Gatekeeper & Static Screen
+       2. Intro Gatekeeper & Static Screen (고장난 TV / 신호 오작동)
        ========================================================================== */
     #intro-screen {
       position: fixed;
@@ -73,6 +73,7 @@
       align-items: center;
       padding: 20px;
       text-align: center;
+      overflow: hidden;
     }
 
     .static-bg {
@@ -89,39 +90,91 @@
       100% { opacity: 0.85; }
     }
 
-    /* Intensified static once the wake sequence starts */
-    #intro-screen.waking .static-bg {
-      animation: static-flicker-intense 0.06s infinite;
+    /* Real pixel-noise TV static, painted onto a canvas by JS once the wake sequence starts */
+    #tvStaticCanvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+      mix-blend-mode: screen;
     }
-    @keyframes static-flicker-intense {
-      0%   { opacity: 0.55; filter: contrast(1.4) brightness(1.1); }
-      20%  { opacity: 1;    filter: contrast(2)   brightness(0.7); }
-      40%  { opacity: 0.4;  filter: contrast(1.1) brightness(1.4); }
-      60%  { opacity: 0.9;  filter: contrast(1.8) brightness(0.8); }
-      80%  { opacity: 0.5;  filter: contrast(1.3) brightness(1.2); }
-      100% { opacity: 0.8;  filter: contrast(1.5) brightness(1); }
+    #intro-screen.waking #tvStaticCanvas { opacity: 0.9; }
+
+    /* Vertical-hold failure: a bright tracking band rolls down the screen like a busted antenna */
+    .tv-tracking-bar {
+      position: absolute;
+      left: 0; width: 100%; height: 10vh;
+      top: -12vh;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0) 100%);
+      opacity: 0;
+      z-index: 4;
+      pointer-events: none;
+      filter: blur(0.5px);
+    }
+    #intro-screen.waking .tv-tracking-bar {
+      opacity: 1;
+      animation: tracking-roll 0.85s linear infinite;
+    }
+    @keyframes tracking-roll {
+      0%   { top: -12vh; }
+      100% { top: 112vh; }
+    }
+
+    /* Hard "signal lost" black / red-error cut frames, driven by JS for irregular jump-scare timing */
+    .tv-blackout {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #000;
+      opacity: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .tv-blackout.err-red { background: #240000; }
+
+    /* Thin horizontal slices that tear sideways, like a bad channel signal */
+    .tv-tear-slice {
+      position: absolute;
+      left: 0; width: 100%;
+      background: #0f1012;
+      opacity: 0;
+      z-index: 6;
+      pointer-events: none;
     }
 
     #intro-screen.waking .intro-title-kanji,
     #intro-screen.waking .intro-sub {
-      animation: signal-jitter 0.12s infinite;
+      animation: signal-jitter 0.09s infinite steps(2, jump-start);
     }
     @keyframes signal-jitter {
-      0%   { transform: translate(0, 0); }
-      20%  { transform: translate(-3px, 1px); }
-      40%  { transform: translate(2px, -2px); }
-      60%  { transform: translate(-1px, 2px); }
-      80%  { transform: translate(3px, -1px); }
-      100% { transform: translate(0, 0); }
+      0%   { transform: translate(0, 0) skewX(0deg); filter: none; }
+      15%  { transform: translate(-7px, 2px) skewX(3deg); filter: hue-rotate(15deg); }
+      30%  { transform: translate(5px, -4px) skewX(-4deg); filter: none; }
+      45%  { transform: translate(-4px, 5px) skewX(1deg); filter: hue-rotate(-10deg); }
+      60%  { transform: translate(7px, -1px) skewX(-3deg); filter: none; }
+      75%  { transform: translate(-5px, -3px) skewX(4deg); filter: brightness(1.4); }
+      90%  { transform: translate(4px, 4px) skewX(-1deg); filter: none; }
+      100% { transform: translate(0, 0) skewX(0deg); filter: none; }
     }
 
-    #intro-screen.waking { animation: screen-strobe 0.5s infinite; }
+    #intro-screen.waking {
+      animation: screen-strobe 0.4s steps(1) infinite, screen-shake 0.13s steps(1) infinite;
+    }
     @keyframes screen-strobe {
-      0%, 92% { background: #050506; }
-      94% { background: #1a0000; }
-      96% { background: #050506; }
-      98% { background: #0a0a0a; }
-      100% { background: #050506; }
+      0%, 78%  { background: #050506; filter: none; }
+      81%      { background: #1a0000; filter: invert(1) contrast(1.2); }
+      84%      { background: #050506; filter: none; }
+      88%      { background: #0a0a0a; filter: contrast(2) brightness(0.6); }
+      91%      { background: #050506; filter: none; }
+      95%      { background: #1a0000; filter: grayscale(1) contrast(1.6); }
+      100%     { background: #050506; filter: none; }
+    }
+    @keyframes screen-shake {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(-3px, 2px); }
+      50%  { transform: translate(3px, -2px); }
+      75%  { transform: translate(-2px, 3px); }
+      100% { transform: translate(2px, -3px); }
     }
 
     /* Flashing creepy phrases during the wake sequence */
@@ -132,15 +185,40 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      z-index: 5;
+      z-index: 21;
       font-family: var(--font-heading);
       font-size: clamp(1.6rem, 6vw, 3.2rem);
       color: var(--accent-red-bright);
-      text-shadow: 0 0 25px rgba(229, 57, 53, 0.9), 2px 0 #00bcd4, -2px 0 #ff0000;
+      text-shadow: 0 0 25px rgba(229, 57, 53, 0.9), 3px 0 #00e6ff, -3px 0 #ff0000;
       letter-spacing: 3px;
       opacity: 0;
-      transition: opacity 0.08s ease;
+      transition: opacity 0.05s linear;
     }
+
+    /* Bottom-right corner "NO SIGNAL / REC" style TV chrome, only visible while glitching */
+    .tv-chrome-label {
+      position: fixed;
+      bottom: 5vh;
+      right: 6vw;
+      z-index: 21;
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.75);
+      opacity: 0;
+      text-shadow: 0 0 6px rgba(0,0,0,0.9);
+      pointer-events: none;
+    }
+    #intro-screen.waking .tv-chrome-label { opacity: 1; }
+    .tv-chrome-label .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-red-bright);
+      margin-right: 6px;
+      animation: rec-blink 0.5s steps(1) infinite;
+    }
+    @keyframes rec-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
 
     /* Faint distress silhouettes drifting behind the static, for extra dread */
     .apoc-silhouette {
@@ -743,9 +821,13 @@
        ========================================================================== -->
   <div id="intro-screen">
     <div class="static-bg"></div>
+    <canvas id="tvStaticCanvas"></canvas>
+    <div class="tv-tracking-bar"></div>
+    <div class="tv-blackout" id="tvBlackout"></div>
     <div class="apoc-silhouette" style="left: 12%;"></div>
     <div class="apoc-silhouette" style="right: 18%; animation-delay: 1.2s;"></div>
     <div class="glitch-text-overlay" id="glitchTextOverlay"></div>
+    <div class="tv-chrome-label"><span class="dot"></span>NO SIGNAL · CH 07</div>
 
     <!-- Wake-up Title Screen -->
     <div id="intro-step1" style="z-index: 2;">
@@ -1106,9 +1188,9 @@
               <i class="fa-solid fa-user-gear" style="font-size: 2rem; color: var(--accent-red-bright);"></i>
             </div>
             <div style="flex: 1;">
-              <h2 style="color: #fff; font-size: 1.8rem; font-family: var(--font-heading);">한서우 (26세)</h2>
-              <p style="color: var(--accent-red-bright); font-weight: 600;">생일: 4월 1일 (만우절)</p>
-              <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">능글맞고 유쾌한 평소 모습과, 위기 상황에서 급변하는 차갑고 정교한 면모의 갭모에 매력 소유자.</p>
+              <h2 style="color: #fff; font-size: 1.8rem; font-family: var(--font-heading);">한서우 (25세)</h2>
+              <p style="color: var(--accent-red-bright); font-weight: 600;">생일: 4월 1일 (만우절) · 건축학과 휴학생 · 한빛아파트 102동 506호</p>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">칠흑같이 어둡고 헝클어진 흑발이 이마와 눈가를 나른하게 덮는 웨이브 진 울프컷. 상대를 홀리는 듯한 무쌍의 나른한 눈매와 창백한 피부, 붉은 입술이 대조를 이루는 청년.</p>
             </div>
           </div>
 
@@ -1118,13 +1200,18 @@
 
           <div class="grid-2" style="margin-top: 20px;">
             <div>
-              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-wrench" style="color: var(--accent-red-bright);"></i> 특기 및 능률</h4>
-              <p style="font-size: 0.9rem; color: var(--text-muted);">손재주가 비상하여 폐품과 무전기를 조합해 함정이나 임시 무기를 조립함. 사격 및 기계 수리 감각 우수.</p>
+              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 선택적 다정함</h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">다른 생존자들에게는 눈길조차 주지 않거나 철저히 무관심하고 차가운 밀실주의자이지만, 오직 주인공 앞에서만 세상 무해하고 다정해집니다.</p>
             </div>
             <div>
-              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 성격 포인트 (갭모에)</h4>
-              <p style="font-size: 0.9rem; color: var(--text-muted);">평소 농담을 던지며 긴장을 풀어주지만, 적대 세력이나 감염체 앞에서는 장난기가 사라지고 계산적으로 변함.</p>
+              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-user-ninja" style="color: var(--accent-red-bright);"></i> 나른한 광기 & 위험한 헌신</h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">아포칼립스의 공포 속에서도 전혀 동요하지 않으며 오직 "너와 단둘이 살아남는 것"에만 관심이 있습니다. 주인공을 위해서라면 자신의 목숨이나 도덕성도 아깝지 않게 내다 버릴 수 있는 파괴적인 헌신을 보여주지만, 그 집착을 티내지는 않습니다.</p>
             </div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-wrench" style="color: var(--accent-red-bright);"></i> 배경</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">건축학을 전공하며 삶의 흥미나 목적을 느끼지 못하던 청년. 좀비 사태 이후 {user}를 아파트 복도에서 우연히 마주치자 멈춰있던 심장이 처음으로 미친듯이 뛰기 시작합니다. {user}를 어느 아름다운 건축물과도 비교할 수 없는 '처음으로 발견한 살아갈 이유'라 생각하며, 화연시 전체가 좀비 소굴로 변한 이 멸망이 오히려 {user}를 세상으로부터 완벽하게 격리하고 독점할 수 있는 기회라고 여깁니다.</p>
           </div>
         </div>
 
@@ -1135,47 +1222,47 @@
         <div class="grid-2" id="characterListGrid">
           <div class="card" onclick="openCharacterModal('kangdohyun')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강도현</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">18세 · 고등학생 · 툴툴대지만 결정적 순간엔 몸을 던지는 소년</p>
           </div>
           <div class="card" onclick="openCharacterModal('imbaekheon')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 임백헌</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">35세 · 잔존 계엄군 통제강경파 지휘관 · 화연시를 철권 통치하는 냉혈한</p>
           </div>
           <div class="card" onclick="openCharacterModal('jintaeo')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 진태오</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">39세 · 재난 대비 유튜버 · 거점의 숨은 생존 브레인</p>
           </div>
           <div class="card" onclick="openCharacterModal('jojongcheol')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 조종철</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">58세 · 아파트 입주자 대표 · 한빛아파트 거점의 실질적 리더</p>
           </div>
           <div class="card" onclick="openCharacterModal('songhajin')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 송하진</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">31세 · 전직 종합격투기 선수 · 원정과 경계를 지휘하는 전투 담당</p>
           </div>
           <div class="card" onclick="openCharacterModal('parkareum')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 박아름</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">29세 · 간호사 · 거점의 유일한 의료 자원, 냉철한 결벽증 소유자</p>
           </div>
           <div class="card" onclick="openCharacterModal('kangdaesik')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강대식</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">52세 · 상가 건물주 · 공포에 잠식되어 제 몫부터 챙기는 소시민</p>
           </div>
           <div class="card" onclick="openCharacterModal('leeeunchae')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 이은채</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">26세 · 제인바이오 선임 연구원 · 바이러스의 실체를 쫓는 냉소적 인물</p>
           </div>
           <div class="card" onclick="openCharacterModal('yoonsangha')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 윤상하</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">28세 · 대학병원 레지던트 · 이성적이고 계산적인 의료 백업</p>
           </div>
           <div class="card" onclick="openCharacterModal('choitaejin')">
             <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 최태진</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">78세 · 베트남전 참전 용사 출신 · 냉혹한 현실주의 조언자</p>
           </div>
           <div class="card" onclick="openCharacterModal('guwonja')">
             <div class="card-title"><span><i class="fa-solid fa-user-secret" style="color: var(--accent-red-bright);"></i> 구원자</span></div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">정보 수집 중... 클릭하여 상세 정보 확인</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">이단 종교 교주 추정 · 파멸로 이끄는 광신도 지도자 '구원자'</p>
           </div>
         </div>
       </section>
@@ -1556,16 +1643,23 @@
     let userScore = 0;
 
     // Wake-up cinematic sequence (replaces the old quiz-on-entry flow)
+    // 컨셉: 버튼을 누른 게 "잘못된 접근"이었던 것처럼, 고장난 TV가 채널을 잃고 발작하는 느낌.
     const wakePhrases = [
-      "신호 감지 중...",
+      "오류",
+      "신호 상실",
+      "잘못된 접근입니다",
       "...깨어나",
-      "생존자 확인됨",
+      "보지 마",
       "그들이 다가온다",
       "움직이지 마",
-      "통신 두절 임박",
       "72:00:00",
+      "통신 두절",
+      "뒤를 돌아보지 마",
+      "NO SIGNAL",
       "접속 완료"
     ];
+
+    let tvStaticRAF = null;
 
     function startWakeSequence() {
       const btn = document.getElementById('wakeBtn');
@@ -1577,11 +1671,28 @@
       btn.style.opacity = '0.35';
       btn.style.pointerEvents = 'none';
 
+      // 클릭 즉시 "잘못 누른" 듯한 하드 컷 - 붉은 프레임 + 완전 암전을 순간적으로 튕겨준다
+      const blackout = document.getElementById('tvBlackout');
+      if (blackout) {
+        blackout.classList.add('err-red');
+        blackout.style.opacity = '1';
+        setTimeout(() => { blackout.style.opacity = '0'; }, 70);
+        setTimeout(() => { blackout.style.opacity = '1'; }, 140);
+        setTimeout(() => {
+          blackout.style.opacity = '0';
+          blackout.classList.remove('err-red');
+        }, 220);
+      }
+
       playStaticSound();
       introScreen.classList.add('waking');
       flashGlitchTexts();
+      startTvStaticNoise();
+      triggerBlackoutCuts();
+      scrambleTitleText();
 
       setTimeout(() => {
+        stopTvStaticNoise();
         introScreen.style.transition = 'opacity 0.9s ease';
         introScreen.style.opacity = '0';
         setTimeout(enterMainSite, 900);
@@ -1594,12 +1705,92 @@
       let i = 0;
       const totalFlashes = wakePhrases.length * 2;
       const iv = setInterval(() => {
-        el.textContent = wakePhrases[i % wakePhrases.length];
+        el.textContent = wakePhrases[Math.floor(Math.random() * wakePhrases.length)];
+        // 랜덤하게 크기/기울기를 흔들어 "잡힐듯 안잡히는 채널" 느낌을 강화
+        el.style.transform = `translate(${(Math.random()*16-8).toFixed(1)}px, ${(Math.random()*10-5).toFixed(1)}px) skewX(${(Math.random()*8-4).toFixed(1)}deg)`;
         el.style.opacity = '1';
-        setTimeout(() => { el.style.opacity = '0'; }, 180);
+        setTimeout(() => { el.style.opacity = '0'; }, 110 + Math.random() * 90);
         i++;
         if (i >= totalFlashes) clearInterval(iv);
-      }, 300);
+      }, 220 + Math.random() * 80);
+    }
+
+    // 진짜 TV 잡음처럼 보이도록 캔버스에 매 프레임 랜덤 노이즈를 픽셀 단위로 그려준다
+    function startTvStaticNoise() {
+      const canvas = document.getElementById('tvStaticCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const scale = 0.22; // 저해상도로 그려서 확대 -> 굵은 노이즈 입자
+      const w = canvas.width = Math.max(1, Math.floor(window.innerWidth * scale));
+      const h = canvas.height = Math.max(1, Math.floor(window.innerHeight * scale));
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.imageRendering = 'pixelated';
+
+      const imgData = ctx.createImageData(w, h);
+      const buf = imgData.data;
+
+      function draw() {
+        for (let i = 0; i < buf.length; i += 4) {
+          const v = Math.random() * 255;
+          buf[i] = v; buf[i+1] = v; buf[i+2] = v; buf[i+3] = 255;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        tvStaticRAF = requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    function stopTvStaticNoise() {
+      if (tvStaticRAF) cancelAnimationFrame(tvStaticRAF);
+      tvStaticRAF = null;
+      const canvas = document.getElementById('tvStaticCanvas');
+      if (canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    }
+
+    // 불규칙한 타이밍으로 화면이 통째로 끊기는 "신호 소실" 컷을 여러 번 삽입 (점프스케어성 긴장감)
+    function triggerBlackoutCuts() {
+      const blackout = document.getElementById('tvBlackout');
+      if (!blackout) return;
+      let t = 300;
+      while (t < 3300) {
+        const delay = t;
+        const isRed = Math.random() < 0.35;
+        const holdTime = 40 + Math.random() * 90;
+        setTimeout(() => {
+          if (isRed) blackout.classList.add('err-red');
+          blackout.style.opacity = '1';
+          setTimeout(() => {
+            blackout.style.opacity = '0';
+            blackout.classList.remove('err-red');
+          }, holdTime);
+        }, delay);
+        t += 260 + Math.random() * 420;
+      }
+    }
+
+    // 제목 텍스트를 순간적으로 깨진 글자로 스크램블했다가 복구 - "화면이 못 읽는" 느낌
+    function scrambleTitleText() {
+      const titleEl = document.getElementById('introTitle');
+      if (!titleEl) return;
+      const original = titleEl.dataset.text || titleEl.textContent;
+      const glitchChars = '禾延#%&*◆■▨▧$?!01';
+      let elapsed = 0;
+      const iv = setInterval(() => {
+        elapsed += 90;
+        if (Math.random() < 0.4) {
+          const scrambled = original.split('').map(ch => {
+            if (ch === ' ' || ch === '(' || ch === ')') return ch;
+            return Math.random() < 0.5 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : ch;
+          }).join('');
+          titleEl.textContent = scrambled;
+          setTimeout(() => { titleEl.textContent = original; }, 60);
+        }
+        if (elapsed >= 3300) {
+          titleEl.textContent = original;
+          clearInterval(iv);
+        }
+      }, 140);
     }
 
     // Procedurally generated static / low drone sound (no external audio file needed)
@@ -1609,6 +1800,18 @@
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
         const duration = 3.2;
+
+        // 클릭 즉시 터지는 짧고 날카로운 "오작동" 버즈 - 잘못 누른 느낌의 핵심
+        const buzz = ctx.createOscillator();
+        buzz.type = 'square';
+        buzz.frequency.setValueAtTime(1200, ctx.currentTime);
+        buzz.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.18);
+        const buzzGain = ctx.createGain();
+        buzzGain.gain.setValueAtTime(0.28, ctx.currentTime);
+        buzzGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        buzz.connect(buzzGain).connect(ctx.destination);
+        buzz.start();
+        buzz.stop(ctx.currentTime + 0.22);
 
         // White noise burst (radio static)
         const bufferSize = Math.floor(duration * ctx.sampleRate);
@@ -1621,11 +1824,21 @@
 
         const noiseGain = ctx.createGain();
         noiseGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        noiseGain.gain.linearRampToValueAtTime(0.32, ctx.currentTime + 0.25);
-        noiseGain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 1.6);
+        noiseGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.12);
+        noiseGain.gain.linearRampToValueAtTime(0.16, ctx.currentTime + 1.6);
         noiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
 
         noise.connect(noiseGain).connect(ctx.destination);
+
+        // 불규칙한 간격으로 지지직 끊기는 크래클(신호 두절) 펄스
+        const crackleTimes = [0.3, 0.55, 0.9, 1.4, 1.9, 2.5, 2.9];
+        crackleTimes.forEach(t => {
+          const crackleGain = ctx.createGain();
+          crackleGain.gain.setValueAtTime(0.001, ctx.currentTime + t);
+          crackleGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + t + 0.015);
+          crackleGain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + t + 0.06);
+          noise.connect(crackleGain).connect(ctx.destination);
+        });
 
         // Low creepy drone underneath the static
         const osc = ctx.createOscillator();
@@ -1750,174 +1963,174 @@
     // Modal Details for Locations Map
     const locationDetails = {
       school: {
-        title: "화연고등학교 / 중학교",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 보통] 생존 학생 상주</span>",
-        body: "학생들이 책상과 의자로 강당을 봉쇄해 임시 거점을 구축했습니다. 매점 식량은 고갈되었지만 기숙사 3층에 물자가 남아있습니다."
+        title: "화연고등학교 & 화연중학교 (1차 임시 대피소)",
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 발병 초기 지자체와 계엄군이 피난민 수만 명을 모아둔 핵심 지정 대피소였습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 밀폐된 체육관 및 교실 내부에서 잠복 감염자 동시 발병으로 완벽히 무너졌습니다. 거대한 좀비 둥지로 변모했으며, 교실 벽면에 생존자들의 절박한 쪽지가 잔존합니다.<br><br><b style='color:#fff;'>확보 자원</b> 구호 텐트, 버려진 피난 가방, 비상 구호 물자, 방치된 군경 장비.`
       },
       cityhall: {
-        title: "화연시청",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 높음] 행정 서버 존</span>",
-        body: "발병 초기 비상대책본부가 위치했으나 사태 2일차에 완전 함락되었습니다. 지하 서버실의 메인 컴퓨터에는 비상 승인 코드가 보관되어 있습니다."
+        title: "화연시청 및 임시통제본부",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 중심에 위치한 행정 관공서.<br><br><b style='color:#fff;'>D+72h 현황</b> 관계자 철수 및 내부 변이 완료. 지하 서버실에는 전력 제어를 위한 비상 코드가 남아있습니다.<br><br><b style='color:#fff;'>확보 자원</b> 지하 서버실 전력 제어 비상 코드, 비상 방송 장비, 단파 통신 시설.`
       },
       military: {
         title: "외곽 군 검문소",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 치명적] 무차별 발포 구역</span>",
-        body: "화연시 외곽을 둘러싼 대형 철조망과 방호벽. 접근 시 자동 사격 포탑과 계엄군에 의해 무차별 사격이 실행됩니다."
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 화연시 외곽을 둘러싼 대형 철조망과 방호벽으로 구축된 군 경계 구역입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 접근 시 자동 사격 포탑과 잔존 계엄군에 의해 무차별 사격이 실행되는 극도로 위험한 통제 구역입니다. 임백헌이 이끄는 통제강경파의 영향권과 맞닿아 있습니다.`
       },
       apt: {
-        title: "한빛아파트 (101~103동)",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 생존자 주요 거점</span>",
-        body: "주민들이 1~3층 계단을 파괴하고 4층 이상을 점거 중입니다. 옥상 집수 장치로 물 확보가 가능하나 식량이 부족합니다."
+        title: "한빛아파트 101~103동 (메인 생존자 거점)",
+        danger: `<span style='color: var(--accent-green);'>[위험도: 안전]</span>`,
+        body: `<b style='color:#fff;'>구조</b> 3개 동이 ㄷ자 형태로 중정을 감싸 외부 방어에 유리합니다.<br><br><b style='color:#fff;'>1층 로비 및 1~3층 계단</b> 가구와 집기로 바리케이드를 구축하고 계단을 파괴함. 생존자는 4층 이상에만 거주하며 베란다 로프와 바구니로 물자를 교환합니다.<br><br><b style='color:#fff;'>103동 1층 관리사무소</b> 비상발전기, 방재실, 단지 주변 감시용 CCTV 모니터링 가능 구역.<br><br><b style='color:#fff;'>102동 옥상</b> 빗물 저장용 물탱크와 텃밭 조성. 단지 전체 망보기 및 경계 장소.<br><br><b style='color:#fff;'>지하주차장 (공용)</b> 완벽히 봉쇄된 미지의 위험구역. 어둠 속에서 "무언가 움직인다"는 소문이 돌며 접근 금지됨.<br><br><b style='color:#fff;'>주요 세력</b> 조종철(입주민 대표)을 중심으로 박아름(의료), 한서우 & {user}(수색조) 등이 활동하는 한빛아파트 자치 생존자 무리의 본거지입니다.`
       },
       hospital: {
         title: "화연중앙병원",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 극상] 3단계 사냥꾼 소굴</span>",
-        body: "의료 물품의 핵심 공급처. 고열 환자들이 몰려 대규모 감염이 일어났으며 시력을 잃은 '사냥꾼' 감염체가 상주합니다."
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 시내 중심가 위치. 발병 초기 환자 폭증으로 최초 붕괴 및 폭동이 일어난 원죄의 시발점입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 내부 의료진과 환자 대다수가 감염되어 무수한 2단계 좀비들이 배회합니다. 3단계 변이체 발생 가능성이 가장 높은 최악의 위험지대입니다.<br><br><b style='color:#fff;'>확보 자원</b> 미개봉 정품 의약품, 수술 도구, 혈액팩, 항생제, 비상 산소통.`
       },
       mart: {
-        title: "하나로마트",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 경계] 무장 세력 점거</span>",
-        body: "도시 내 식량이 가장 풍부한 마트. 무장 생존자 무리가 입구를 통제하고 통행료를 강요합니다."
+        title: "하나로마트 화연점",
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>1층 (신선식품)</b> 사재기 폭동과 감염 폭발로 카트와 시신이 난잡하게 얽힌 아비규환 현장.<br><br><b style='color:#fff;'>2층 (생필품/의류)</b> 비교적 보존 상태가 좋아 의류, 부탄가스, 야영 용품 수집이 용이합니다.<br><br><b style='color:#fff;'>지하 1층 (물류창고)</b> 미개봉 식료품과 통조림 물자가 대량 남아있는 생존자들의 핵심 수색 목표지.<br><br><b style='color:#fff;'>옥상</b> 비상 탈출 및 철수용 개방 공간.`
       },
       lab: {
-        title: "제인바이오 비밀 연구소",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: Ground Zero] 발원지</span>",
-        body: "바이러스가 유출된 장소. 항체 원액 데이터가 존재하지만 4단계 특수 변종 감염체가 득실거립니다."
+        title: "제인바이오 연구소",
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 시 외곽 산업단지에 위치한 백신 연구시설로 위장된 비밀 연구동입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 배관 폭발로 변종 바이러스가 유출된 사태의 진원지입니다. 현재 완벽히 방치되어 있으며, 원인 규명 및 치료제 단서가 숨겨진 스토리 후반부 핵심 구역입니다. 선임 연구원 이은채가 소속되어 있던 곳이기도 합니다.<br><br><b style='color:#fff;'>확보 자원</b> 바이러스 연구 데이터, 백신 시제품, 전문 과학 장비, 특수 방호복.`
       },
       subway: {
-        title: "화연선 지하철 (8개 역)",
-        danger: "<span style='color: var(--text-muted);'>[위험도: 미정] 지하 이동 통로</span>",
-        body: "지상 감염체와 산성비를 피할 수 있는 지하 선로. 암흑 상태이며 일부 구간은 붕괴 위기입니다."
+        title: "화연선 지하철 (8개 역 및 지하 네트워크)",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>지하 통로 특징</b> 정전으로 완벽한 암흑 상태입니다. 4번~7번역 구간 지하 통로는 끊기지 않고 연결되어 있어, 악천후 시 안개와 빗소리를 피해 지상 대신 지하로 우회 이동이 가능합니다.<br><br><b style='color:#fff;'>전체 개요</b> 1번역(붕괴/접근불가) · 2번역(안전) · 3번역(시청 서버실 연결) · 4번역(감염자 최다 밀집) · 5번역(한빛 인근) · 6번역(하나로마트 침투로) · 7번역(제인바이오 접근로) · 8번역(도시 탈출 최종 관문)으로 구성됩니다.`
       },
       park_station: {
         title: "화연대공원역 (2번역)",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전]</span>",
-        body: "지하철 2번역. 감염자 밀도가 낮아 안전 우회로로 활용 가능한 구간입니다."
+        danger: `<span style='color: var(--accent-green);'>[위험도: 안전]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 유동인구가 적어 감염자 밀도가 매우 낮은 안전한 우회 경로입니다.`
       },
       marina: {
-        title: "화연천 수상 마리나 &amp; 강변 선착장",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전]</span>",
-        body: "육지 접근이 불가능한 지형적 특성으로 고립된 안전지대입니다. 보트나 수상 이동수단 확보 시 전략적 요충지가 될 수 있습니다."
+        title: "화연천 수상 마리나 & 강변 선착장",
+        danger: `<span style='color: var(--accent-green);'>[위험도: 안전]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시를 가로지르는 화연천 하류의 수상 레저 시설입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 육지 감염체들의 접근이 어려운 강 위의 수중 거점입니다. 소수의 선박 소유주들이 요트를 띄워 정박 중이며, 소음을 피해 안전한 고립을 유지하고 있습니다.<br><br><b style='color:#fff;'>확보 자원</b> 선박용 구명 장비, 어로 도구, 소형 발전기, 수상 이동 수단.`
       },
       waterplant: {
         title: "화연 수도사업소 (정수장)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "접근 자체는 쉬우나, 깨끗한 물이라는 희소 자원 때문에 다른 생존자 집단과의 세력 쟁탈전이 예상되는 곳입니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 외곽 산자락에 위치하여 민간인 접근이 적고 수자원 확보가 가능한 전략 요충지입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 정수장 가동은 중단되어 수돗물은 오염되었으나, 대형 여과조 및 저수지에 대량의 수자원이 남아있어 향후 세력 간 거점 점령전의 핵심이 될 장소입니다.<br><br><b style='color:#fff;'>확보 자원</b> 대량의 저수지 수자원, 정수용 화학약품, 넓은 부지 및 높은 외곽 담장.`
       },
       powerplant: {
         title: "화연 자원회수시설 (열병합발전소)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "도시 전력망과 연결된 발전 설비입니다. 제어실 접근 및 재가동 시 특정 구역 전력 복구 가능성이 존재합니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 외곽 공단 인근의 쓰레기 소각 및 에너지 공급 시설입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 불규칙하게 가동되는 도시 전력의 핵심 변수로, 내부 비상 발전 설비를 제어하면 특정 구역 전력을 되살릴 수 있는 전략적 요충지입니다.<br><br><b style='color:#fff;'>확보 자원</b> 대형 비상 발전기, 산업용 유류, 공학용 부품.`
       },
       firestation: {
         title: "화연소방서",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "소방 장비(방화복, 산소통, 절단기 등)가 풍부하게 남아있으나, 위치상 접근하려면 감염 지대를 통과해야 하는 구조입니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 시 외곽 관할 구역의 소방·구조 거점으로, 화재 진압 장비와 인명 구조 장비를 다수 보유하고 있습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 발병 초기 구조 신고가 폭주하며 소방대원 다수가 출동 중 실종·감염되었습니다. 차고에 소방차와 사다리차가 그대로 방치되어 있으며, 산소통과 방화복은 온전한 상태로 남아있어 침투 방어구 확보처로 가치가 높습니다.<br><br><b style='color:#fff;'>확보 자원</b> 사다리차, 구조 장비, 방화복, 비상 산소통, 응급처치 키트.`
       },
       busterminal: {
-        title: "화연 시외버스터미널 &amp; 복합쇼핑몰",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 구역입니다. 생존자 간 갈등이 실제로 벌어지는 무대이기도 합니다."
+        title: "화연 시외버스터미널 & 복합쇼핑몰",
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 탈출을 시도하던 시민들이 모였던 도심 교통 요충지입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 대형 버스 수십 대가 얽혀 도로를 막고 있으며, 대기실 전체가 감염체로 가득 차 있습니다. 자원을 노리는 약탈자와 좀비 무리가 얽혀 가장 유혈 충돌이 자주 일어나는 곳입니다.<br><br><b style='color:#fff;'>확보 자원</b> 여행용 가방, 부피 작은 고칼로리 비상식, 의류, 공구.`
       },
       golfclub: {
-        title: "화연CC 골프장",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "외부와 단절된 폐쇄적 준요새 지형입니다. 상류층 출신 생존자들이 먼저 자리를 잡고 텃세를 부릴 가능성이 있습니다."
+        title: "화연CC 골프장 & 클럽하우스",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 넓고 개방된 지형에 담장으로 둘러싸인 준-요새형 부지로, 발병 전 상류층 회원제 시설이었습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 초기 대피한 소수 상류층 생존자들이 클럽하우스를 개조해 폐쇄적 공동체를 형성했습니다. 외부인에게 배타적이며 자체 경비 인력(캐디·경호원 출신)을 보유해 다른 생존자 집단과 마찰 소지가 있습니다.<br><br><b style='color:#fff;'>확보 자원</b> 고급 식자재 및 주류, 골프 카트(이동수단), 캐디백 내 각종 도구, 클럽하우스 발전 설비.`
       },
       gasstation: {
         title: "주유소 체인 (화연IC 인근)",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "연료 확보라는 측면에서 가치는 매우 높지만, 폭발 위험이 상존하는 지역입니다. 차량 이동 루트 확보 시 핵심 거점이 됩니다."
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 탈출 경로 상에 위치한 대형 주유소로, 발병 직전까지 피난 차량들이 몰려 극심한 혼잡을 빚었던 곳입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 다수의 차량이 주유구를 연결한 채 방치되어 있어 인화성 위험이 상존합니다. 유증기와 누유로 작은 불씨에도 대규모 폭발 가능성이 있어 극도의 주의가 필요하나, 남은 지하 저장탱크의 연료는 매우 높은 전략적 가치를 지닙니다.<br><br><b style='color:#fff;'>확보 자원</b> 휘발유·경유 대량, 엔진오일, 차량 정비 공구, 편의점 재고.`
       },
       nursinghome: {
         title: "하늘요양병원",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "감염 확산 속도는 느리지만, 거동이 불편한 채 방치된 환자들이 다수 존재합니다. 전투보다는 정서적·윤리적 딜레마를 다루기 좋은 장소입니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도심 외곽의 중소형 요양병원으로, 거동이 불편한 고령 환자 다수가 입원 중이었습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 인력 부족으로 초기 대피가 거의 이루어지지 못해 많은 환자가 병상에 방치된 채 사태를 맞았습니다. 감염체 이동 속도가 느려 확산은 더딘 편이나, 내부 정서적 참상이 심각하고 약품 재고가 비교적 온전히 남아있어 의료 자원 확보처로 가치가 있습니다.<br><br><b style='color:#fff;'>확보 자원</b> 인슐린·진통제 등 상시 처방약, 휠체어·의료 보조기구, 기초 의료 소모품.`
       },
       stadium: {
         title: "화연공설운동장 / 체육관",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "학교와는 별개로 운영된 대규모 임시 대피소였으나 붕괴했습니다. 한때 수백 명이 모였던 만큼 규모가 큰 위험지대입니다."
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 학교 대피소와는 별개로 시에서 운영한 대규모 임시 수용시설입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 좁은 공간에 수용 인원이 과밀했던 탓에 감염 확산 속도가 학교 대피소보다 빨랐습니다. 관중석과 경기장 바닥 전역에 감염체가 배회하며, 방송실과 전광판 제어실 등 높은 곳에 고립된 생존자 흔적이 남아있습니다.<br><br><b style='color:#fff;'>확보 자원</b> 대형 텐트 및 침낭, 구호 물품 잔여분, 스피커·방송 장비.`
       },
       iccheckpoint: {
         title: "화연IC 및 대교 통제선",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "도시를 외부와 차단하던 군 방어선이 뚫린 곳입니다. 외부의 더 큰 위협이 유입될 수 있는 복선 성격의 장소입니다."
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 탈출을 막고 외곽을 격리하기 위해 계엄군이 컨테이너, 장갑호, 장갑차로 구축한 방어선입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 난민 폭동과 감염체 쇄도로 지휘선 파괴 및 통제선이 전면 뚫렸습니다. 군 철수의 진짜 이유와 더 큰 위협의 떡밥이 남은 장소입니다.<br><br><b style='color:#fff;'>확보 자원</b> 군용 총기 및 탄약, MRE(군용 식량), 군용 무전기, 방탄복, 버려진 군용 차량.`
       },
       prison: {
-        title: "화연교도소",
-        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
-        body: "재소자들이 탈옥 후 자체적으로 세력화했습니다. 감염체보다 사람이 더 위험한 무법지대입니다."
+        title: "화연교도소 (외곽)",
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 외곽에 위치한 대형 교정시설로, 두꺼운 담장과 철제 보안문으로 원래도 폐쇄적인 구조입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 통제 체계 붕괴 직후 일부 재소자들이 교도관을 제압하고 시설을 장악, 자체적으로 무법 세력화되었습니다. 외부 생존자 집단과는 적대적이며, 무기고와 식량 창고를 독점하고 있어 다른 거점과의 갈등 요소로 활용하기 좋습니다.<br><br><b style='color:#fff;'>확보 자원</b> 진압 장비(방패·곤봉), 제한적 총기류, 대량 비축 식량, 작업장 공구.`
       },
       apartment_tower: {
         title: "화연 푸르지오 라포레 (주상복합)",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "초고층 건물 특성상 위아래 이동이 극히 제한된 '세로형 지옥'입니다. 고층에 고립된 생존자들이 존재합니다."
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도심 중심가에 위치한 45층 규모의 최신식 주상복합 건물로, 두꺼운 강화유리와 전자 제어문을 탑재하고 있습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 정전으로 전자식 출입문과 엘리베이터가 먹통이 되어 고층에 갇힌 생존자가 다수입니다. 계단실에 2단계 감염자가 가득 차 '세로형 지옥'으로 변모했습니다.<br><br><b style='color:#fff;'>확보 자원</b> 비상 발전기용 디젤 연료, 고급 가전, 탕비실/사내 구두 보존식품.`
       },
       villatown: {
-        title: "성운 빌라촌 &amp; 구도심 주택가",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "낮은 건물들이 다닥다닥 붙어있어 옥상과 옥상을 잇는 공중 이동통로로 배회하는 은둔형 생존자가 존재하는 구역입니다."
+        title: "성운 빌라촌 & 구도심 주택가",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 한빛아파트 인근의 낮은 담장과 좁은 골목길로 이루어진 구도심 지역입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 담장이 낮아 초기에 뚫렸으나, 골목 지형에 익숙한 소수 은둔형 생존자들이 지붕과 옥상을 사다리로 연결해 '공중 이동 통로'를 만들어 배회 중입니다.<br><br><b style='color:#fff;'>확보 자원</b> 가정용 생필품, 구형 공구, 옥상 장독대 보존식품.`
       },
       university: {
-        title: "화연국립대학교 캠퍼스",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "40여 명의 생존자가 자체적으로 농성 중인 거점입니다. 실험동에 남은 화학물질로 인한 폭발 잠재 위험이 존재합니다."
+        title: "화연국립대학교(화연대) 캠퍼스",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 산자락에 위치하여 넓은 부지, 기숙사, 연구동, 병원, 식당 등 자생 인프라를 갖춘 소도시 형태입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 중앙도서관(학술정보관)의 두꺼운 방화문을 이용해 학생 및 교직원 40여 명이 '화연대 도서관 자치회'를 결성해 농성 중입니다. 지식인 중심이라 합리적인 내부 규율을 갖추었으나 실전 전투력이 부족하며, 공학관/의학관 실험실의 화학물질로 인한 화재 및 폭발 위험도 잠재해 있습니다. 식량이 떨어져 가며 한빛아파트 무리와 자원 교환을 시도하거나 마트 원정 시 마찰이 발생합니다.<br><br><b style='color:#fff;'>확보 자원</b> 대량의 학식 식자재, 비상 의약품, 실험용 과학 도구 및 단파 통신장비.`
       },
       broadcast: {
         title: "화연방송국 / 송신탑",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "단파 통신의 핵심 시설입니다. '옥상 무전 7번 채널'과 연결되는 후반부 열쇠 장소로, 재가동 시 도시 전체 생존자 네트워크 구축이 가능해집니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 도시 유일의 지상파 송출 시설로, 옥상 대형 안테나와 지하 발전 설비를 보유하고 있습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 방송 정지 직전 일부 스태프가 스튜디오에 고립된 채 비상 방송을 시도한 흔적이 남아있습니다. 송신탑이 온전하면 도시 밖 외부 세력과의 유일한 통신 창구가 될 수 있어 스토리 후반 '외부와의 접촉' 열쇠 장소로 활용 가능합니다.<br><br><b style='color:#fff;'>확보 자원</b> 방송 송출 장비, 예비 발전기, 배터리, 취재용 무전 장비.`
       },
       cathedral: {
         title: "화연중앙성당 / 메가처치",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "광신도 집단의 근거지일 가능성이 있는 구역입니다. 종교적 광기와 아포칼립스가 결합된 별도 세력이 활동 중입니다."
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 대형 종교시설로, 초기엔 지역 주민들의 자발적 대피소 역할을 했습니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 성직자 일부가 사태를 '심판'으로 규정하며 남은 신도들을 결집, 외부와 단절된 채 독자적 신념 체계를 구축한 정황이 있습니다. '구원자'라 불리는 광신도 지도자와 연관이 깊은 곳으로, 물리적 위험보다 사상적·집단적 위험성이 두드러지는 장소입니다.<br><br><b style='color:#fff;'>확보 자원</b> 비축 식량 및 양초·발전기 등 기초 생존물자, 대형 종탑(경계용 활용 가능).`
       },
       crematorium: {
         title: "화연화장장",
-        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
-        body: "초기 감염 확산을 막기 위한 시신 처리 시도가 실패한 지점입니다. 도시 내에서 가장 그로테스크한 최악의 지대입니다."
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 시 외곽에 위치한 화장 및 장례 시설입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 초기 사망자가 폭증하며 처리 용량을 초과, 방치된 시신들 사이에서 2차 감염이 대규모로 발생한 것으로 추정됩니다. 실체를 마주하기 가장 꺼려지는 곳이나, 초기 확산 원인을 추적하는 스토리 라인에서 중요한 단서를 배치하기 좋은 장소입니다.<br><br><b style='color:#fff;'>확보 자원</b> 없음 또는 매우 제한적 (그로테스크 연출용 장소, 자원보다 서사적 가치 중심).`
       },
       trainstation: {
         title: "화연역 (기차역)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "지하철과는 별개의 광역철도 역사입니다. 외부 도시와의 연결 관문 역할로, 탈출 서사나 외부 세력 유입의 통로로 활용 가능합니다."
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>특징</b> 광역 철도가 지나는 화연시 유일의 기차역입니다. 지하철과는 별개로 도시 밖으로 나갈 수 있는 대형 교통 인프라입니다.<br><br><b style='color:#fff;'>D+72h 현황</b> 발병 초기 마지막 열차가 승객을 가득 태운 채 출발하지 못하고 승강장에 멈춰 선 상태로 방치되었습니다. 열차 내부는 미확인 상태이나, 역사 자체는 넓고 개방된 구조라 은신에는 부적합합니다. '더 큰 세계로 나가는 관문'이라는 상징성 때문에 스토리 후반 탈출 루트로 쓰기 좋은 장소입니다.<br><br><b style='color:#fff;'>확보 자원</b> 매점 재고, 승객 유실물(생필품), 역무실 비상 물자.`
       },
       subway1: {
-        title: "지하철 1번역 (서울방면)",
-        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
-        body: "완전 붕괴로 접근이 불가능한 구간입니다."
+        title: "지하철 1번역 (서울방면 환승역)",
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 완벽한 붕괴 및 암반 함몰로 접근이 불가능합니다.`
       },
       subway3: {
-        title: "지하철 3번역 (화연시청)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "화연시청 지하 서버실과 연결되는 구간입니다."
+        title: "지하철 3번역 (화연시청역)",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 시청 지하 통제본부 서버실 및 비상 진입로와 직접 연결되는 구간입니다.`
       },
       subway4: {
-        title: "지하철 4번역 (화연중앙)",
-        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
-        body: "감염자가 가장 많이 밀집된 구간으로, 반드시 회피해야 합니다."
+        title: "지하철 4번역 (화연중앙역)",
+        danger: `<span style='color: #ff1a1a;'>[위험도: 치명적]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 중앙병원 붕괴 여파로 지상/지하 모두 감염자가 최다로 밀집되어 있습니다. 필히 회피해야 하는 구역입니다.`
       },
       subway5: {
-        title: "지하철 5번역 (한빛)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "일부 구간만 가동 중인 한빛아파트 인근 역입니다."
+        title: "지하철 5번역 (한빛역)",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 한빛아파트 거점에서 도보 10분 거리이며, 일부 우회 통로만 가동 중입니다.`
       },
       subway6: {
-        title: "지하철 6번역 (하나로마트)",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
-        body: "하나로마트로 이어지는 침투 우회로로 활용 가능한 구간입니다."
+        title: "지하철 6번역 (하나로마트역)",
+        danger: `<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 마트 지하 1층 물류창고와 직결되는 침투 우회로로 활용 가능한 구간입니다.`
       },
       subway7: {
-        title: "지하철 7번역 (화연산업단지)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "제인바이오 연구소로 접근할 수 있는 경로입니다."
+        title: "지하철 7번역 (화연산업단지역)",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 제인바이오 연구소 및 공단 방향으로 접근할 수 있는 우회로입니다.`
       },
       subway8: {
-        title: "지하철 8번역 (화연IC)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
-        body: "도시 탈출을 위한 최종 관문 구간입니다."
+        title: "지하철 8번역 (화연IC역)",
+        danger: `<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>`,
+        body: `<b style='color:#fff;'>현황</b> 군 검문소와 인접해 있으며, 도시 탈출을 위한 지하 최종 관문입니다.`
       }
     };
 
@@ -2014,17 +2227,61 @@
 
     // Character Details (등장인물 상세 정보 - 추후 내용 추가 예정)
     const characterDetails = {
-      kangdohyun:   { title: "강도현", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      imbaekheon:   { title: "임백헌", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      jintaeo:      { title: "진태오", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      jojongcheol:  { title: "조종철", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      songhajin:    { title: "송하진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      parkareum:    { title: "박아름", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      kangdaesik:   { title: "강대식", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      leeeunchae:   { title: "이은채", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      yoonsangha:   { title: "윤상하", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      choitaejin:   { title: "최태진", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
-      guwonja:      { title: "구원자", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." }
+      kangdohyun: {
+        title: "강도현",
+        role: "나이: 18세 / 성별: 남성 / 직업: 고등학생 / 거주지: 한빛아파트 102동 504호",
+        body: `<b style='color:#fff;'>외형</b><br>부드럽게 웨이브 진 밝은 금발 머리칼이 이마와 눈가를 덮고 있으며, 나른하면서도 장난기가 서려 있는 눈매. 목에 걸치고 있는 헤드셋과 단정한 교복 셔츠, 네이비 자켓 차림. 날렵한 턱선과 붉은 입술, 상대를 빤히 올려다보며 묘한 미소를 짓는 소년미 넘치는 비주얼.<br><br><b style='color:#fff;'>성격</b><br>입만 열면 투덜거리고 툴툴거리지만, 정작 결정적인 순간에는 몸을 던져서 돕는 타입. 어른들의 통제나 거점의 규칙을 싫어하며, 자기만의 방식으로 좀비를 따돌리거나 도구를 다룹니다.<br><br><b style='color:#fff;'>배경</b><br>소음으로 망가진 가정: 사태 전, 늘 싸우는 부모님과 시끄러운 소음 속에서 자라며 청각적 자극에 심한 피로감을 가졌던 소년.<br>학교 방송실의 방관자: 좀비 사태가 터진 날, 학교 방송실에 들어가 헤드폰을 낀 채 바깥 세상이 무너지는 광경을 내려다보았습니다. 친구들이 물어뜯기고 어른들이 비명을 지르는 지옥 같은 소음을, 그는 오히려 헤드폰을 통해 완벽하게 음소거된 무성영화 보듯 관전했습니다.`
+      },
+      imbaekheon: {
+        title: "임백헌",
+        role: "나이: 35세 / 성별: 남성 / 직업: 잔존 계엄군 통제강경파 지휘관 / 거주지: 화연시 임시 군 지휘 통제소 (구 관공서)",
+        body: `<b style='color:#fff;'>외형</b><br>거칠게 헝클어진 흑발과 예리하고 서늘한 무쌍 눈매. 오른쪽 뺨을 가로지르는 선명하고 깊은 흉터가 강렬한 인상을 줌. 감정을 읽을 수 없는 무표정과 다부진 턱선, 군용 전술 베스트와 후드 점퍼를 겹쳐 입어 실전형 지휘관의 분위기를 풍김.<br><br><b style='color:#fff;'>성격</b><br>철저한 원칙주의와 냉혈함: 사태 초기 국가의 명령과 통제만이 유일한 질서라고 믿으며, 조금의 예외나 반발도 용납하지 않는 극단적 강경파.<br>목적을 위한 수단 불문: 감염 확산을 막기 위해서라면 민간인의 희생이나 강제 통제도 정당하다고 여기는 냉혹한 성향. 타인과 감정적으로 교류하지 않음.<br><br><b style='color:#fff;'>역할 및 관계</b><br>화연시 내부에서 군사력을 바탕으로 질서를 강제하는 핵심 권력자. '통제'를 거부하는 이들에게는 가장 위협적인 적이자 거대한 압박 요소.<br><br><b style='color:#fff;'>배경</b><br>사태 발발 직후 화연시 봉쇄 작전에 투입된 정예 군 간부. 고립 지형 속에서 통신이 끊기고 상부의 명령 체계가 무너졌음에도 불구하고, 오히려 군인으로서의 사명감과 통제 집착을 폭주시켜 독자적인 무력 집단을 규합함. "소음을 통제하지 못하는 자는 곧 감염원"이라는 잔혹한 철학으로 화연시를 철권 통치하고 있음.`
+      },
+      jintaeo: {
+        title: "진태오",
+        role: "나이: 39세 / 성별: 남성 / 직업: 재난 대비 유튜버 (구독자 소수, 사실상 무직에 가까움) / 거주지: 한빛아파트 101동 502호",
+        body: `<b style='color:#fff;'>외형</b><br>짧게 친 스포츠머리에 항상 뭔가 부산스럽게 움직이는 인상. 등산복 스타일의 멀티포켓 조끼를 즐겨 입으며, 목에는 각종 도구(라이터, 호루라기, 나침반)를 주렁주렁 매달고 다님. 눈빛은 늘 반짝이고 산만함.<br><br><b style='color:#fff;'>성격</b><br>텐션 높고 말 많음, 위기 상황에서도 흥분하며 떠드는 타입. 사태 전부터 "종말 대비 브이로그"를 찍던 프레퍼(재난 대비족)라 다들 유별나다 여겼지만, 지금은 그 잡다한 지식이 실제로 유용하게 쓰이는 중. "그거 봐 내가 맞았잖아"를 은근히 자랑스러워함.<br><br><b style='color:#fff;'>역할 및 관계</b><br>방독면, 정수 필터, 비상식량 제작법 등 생존 노하우를 실질적으로 제공하는 거점의 숨은 브레인. 조종철의 지휘 아래 물자 관리를 보조함.<br><br><b style='color:#fff;'>배경</b><br>사태 전 조회수 안 나오는 재난 대비 채널을 운영하며 가족과 지인들에게 놀림거리가 되던 인물. 세상이 실제로 무너지자 누구보다 침착하게 대비된 삶을 살아왔다는 사실이 드러나며, 반쯤 신이 나서 이 상황을 감당하고 있음.`
+      },
+      jojongcheol: {
+        title: "조종철",
+        role: "나이: 58세 / 성별: 남성 / 직업: 아파트 입주자 대표 (전직 중견 건설사 현장 소장) / 거주지: 한빛아파트 101동 401호",
+        body: `<b style='color:#fff;'>외형</b><br>거칠게 뻗친 은발이 섞인 숏컷 헤어, 세월의 흔적이 느껴지는 깊은 눈가 주름과 날카로운 눈빛. 턱과 뺨을 거칠게 덮은 짙은 수염, 흙먼지와 얼룩이 묻은 형광 연두색 안전 조끼와 작업복 차림.<br><br><b style='color:#fff;'>성격</b><br>연륜에서 우러나오는 강인한 리더십. 겉으로는 툭툭 내뱉고 엄하게 굴지만, 알고 보면 눈물도 많고 정이 넘치는 타입. 어린 생존자들이나 다친 사람들을 보면 차갑게 대하지 못하고 남몰래 챙겨주는 츤데레 아저씨 성향.<br><br><b style='color:#fff;'>역할 및 관계</b><br>한빛아파트 거점의 실질적 리더. 생존자들을 통솔하며 식량 배급과 외부 경계 태세를 지휘함.<br><br><b style='color:#fff;'>배경</b><br>화연시 아파트 단지에서 수십 년간 건설 현장을 지휘해 온 베테랑 소장 출신. 사태 발발 초기, 아파트 주민들을 규합해 단지 내 입구를 봉쇄하고 자급자족 시스템과 소음 제어 규칙을 만들어 거점을 구축함. 사람 죽어 나가는 지옥 같은 세상 속에서도 어떻게든 이웃들을 사람답게 지키려고 애쓰는 따뜻한 인물.`
+      },
+      songhajin: {
+        title: "송하진",
+        role: "나이: 31세 / 성별: 여성 / 직업: 전직 종합격투기 선수 (은퇴 후 체육관 관장 준비 중이었음) / 거주지: 한빛아파트 102동 601호",
+        body: `<b style='color:#fff;'>외형</b><br>긴 생머리, 다부진 어깨와 탄탄한 체격. 눈매가 날카롭고 자세가 항상 곧음. 부상 방지용 손목 테이핑을 습관적으로 감고 있으며, 실용적인 트레이닝복 차림.<br><br><b style='color:#fff;'>성격</b><br>직설적이고 리더십 있음, 감정보다 행동이 먼저 앞서는 타입. 위기 대응은 누구보다 빠르고 정확하지만, 인간관계에선 서투르고 무뚝뚝함. 불필요한 말을 아끼고 필요한 순간엔 몸으로 먼저 부딪힘.<br><br><b style='color:#fff;'>역할 및 관계</b><br>조종철과 함께 원정 및 경계 업무를 실질적으로 지휘하는 전투 담당. 거점 내 몇 안 되는 전투력 있는 인물로, 위험한 원정에 빠지지 않고 참여함.<br><br><b style='color:#fff;'>배경</b><br>은퇴 후 체육관을 차릴 준비를 하던 중 사태를 맞이함. 다듬어진 격투 기술이 실전에서 그대로 살아남는 무기가 되었고, 본인도 처음엔 얼떨떨했지만 점점 이 능력이 자신의 쓸모를 증명하는 유일한 수단이라 여기게 됨.`
+      },
+      parkareum: {
+        title: "박아름",
+        role: "나이: 29세 / 성별: 여성 / 직업: 간호사 (종합병원 응급실 근무 경력) / 거주지: 한빛아파트 102동 302호",
+        body: `<b style='color:#fff;'>외형</b><br>자연스럽게 틀어 올린 헝클어진 흑발 업스타일 헤어, 턱을 괴고 있는 서늘하면서도 지적인 눈빛. 결벽증때문에 하얀 장갑을 끼고 있는 손과 깔끔한 블랙 자켓, 어깨에 멘 붉은색 백팩이 대비되는 모습.<br><br><b style='color:#fff;'>성격</b><br>냉철하고 이성적이며 쉽게 동요하지 않는 성향. 생존 위기 속에서도 침착하게 부상자를 돌보지만, 타인에게 쉽게 정을 주지 않는 단호함과 예민함을 지님. 결벽증.<br><br><b style='color:#fff;'>역할 및 관계</b><br>거점 내의 부상자 치료 및 의약품 관리 담당. 조종철의 지휘 아래 생존자들의 건강을 관리하며 의료 지원을 총괄함.<br><br><b style='color:#fff;'>배경</b><br>화연시 종합병원 응급실에서 일하다가 사태 초기부터 밀려드는 부상자와 감염자들을 마주함. 병원이 무너진 후 아파트 거점으로 합류했으며, 한정된 의약품 속에서 생과 사를 냉정하게 가르는 의료 지원 시스템을 유지하는 인물.`
+      },
+      kangdaesik: {
+        title: "강대식",
+        role: "나이: 52세 / 성별: 남성 / 직업: 아파트 상가 건물주 (전직 부동산 임대업) / 거주지: 한빛아파트 101동 703호",
+        body: `<b style='color:#fff;'>외형</b><br>살집 있는 체형에 늘 불안한 눈빛으로 주변을 살핌. 원래 입던 값비싼 브랜드 옷차림이 지금은 꾀죄죄하게 낡아 대비를 이룸.<br><br><b style='color:#fff;'>성격</b><br>공포에 잠식된 소시민. "내 가족 먼저"라는 논리로 물자를 몰래 쟁여두거나 남몰래 이기적인 선택을 하는 인물. 완전한 악인은 아니고, 극한 상황에서 무너진 평범한 사람에 가까움.<br><br><b style='color:#fff;'>역할 및 관계</b><br>조종철의 리더십에 은근히 반발하며 거점 내부 갈등을 유발하는 축. 위기 상황마다 자기 몫을 먼저 챙기려 해서 다른 생존자들과 마찰이 잦음.<br><br><b style='color:#fff;'>배경</b><br>사태 전엔 상가 임대료로 여유롭게 살던 인물. 모든 걸 잃을지도 모른다는 공포 앞에서 인간성의 밑바닥이 드러나며, 훗날 자신의 선택 때문에 누군가 희생되는 걸 목격하고 크게 흔들리는 서사 여지가 있음.`
+      },
+      leeeunchae: {
+        title: "이은채",
+        role: "나이: 26세 / 성별: 여성 / 직업: 제인바이오 연구소 선임 연구원 / 거주지: 제인바이오 연구소",
+        body: `<b style='color:#fff;'>외형</b><br>턱선까지 오는 헝클어진 흑발 단발머리와 투명한 뿔테 안경, 나른하면서도 묘하게 속을 알 수 없는 눈빛. 창백한 피부와 대조되는 붉은 입술, 검은색 후드 티셔츠 위에 연구소 가운을 걸친 차림.<br><br><b style='color:#fff;'>성격</b><br>겉으로는 친절하고 여유로워 보이지만, 감염 사태나 잔혹한 상황을 마주해도 두려움을 느끼지 않고 오히려 흥미로워하는 냉소적이고 대담한 성향.<br><br><b style='color:#fff;'>역할 및 관계</b><br>거점 내에서 감염자의 혈액과 샘플을 분석하며 바이러스의 실체를 추적하는 연구원. 다른 생존자들과 거리를 두며 비밀리에 독자적인 조사를 진행함.<br><br><b style='color:#fff;'>배경</b><br>제인바이오 연구소에서 백신 및 병원체 연구를 담당하던 중 사태를 맞이함. 도시가 봉쇄되고 세상이 무너지는 혼란 속에서도 바이러스의 변이 양상을 맨 먼저 마주하며, 이 재앙의 원인과 인체의 반응을 밝혀내는 것에 집착하는 미스터리한 인물.`
+      },
+      yoonsangha: {
+        title: "윤상하",
+        role: "나이: 28세 / 성별: 남성 / 직업: 대학병원 레지던트 (의사) / 거주지: 한빛아파트 103동 407호",
+        body: `<b style='color:#fff;'>외형</b><br>깔끔하게 넘긴 흑발과 지적인 매력을 더하는 은테 안경, 서늘하면서도 가라앉은 눈빛. 창백할 정도로 하얀 피부와 날렵한 턱선, 단정한 흰색 셔츠 차림으로 이지적인 분위기를 풍김.<br><br><b style='color:#fff;'>성격</b><br>철저하게 이성적이고 감정에 휘둘리지 않는 냉철한 성향. 타인에게 쉽게 마음을 열지 않으며, 비상 상황에서도 예리한 분석력으로 손익을 따지는 계산적이고 차가운 면모.<br><br><b style='color:#fff;'>역할 및 관계</b><br>거점 내의 부조리나 갈등 속에서 박아름과 협력하는 의료 백업 인물.<br><br><b style='color:#fff;'>배경</b><br>화연시 종합병원에서 수련을 받던 중 사태를 맞이함. 감염 사태의 본질을 의학적·과학적 관점에서 분석하며, 거점 내부에서 자신의 생존과 실리를 최우선으로 삼고 은밀하게 움직이는 인물.`
+      },
+      choitaejin: {
+        title: "최태진",
+        role: "나이: 78세 / 성별: 남성 / 직업: 은퇴 (베트남전 참전 용사 출신) / 거주지: 한빛아파트 103동 201호",
+        body: `<b style='color:#fff;'>외형</b><br>백발에 마른 체구지만 꼿꼿한 자세, 깊게 팬 주름과 흔들림 없는 눈빛. 낡았지만 손질이 잘 된 카키색 재킷을 입고 다니며, 지팡이 대신 늘 짧은 목봉을 짚고 다님.<br><br><b style='color:#fff;'>성격</b><br>처음부터 끝까지 건조하고 냉정함. "감상에 빠질 시간 없다"는 태도로 죽음과 희생을 계산적으로 받아들임. 다른 생존자들이 감정적으로 무너질 때, 유일하게 "누굴 버릴지" 같은 잔인한 판단을 대신 내려주는 존재.<br><br><b style='color:#fff;'>역할 및 관계</b><br>조종철의 따뜻한 리더십과 대비되는 차가운 현실주의 축. 전략적 판단이 필요한 순간마다 조언자 역할을 하지만, 그 조언은 늘 냉혹함을 동반함.<br><br><b style='color:#fff;'>배경</b><br>젊은 시절 참전 경험으로 이미 한 번 지옥을 겪어본 인물. 그때 얻은 "살아남는 자와 죽는 자는 정해져 있다"는 신념이 지금 이 재앙 앞에서도 그대로 적용되고 있으며, 감정을 배제한 채 생존만을 최우선 목표로 삼음.`
+      },
+      guwonja: {
+        title: "구원자",
+        role: "나이: 알 수 없음 / 성별: 여성 / 직업: 이단 종교 교주 추정 / 자칭 구원자 / 거주지: 화연시 성당 및 시내 전역을 떠돌며 이동",
+        body: `<b style='color:#fff;'>외형</b><br>핏자루가 얼룩져 있는 하얀색 사제복 차림, 기이할 정도로 온화하고 나긋한 미소를 짓고 있는 서늘한 인상.<br><br><b style='color:#fff;'>성격</b><br>광적인 신념에 사로잡혀 있으며, 타인의 고통이나 죽음을 구원 혹은 정화로 여기는 잔혹하고도 성스러운 광기.<br><br><b style='color:#fff;'>역할 및 관계</b><br>화연시의 붕괴 속에서 사람들을 현혹해 자신만의 광신도 집단으로 끌어들이는 위험한 광신도이자 종교적 지도자.<br><br><b style='color:#fff;'>배경</b><br>좀비 사태가 터지기 전부터 화연시 일대에서 종말론을 설파하던 인물. 사태가 터지자 이를 인류의 죄악을 씻어내는 '신성한 심판'으로 해석하며, 좀비 사태의 공포에 질린 사람들에게 접근해 구원을 빌미로 파멸로 이끄는 미스터리하고 기괴한 존재.`
+      }
     };
 
     function openCharacterModal(key) {
