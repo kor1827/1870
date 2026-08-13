@@ -169,47 +169,151 @@
     }
     .intro-phase.show { opacity: 1; }
 
-    /* --- 1단계: 긴급재난문자 --- */
-    #disasterAlertScreen { background: #000; }
-    #disasterAlertScreen.buzz { animation: disaster-buzz 0.12s steps(1) 3; }
-    @keyframes disaster-buzz {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(2px, -2px); }
+    /* --- 1단계: 실제 긴급재난문자 잠금화면 재현 --- */
+    #disasterAlertScreen {
+      background: radial-gradient(ellipse at 50% 30%, #1a1a1c 0%, #050505 75%);
     }
-    .disaster-lines {
+    .phone-mock {
       width: 100%;
-      max-width: 560px;
-      font-family: var(--font-tech);
-      color: #eaeaea;
-      font-size: clamp(0.92rem, 3vw, 1.1rem);
-      line-height: 1.9;
-      text-align: left;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .disaster-line { white-space: pre-wrap; word-break: keep-all; min-height: 1.4em; }
-    .disaster-line.warn { color: var(--accent-red-bright); }
-    .disaster-line.final {
-      color: var(--accent-red-bright);
-      font-family: var(--font-heading);
-      font-size: clamp(1.35rem, 5vw, 2rem);
-      margin-top: 14px;
-      letter-spacing: 2px;
-      animation: signal-jitter 0.09s infinite steps(2, jump-start);
+    .phone-clock {
+      text-align: center;
+      margin-bottom: 34px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
     }
-    .disaster-line .type-cursor {
-      display: inline-block;
-      width: 8px; height: 1em;
-      background: #eaeaea;
-      vertical-align: -2px;
-      margin-left: 2px;
-      animation: cursor-blink 0.6s steps(1) infinite;
+    .phone-time {
+      font-size: clamp(3.2rem, 13vw, 4.2rem);
+      font-weight: 300;
+      color: #f2f2f2;
+      letter-spacing: 1px;
+      line-height: 1;
     }
-    @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    .phone-date {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+    }
+    .phone-notif-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 10px;
+    }
+    .phone-alert-card {
+      width: 100%;
+      background: rgba(248, 248, 248, 0.96);
+      border-radius: 16px;
+      padding: 12px 14px 11px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+      opacity: 0;
+      transform: translateY(-26px);
+      transition: opacity 0.35s cubic-bezier(.2,.9,.3,1.3), transform 0.35s cubic-bezier(.2,.9,.3,1.3);
+    }
+    .phone-alert-card.show { opacity: 1; transform: translateY(0); }
+    .phone-alert-card.buzz { animation: phone-buzz 0.5s ease-in-out; }
+    @keyframes phone-buzz {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      20% { transform: translateY(0) translateX(-2px); }
+      40% { transform: translateY(0) translateX(2px); }
+      60% { transform: translateY(0) translateX(-1.5px); }
+      80% { transform: translateY(0) translateX(1.5px); }
+    }
+    .phone-alert-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    .phone-alert-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px; height: 15px;
+      color: #ff8f00;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    .phone-alert-card.emergency .phone-alert-icon { color: #e53935; }
+    .phone-alert-app { flex: 1; }
+    .phone-alert-time {
+      font-size: 0.76rem;
+      font-weight: 400;
+      color: #8a8a8a;
+    }
+    .phone-alert-body {
+      margin-top: 5px;
+      font-size: 0.86rem;
+      line-height: 1.48;
+      color: #262626;
+      word-break: keep-all;
+      letter-spacing: -0.1px;
+    }
+    .phone-alert-more {
+      margin-top: 6px;
+      font-size: 0.72rem;
+      color: #a3a3a3;
+    }
 
     /* --- 2단계: CCTV 감시화면 --- */
-    #cctvScreen { background: rgba(0, 0, 0, 0.12); }
+    @keyframes dread-pulse {
+      0%, 100% { text-shadow: 0 0 8px rgba(229, 57, 53, 0.5); opacity: 0.92; }
+      50% { text-shadow: 0 0 22px rgba(229, 57, 53, 0.95); opacity: 1; }
+    }
+    #cctvScreen { background: transparent; }
+    .cctv-lab-bg {
+      position: absolute; inset: 0;
+      z-index: 2;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 38%, #142019 0%, #070a08 68%, #020302 100%);
+    }
+    .cctv-lab-bg .lab-ceiling {
+      position: absolute; left: 0; right: 0; top: 0; height: 24%;
+      background: linear-gradient(to top, rgba(30,45,36,0.05), rgba(4,6,5,0.7));
+      clip-path: polygon(37% 100%, 63% 100%, 100% 0%, 0% 0%);
+    }
+    .cctv-lab-bg .lab-floor {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 40%;
+      background: linear-gradient(to bottom, rgba(30,45,36,0.05), rgba(6,9,7,0.65));
+      clip-path: polygon(32% 0%, 68% 0%, 100% 100%, 0% 100%);
+    }
+    .cctv-lab-bg .lab-shelf {
+      position: absolute; top: 25%; bottom: 32%; width: 9%;
+      background: repeating-linear-gradient(to bottom, rgba(70,95,78,0.4) 0 3px, transparent 3px 24px);
+      opacity: 0.55;
+    }
+    .cctv-lab-bg .lab-shelf-l { left: 3%; transform: skewY(3.5deg); }
+    .cctv-lab-bg .lab-shelf-r { right: 3%; transform: skewY(-3.5deg); }
+    .cctv-lab-bg .lab-door {
+      position: absolute; left: 50%; top: 29%; width: 6.5%; height: 42%;
+      transform: translateX(-50%);
+      background: rgba(12,17,14,0.92);
+      border: 1px solid rgba(120,150,130,0.22);
+    }
+    .cctv-lab-bg .lab-door::after {
+      content: '';
+      position: absolute; left: 12%; right: 12%; bottom: -3px; height: 2px;
+      background: rgba(255, 205, 120, 0.5);
+      filter: blur(1px);
+      animation: door-light-flicker 2.8s ease-in-out infinite;
+    }
+    @keyframes door-light-flicker {
+      0%, 100% { opacity: 0.45; }
+      42% { opacity: 0.1; }
+      58% { opacity: 0.6; }
+      82% { opacity: 0.25; }
+    }
     #cctvScreen .cctv-hud {
       position: absolute;
       top: 22px; left: 24px;
+      z-index: 8;
       display: flex;
       align-items: center;
       gap: 14px;
@@ -247,13 +351,13 @@
       opacity: 0;
       text-shadow: 0 0 20px rgba(229, 57, 53, 0.9);
     }
-    .cctv-terminated-text.show { opacity: 1; animation: signal-jitter 0.09s infinite steps(2, jump-start); }
+    .cctv-terminated-text.show { opacity: 1; animation: dread-pulse 1.8s ease-in-out infinite; }
 
     /* CCTV 단계에서 노이즈 캔버스에 옅은 초록빛 감시카메라 톤을 입힘 */
     #tvStaticCanvas.cctv-tint { filter: grayscale(0.4) sepia(0.3) hue-rotate(60deg) saturate(1.6) brightness(0.9); }
 
     /* 실루엣이 무한반복 대신 한 번만 화면을 지나가도록 트리거하는 클래스 */
-    .apoc-silhouette.silhouette-play { opacity: 0; animation: silhouette-lurch 2s ease-in-out 1; }
+    .apoc-silhouette.silhouette-play { opacity: 0; animation: silhouette-lurch 3.4s ease-in-out 1; }
 
     /* 이미지 파일이 아직 저장소에 없을 때, 깨진 아이콘 대신 보여주는 대체 박스 */
     .img-fallback {
@@ -356,25 +460,48 @@
     }
     @keyframes rec-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
 
-    /* Faint distress silhouettes drifting behind the static, for extra dread */
+    /* 배경 복도를 가로질러 아주 느리고 희미하게 지나가는 먼 인영 */
     .apoc-silhouette {
       position: fixed;
-      bottom: 0;
-      width: 60px; height: 130px;
+      bottom: 26%;
+      left: 42%;
+      width: 46px; height: 118px;
       background: #000;
       opacity: 0;
       clip-path: polygon(30% 0%, 70% 0%, 80% 20%, 70% 45%, 90% 55%, 80% 100%, 20% 100%, 10% 55%, 30% 45%, 20% 20%);
-      z-index: 1;
+      z-index: 3;
       pointer-events: none;
     }
-    #intro-screen.waking .apoc-silhouette {
-      animation: silhouette-lurch 3s ease-in-out infinite;
+    .apoc-silhouette.silhouette-play {
+      opacity: 0;
+      animation: silhouette-lurch 3.4s ease-in-out 1;
     }
     @keyframes silhouette-lurch {
-      0%   { opacity: 0; transform: translateX(0) translateY(0); }
-      15%  { opacity: 0.5; }
-      30%  { opacity: 0; transform: translateX(30px) translateY(-4px); }
-      100% { opacity: 0; }
+      0%   { opacity: 0; transform: translateX(-90px) translateY(0); }
+      30%  { opacity: 0.4; }
+      50%  { opacity: 0.5; transform: translateX(0px) translateY(-2px); }
+      75%  { opacity: 0.28; transform: translateX(70px) translateY(-3px); }
+      100% { opacity: 0; transform: translateX(140px) translateY(-3px); }
+    }
+
+    /* 신호가 끊기기 직전, 렌즈 바로 앞까지 훅 다가온 듯 보이는 크고 짙은 인영 */
+    .apoc-silhouette-close {
+      bottom: 0;
+      left: 50%;
+      width: 220px; height: 100vh;
+      transform: translateX(-50%);
+      clip-path: polygon(38% 8%, 62% 8%, 70% 22%, 60% 40%, 82% 48%, 68% 100%, 32% 100%, 18% 48%, 40% 40%, 30% 22%);
+      z-index: 4;
+      background: #000;
+    }
+    .apoc-silhouette-close.silhouette-close-play {
+      opacity: 0;
+      animation: silhouette-close-lunge 0.55s cubic-bezier(.3,0,.4,1) 1;
+    }
+    @keyframes silhouette-close-lunge {
+      0%   { opacity: 0; transform: translateX(-50%) scale(0.85); }
+      55%  { opacity: 0.82; transform: translateX(-50%) scale(1); }
+      100% { opacity: 0.7; transform: translateX(-50%) scale(1.03); }
     }
 
     .intro-title-kanji {
@@ -1045,11 +1172,8 @@
        ========================================================================== -->
   <div id="intro-screen">
     <div class="static-bg"></div>
-    <canvas id="tvStaticCanvas"></canvas>
     <div class="tv-tracking-bar"></div>
     <div class="tv-blackout" id="tvBlackout"></div>
-    <div class="apoc-silhouette" id="silhouetteL" style="left: 12%;"></div>
-    <div class="apoc-silhouette" id="silhouetteR" style="right: 18%;"></div>
 
     <!-- Wake-up Title Screen -->
     <div id="intro-step1" style="z-index: 2;">
@@ -1060,15 +1184,31 @@
       </button>
     </div>
 
-    <!-- 1단계: 긴급재난문자 (타이핑 연출) -->
-    <div id="disasterAlertScreen" class="intro-phase">
-      <div class="disaster-lines" id="disasterLines"></div>
+    <!-- 1단계: 실제 긴급재난문자 수신 화면 (잠금화면 사실적 재현) -->
+    <div id="disasterAlertScreen" class="intro-phase phone-phase">
+      <div class="phone-mock">
+        <div class="phone-clock">
+          <div class="phone-time" id="phoneTime">03:41</div>
+          <div class="phone-date" id="phoneDate">8월 13일 목요일</div>
+        </div>
+        <div class="phone-notif-stack" id="phoneNotifStack"></div>
+      </div>
     </div>
 
-    <!-- 2단계: CCTV 감시화면 -->
+    <!-- 2단계: CCTV 감시화면 (연구동 지하 복도) -->
     <div id="cctvScreen" class="intro-phase">
+      <div class="cctv-lab-bg">
+        <div class="lab-ceiling"></div>
+        <div class="lab-floor"></div>
+        <div class="lab-shelf lab-shelf-l"></div>
+        <div class="lab-shelf lab-shelf-r"></div>
+        <div class="lab-door"></div>
+        <div class="apoc-silhouette" id="silhouetteL"></div>
+        <div class="apoc-silhouette apoc-silhouette-close" id="silhouetteR"></div>
+      </div>
+      <canvas id="tvStaticCanvas"></canvas>
       <div class="cctv-hud">
-        <span class="cctv-cam-label"><span class="cctv-rec-dot"></span>CAM 04</span>
+        <span class="cctv-cam-label"><span class="cctv-rec-dot"></span>CAM 07 · 연구동 B2 복도</span>
         <span class="cctv-timestamp" id="cctvTimestamp">2026-08-13 03:41:17</span>
       </div>
       <div class="cctv-status-text" id="cctvStatusText"></div>
@@ -2213,65 +2353,104 @@
       });
     }
 
-    // 재난문자 수신음 (삐- 삐- 삐- 3연속 비프)
-    function playDisasterBeep() {
+    // 문자 수신 진동음 - 화려한 경고음 대신 실제 휴대폰 진동에 가까운 아주 낮고 짧은 이중 펄스
+    function playPhoneVibrate() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
-        [0, 0.35, 0.7].forEach(t => {
+        [0, 0.14].forEach(t => {
           const osc = ctx.createOscillator();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(1000, ctx.currentTime + t);
+          osc.frequency.setValueAtTime(120, ctx.currentTime + t);
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0.0001, ctx.currentTime + t);
-          gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + t + 0.02);
-          gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + t + 0.28);
+          gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + t + 0.015);
+          gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + t + 0.09);
           osc.connect(gain).connect(ctx.destination);
           osc.start(ctx.currentTime + t);
-          osc.stop(ctx.currentTime + t + 0.3);
+          osc.stop(ctx.currentTime + t + 0.1);
         });
       } catch (e) { /* 오디오 미지원 환경은 조용히 무시 */ }
     }
 
-    // 1단계: 긴급재난문자가 한 줄씩 타이핑되다가, 마지막에 소름 끼치는 한 줄로 마무리
+    // CCTV 화면 바로 앞까지 뭔가 다가왔을 때 나는 아주 희미한 감지음 (거의 들리지 않을 정도로 조용하게)
+    function playMotionPing() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.3);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.02);
+        gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.32);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.34);
+      } catch (e) { /* 오디오 미지원 환경은 조용히 무시 */ }
+    }
+
+    // 알림 카드 하나를 스택에 만들어 붙이는 헬퍼
+    function createAlertCard(kind, appLabel, time, body) {
+      const card = document.createElement('div');
+      card.className = 'phone-alert-card' + (kind === 'emergency' ? ' emergency' : '');
+      card.innerHTML =
+        '<div class="phone-alert-top">' +
+          '<span class="phone-alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>' +
+          '<span class="phone-alert-app">' + appLabel + '</span>' +
+          '<span class="phone-alert-time">' + time + '</span>' +
+        '</div>' +
+        '<div class="phone-alert-body">' + body + '</div>' +
+        '<div class="phone-alert-more">눌러서 더 보기</div>';
+      return card;
+    }
+
+    // 1단계: 실제 재난문자를 참고한 잠금화면 재현 - 안전안내문자로 시작해 긴급재난문자로 격상됨
     async function runDisasterPhase() {
       const screen = document.getElementById('disasterAlertScreen');
-      const linesWrap = document.getElementById('disasterLines');
-      linesWrap.innerHTML = '';
+      const stack = document.getElementById('phoneNotifStack');
+      stack.innerHTML = '';
       screen.classList.add('show');
-      playDisasterBeep();
 
-      const lines = [
-        { text: '[긴급재난문자]', cls: '' },
-        { text: '화연시 전역 감염 확산 경보 발령', cls: 'warn' },
-        { text: '즉시 실내로 대피하고 문을 잠그십시오', cls: 'warn' },
-        { text: '외부 접촉 시 감염 위험이 있습니다', cls: '' },
-        { text: '재전송 중...', cls: '' },
-        { text: '수신 실패', cls: 'warn' },
-        { text: '재전송 중...', cls: '' },
-        { text: '...', cls: '' }
-      ];
+      // 화면만 켜진 채 잠시 정적 - 아직 아무 것도 오지 않은 상태
+      await wait(1100);
 
-      for (const line of lines) {
-        const p = document.createElement('div');
-        p.className = 'disaster-line' + (line.cls ? ' ' + line.cls : '');
-        linesWrap.appendChild(p);
-        await typeLine(p, line.text, 24);
-        await wait(260);
-      }
+      // 첫 번째 문자: 낮은 단계의 안전안내문자
+      playPhoneVibrate();
+      const card1 = createAlertCard(
+        'info', '안전안내문자', '지금',
+        '[질병관리청] 8월13일 03:15 현재 화연시 일대 원인불명 집단 발열 증상 다수 신고 접수. 외출을 자제하고 경과를 지켜봐 주시기 바랍니다'
+      );
+      stack.appendChild(card1);
+      requestAnimationFrame(() => card1.classList.add('show'));
 
-      await wait(200);
-      screen.classList.add('buzz');
-      const finalLine = document.createElement('div');
-      finalLine.className = 'disaster-line final';
-      linesWrap.appendChild(finalLine);
-      await typeLine(finalLine, '당신 근처에도 있습니다.', 45);
+      await wait(2800);
 
-      await wait(1000);
+      // 첫 문자의 시간 표시가 흘러감 (방금 -> 1분 전)
+      const t1 = card1.querySelector('.phone-alert-time');
+      if (t1) t1.textContent = '1분 전';
+
+      // 두 번째 문자: 긴급재난문자로 격상, 위에 새로 쌓임
+      playPhoneVibrate();
+      const card2 = createAlertCard(
+        'emergency', '긴급재난문자', '지금',
+        '[행정안전부] 8월13일 03:41 현재 화연시 전역 감염체 다수 출현. 국민 여러분께서는 즉시 실내로 대피하고 문을 잠그시기 바랍니다'
+      );
+      stack.appendChild(card2);
+      requestAnimationFrame(() => card2.classList.add('show'));
+
+      await wait(600);
+      card2.classList.add('buzz');
+
+      // 문자를 다 읽을 시간 - 조용한 정적
+      await wait(2600);
+
       screen.classList.remove('show');
-      screen.classList.remove('buzz');
-      await wait(200);
+      await wait(300);
     }
 
     // 2단계: CCTV 감시화면 - 실루엣이 스쳐 지나가고, 신호가 끊기다가 강제 종료됨
@@ -2282,9 +2461,12 @@
       const timestampEl = document.getElementById('cctvTimestamp');
       const canvas = document.getElementById('tvStaticCanvas');
       const blackout = document.getElementById('tvBlackout');
+      const sClose = document.getElementById('silhouetteR');
 
       screen.classList.add('show');
       canvas.classList.add('cctv-tint');
+      // 옅은 그레인만 얹어서 뒤편 복도와 인영이 실제로 보이도록 함 (이전엔 opacity가 0으로 남아 아무것도 안 보였음)
+      canvas.style.opacity = '0.28';
       startTvStaticNoise();
       playStaticSound();
 
@@ -2298,28 +2480,37 @@
         timestampEl.textContent = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
       }, 1000);
 
-      await wait(500);
+      // 한동안 아무 일도 일어나지 않는 정적 - 그저 노이즈와 타임스탬프만 흐른다
+      await wait(1900);
 
-      // 실루엣이 화면 가장자리를 한 번 스쳐 지나감
+      // 복도 안쪽, 문 근처로 먼 인영 하나가 아주 느리게 스쳐 지나감 (있는 듯 없는 듯)
       const sL = document.getElementById('silhouetteL');
       if (sL) {
         sL.classList.add('silhouette-play');
-        setTimeout(() => sL.classList.remove('silhouette-play'), 2100);
+        setTimeout(() => sL.classList.remove('silhouette-play'), 3400);
       }
 
-      await wait(700);
+      await wait(2600);
 
-      // SIGNAL LOST / RECONNECTING... 이 불규칙하게 깜빡임
-      const flickerMsgs = ['SIGNAL LOST', 'RECONNECTING...', 'SIGNAL LOST', 'RECONNECTING...', 'SIGNAL LOST'];
-      for (const msg of flickerMsgs) {
-        statusText.textContent = msg;
+      // SIGNAL LOST / RECONNECTING... - 일정한 점멸이 아니라 불규칙하게, 점점 간격이 벌어지며 끊긴다
+      const flickerMsgs = [
+        { text: 'SIGNAL LOST', on: 340, off: 900 },
+        { text: 'RECONNECTING...', on: 520, off: 1200 }
+      ];
+      for (const f of flickerMsgs) {
+        statusText.textContent = f.text;
         statusText.classList.add('show');
-        await wait(260);
+        await wait(f.on);
         statusText.classList.remove('show');
-        await wait(110);
+        await wait(f.off);
       }
 
-      await wait(200);
+      // 신호가 완전히 끊기기 직전, 렌즈 바로 앞까지 뭔가 훅 다가온다 - 아주 짧게, 한 번만
+      playMotionPing();
+      if (sClose) {
+        sClose.classList.add('silhouette-close-play');
+      }
+      await wait(550);
 
       // 프리즈 프레임: 노이즈가 멈추고 색이 왜곡된 채 화면이 굳음
       stopTvStaticNoise();
@@ -2341,6 +2532,7 @@
       canvas.classList.remove('cctv-tint');
       canvas.style.filter = '';
       canvas.style.opacity = '';
+      if (sClose) sClose.classList.remove('silhouette-close-play');
       if (blackout) blackout.style.opacity = '0';
     }
 
@@ -2355,18 +2547,12 @@
       btn.style.pointerEvents = 'none';
       document.getElementById('intro-step1').style.display = 'none';
 
-      // 클릭 즉시 "잘못 누른" 듯한 하드 컷 - 붉은 프레임 + 완전 암전을 순간적으로 튕겨준다
+      // 클릭 즉시 화면이 훅 꺼지듯 암전 - 화려한 붉은 점멸 대신, 정적과 어둠으로 긴장을 조성
       const blackout = document.getElementById('tvBlackout');
       if (blackout) {
-        blackout.classList.add('err-red');
         blackout.style.opacity = '1';
-        await wait(70);
+        await wait(650);
         blackout.style.opacity = '0';
-        await wait(70);
-        blackout.style.opacity = '1';
-        await wait(80);
-        blackout.style.opacity = '0';
-        blackout.classList.remove('err-red');
       }
 
       // 1단계: 긴급재난문자 -> 2단계: CCTV 감시화면 -> 사이트 진입
@@ -2480,19 +2666,19 @@
         const ctx = new AudioCtx();
         const duration = 3.2;
 
-        // 클릭 즉시 터지는 짧고 날카로운 "오작동" 버즈 - 잘못 누른 느낌의 핵심
+        // 클릭 즉시 터지는 아주 짧고 낮은 "오작동" 버즈 - 화려한 사이렌보다 낮고 조용하게
         const buzz = ctx.createOscillator();
         buzz.type = 'square';
-        buzz.frequency.setValueAtTime(1200, ctx.currentTime);
+        buzz.frequency.setValueAtTime(700, ctx.currentTime);
         buzz.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.18);
         const buzzGain = ctx.createGain();
-        buzzGain.gain.setValueAtTime(0.28, ctx.currentTime);
+        buzzGain.gain.setValueAtTime(0.1, ctx.currentTime);
         buzzGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
         buzz.connect(buzzGain).connect(ctx.destination);
         buzz.start();
         buzz.stop(ctx.currentTime + 0.22);
 
-        // White noise burst (radio static)
+        // White noise burst (radio static) - 낮은 볼륨으로 은은하게
         const bufferSize = Math.floor(duration * ctx.sampleRate);
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -2503,23 +2689,23 @@
 
         const noiseGain = ctx.createGain();
         noiseGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        noiseGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.12);
-        noiseGain.gain.linearRampToValueAtTime(0.16, ctx.currentTime + 1.6);
+        noiseGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.12);
+        noiseGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 1.6);
         noiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
 
         noise.connect(noiseGain).connect(ctx.destination);
 
-        // 불규칙한 간격으로 지지직 끊기는 크래클(신호 두절) 펄스
+        // 불규칙한 간격으로 지지직 끊기는 크래클(신호 두절) 펄스 - 작게
         const crackleTimes = [0.3, 0.55, 0.9, 1.4, 1.9, 2.5, 2.9];
         crackleTimes.forEach(t => {
           const crackleGain = ctx.createGain();
           crackleGain.gain.setValueAtTime(0.001, ctx.currentTime + t);
-          crackleGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + t + 0.015);
+          crackleGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + t + 0.015);
           crackleGain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + t + 0.06);
           noise.connect(crackleGain).connect(ctx.destination);
         });
 
-        // Low creepy drone underneath the static
+        // Low creepy drone underneath the static - 아주 은은하게
         const osc = ctx.createOscillator();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(55, ctx.currentTime);
@@ -2527,7 +2713,7 @@
 
         const oscGain = ctx.createGain();
         oscGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        oscGain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.5);
+        oscGain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.5);
         oscGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
 
         osc.connect(oscGain).connect(ctx.destination);
