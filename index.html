@@ -10,9 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;600;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Leaflet.js CSS (Interactive Map) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <!-- Leaflet (for the CartoDB Dark Matter No-Labels tactical map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
     /* ==========================================================================
@@ -88,6 +87,80 @@
       0% { opacity: 0.8; }
       50% { opacity: 0.95; }
       100% { opacity: 0.85; }
+    }
+
+    /* Intensified static once the wake sequence starts */
+    #intro-screen.waking .static-bg {
+      animation: static-flicker-intense 0.06s infinite;
+    }
+    @keyframes static-flicker-intense {
+      0%   { opacity: 0.55; filter: contrast(1.4) brightness(1.1); }
+      20%  { opacity: 1;    filter: contrast(2)   brightness(0.7); }
+      40%  { opacity: 0.4;  filter: contrast(1.1) brightness(1.4); }
+      60%  { opacity: 0.9;  filter: contrast(1.8) brightness(0.8); }
+      80%  { opacity: 0.5;  filter: contrast(1.3) brightness(1.2); }
+      100% { opacity: 0.8;  filter: contrast(1.5) brightness(1); }
+    }
+
+    #intro-screen.waking .intro-title-kanji,
+    #intro-screen.waking .intro-sub {
+      animation: signal-jitter 0.12s infinite;
+    }
+    @keyframes signal-jitter {
+      0%   { transform: translate(0, 0); }
+      20%  { transform: translate(-3px, 1px); }
+      40%  { transform: translate(2px, -2px); }
+      60%  { transform: translate(-1px, 2px); }
+      80%  { transform: translate(3px, -1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    #intro-screen.waking { animation: screen-strobe 0.5s infinite; }
+    @keyframes screen-strobe {
+      0%, 92% { background: #050506; }
+      94% { background: #1a0000; }
+      96% { background: #050506; }
+      98% { background: #0a0a0a; }
+      100% { background: #050506; }
+    }
+
+    /* Flashing creepy phrases during the wake sequence */
+    .glitch-text-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 5;
+      font-family: var(--font-heading);
+      font-size: clamp(1.6rem, 6vw, 3.2rem);
+      color: var(--accent-red-bright);
+      text-shadow: 0 0 25px rgba(229, 57, 53, 0.9), 2px 0 #00bcd4, -2px 0 #ff0000;
+      letter-spacing: 3px;
+      opacity: 0;
+      transition: opacity 0.08s ease;
+    }
+
+    /* Faint distress silhouettes drifting behind the static, for extra dread */
+    .apoc-silhouette {
+      position: fixed;
+      bottom: 0;
+      width: 60px; height: 130px;
+      background: #000;
+      opacity: 0;
+      clip-path: polygon(30% 0%, 70% 0%, 80% 20%, 70% 45%, 90% 55%, 80% 100%, 20% 100%, 10% 55%, 30% 45%, 20% 20%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    #intro-screen.waking .apoc-silhouette {
+      animation: silhouette-lurch 3s ease-in-out infinite;
+    }
+    @keyframes silhouette-lurch {
+      0%   { opacity: 0; transform: translateX(0) translateY(0); }
+      15%  { opacity: 0.5; }
+      30%  { opacity: 0; transform: translateX(30px) translateY(-4px); }
+      100% { opacity: 0; }
     }
 
     .intro-title-kanji {
@@ -309,6 +382,19 @@
     .cta-community { background: #03cf5d; color: #fff; box-shadow: 0 0 15px rgba(3, 207, 93, 0.3); }
     .cta-community:hover { transform: translateY(-2px); background: #22e279; }
 
+    .cta-survival {
+      background: var(--accent-yellow);
+      color: #1a1200;
+      box-shadow: 0 0 15px rgba(255, 179, 0, 0.5);
+      animation: cta-pulse 1.6s infinite;
+    }
+    .cta-survival:hover { transform: translateY(-2px); background: #ffc94d; }
+    @keyframes cta-pulse {
+      0% { box-shadow: 0 0 10px rgba(255, 179, 0, 0.4); }
+      50% { box-shadow: 0 0 22px rgba(255, 179, 0, 0.85); }
+      100% { box-shadow: 0 0 10px rgba(255, 179, 0, 0.4); }
+    }
+
     /* ==========================================================================
        4. Tabs & Timeline System
        ========================================================================== */
@@ -412,10 +498,9 @@
     .badge-red { background: rgba(229, 57, 53, 0.2); color: var(--accent-red-bright); border: 1px solid var(--accent-red); }
     .badge-yellow { background: rgba(255, 179, 0, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+    .badge-black { background: rgba(0, 0, 0, 0.55); color: #ff4d4d; border: 1px solid #555; }
 
-    /* ==========================================================================
-       5. Leaflet Interactive Map Styling (Google Map Style Dark Mode)
-       ========================================================================== */
+    /* Tactical Map Visualizer */
     .tactical-map-box {
       background: #090a0c;
       border: 1px solid rgba(229, 57, 53, 0.4);
@@ -424,79 +509,65 @@
       margin-bottom: 30px;
     }
 
-    #leaflet-map {
-      width: 100%;
-      height: 480px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
+    .map-grid-visual {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
       margin-top: 15px;
-      background-color: #0d1117;
-      z-index: 10;
     }
 
-    /* Dark Mode Filter for Map Tiles */
-    .leaflet-tile-pane {
-      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
-    }
-
-    /* Custom Leaflet Marker Icon Style */
-    .custom-map-icon {
-      background: rgba(22, 24, 28, 0.9);
-      border: 2px solid var(--accent-red-bright);
-      border-radius: 50%;
-      color: #fff;
-      display: flex !important;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
-      box-shadow: 0 0 12px var(--accent-red-bright);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .custom-map-icon:hover {
-      transform: scale(1.25);
-      background: var(--accent-red);
-    }
-
-    /* Leaflet Popup Style Override */
-    .leaflet-popup-content-wrapper {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--accent-red-bright);
+    .map-node {
+      background: rgba(22, 24, 28, 0.8);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      padding: 12px;
       border-radius: 6px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.8);
-      font-family: var(--font-body);
-    }
-
-    .leaflet-popup-tip {
-      background: var(--accent-red-bright);
-    }
-
-    .map-pop-title {
-      font-family: var(--font-heading);
-      color: #fff;
-      font-size: 1.1rem;
-      margin-bottom: 4px;
-    }
-
-    .map-pop-btn {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 4px 10px;
-      background: var(--accent-red);
-      color: #fff;
-      border-radius: 3px;
-      font-size: 0.8rem;
+      text-align: center;
+      font-size: 0.85rem;
       cursor: pointer;
-      font-weight: bold;
-      border: none;
+      transition: all 0.2s;
     }
 
-    .map-pop-btn:hover { background: var(--accent-red-bright); }
+    .map-node:hover {
+      border-color: var(--accent-red-bright);
+      background: rgba(229, 57, 53, 0.15);
+      transform: scale(1.03);
+    }
+
+    .map-node-icon { font-size: 1.3rem; margin-bottom: 6px; color: var(--accent-red-bright); }
+
+    /* Leaflet tactical map (CartoDB Dark Matter, no labels) */
+    #tacticalLeafletMap {
+      width: 100%;
+      height: 360px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(229, 57, 53, 0.3);
+      background: #0a0a0c;
+    }
+    .tactical-marker-inner {
+      width: 30px; height: 30px;
+      background: rgba(229, 57, 53, 0.92);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(229, 57, 53, 0.9);
+      cursor: pointer;
+    }
+    .leaflet-tooltip.tactical-tooltip {
+      background: #111;
+      color: #fff;
+      border: 1px solid var(--accent-red-bright);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+    }
+    .leaflet-container { background: #0a0a0c; }
 
     /* ==========================================================================
-       6. Integrated Community Page UI
+       5. Integrated Community Page UI
        ========================================================================== */
     .comm-board-container {
       background: var(--bg-card);
@@ -654,57 +725,36 @@
     }
 
     @media (max-width: 768px) {
+      .map-grid-visual { grid-template-columns: repeat(2, 1fr); }
       .cta-buttons { flex-direction: column; }
       .cta-btn { justify-content: center; }
-      #leaflet-map { height: 380px; }
     }
   </style>
 </head>
 <body>
 
   <!-- ==========================================================================
-       GATEKEEPER INTRO SCREEN (Glitch Title + Expanded 5-Quiz System)
+       GATEKEEPER INTRO SCREEN (Static Wake-Up Cinematic — no quiz here anymore)
        ========================================================================== -->
   <div id="intro-screen">
     <div class="static-bg"></div>
+    <div class="apoc-silhouette" style="left: 12%;"></div>
+    <div class="apoc-silhouette" style="right: 18%; animation-delay: 1.2s;"></div>
+    <div class="glitch-text-overlay" id="glitchTextOverlay"></div>
 
-    <!-- Step 1: Initial Title Screen -->
+    <!-- Wake-up Title Screen -->
     <div id="intro-step1" style="z-index: 2;">
-      <div class="intro-title-kanji glitch" data-text="화연 (禾延)">화연 (禾延)</div>
-      <p class="intro-sub">발병 72시간 경과 · 화연시 생존 가능성 종합 진단</p>
-      <button class="gate-btn" onclick="startIntroQuiz()">
-        <i class="fa-solid fa-shield-halved"></i> 생존 가능성 테스트 시작 (5문항)
+      <div class="intro-title-kanji glitch" data-text="화연 (禾延)" id="introTitle">화연 (禾延)</div>
+      <p class="intro-sub" id="introSubText">신호 미약 · 발병 72시간 경과 · 의식 회복 시도 중...</p>
+      <button class="gate-btn" id="wakeBtn" onclick="startWakeSequence()">
+        <i class="fa-solid fa-power-off"></i> 신호 수신 (클릭하여 깨어나기)
       </button>
-    </div>
-
-    <!-- Step 2: Interactive Quiz Box -->
-    <div id="intro-quiz-box" class="intro-quiz-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.3rem;" id="quizQTitle">[진단 Q1]</h3>
-        <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 0.85rem;" id="quizProgress">1 / 5</span>
-      </div>
-
-      <p style="color: #ddd; font-size: 0.95rem; margin-bottom: 15px;" id="quizQText">질문 내용이 표시됩니다.</p>
-
-      <div id="quizOptions"></div>
-
-      <!-- Result Screen -->
-      <div id="quizResult" style="display: none; text-align: center; margin-top: 15px;">
-        <p style="color: var(--text-muted); font-size: 0.85rem;">측정된 화연시 생존 가능성</p>
-        <div id="quizScoreDisplay" style="font-family: var(--font-tech); font-size: 3.2rem; color: var(--accent-red-bright); font-weight: 900;">85%</div>
-        <p id="quizScoreComment" style="color: #ccc; margin: 12px 0 20px; font-size: 0.9rem; line-height: 1.5; word-break: keep-all;">
-          결과 메시지가 여기에 출력됩니다.
-        </p>
-        <button class="gate-btn" onclick="enterMainSite()">
-          <i class="fa-solid fa-right-to-bracket"></i> 화연시 진입하기 (메인 이동)
-        </button>
-      </div>
     </div>
   </div>
 
 
   <!-- ==========================================================================
-       MAIN WEBSITE (Unlocked After Quiz)
+       MAIN WEBSITE (Unlocked After Wake-Up Sequence)
        ========================================================================== -->
   <div id="main-site">
     <!-- Top Emergency Bar -->
@@ -723,19 +773,19 @@
 
       <!-- Action Buttons (CTA) -->
       <div class="cta-buttons">
-        <a href="#" target="_blank" class="cta-btn cta-kakao">
-          <i class="fa-solid fa-comment"></i> 오픈채팅 참여
-        </a>
         <a href="#" target="_blank" class="cta-btn cta-novel">
           <i class="fa-solid fa-book-open"></i> 원작 소설 바로가기
         </a>
-        <!-- 생존자 커뮤니티 버튼 -->
+        <!-- 생존자 커뮤니티 버튼 (누르면 지도 탭처럼 해당 탭으로 이동) -->
         <button class="cta-btn cta-community" onclick="switchTab('community')">
           <i class="fa-solid fa-users"></i> 생존자 커뮤니티
         </button>
+        <button class="cta-btn cta-survival" onclick="switchTab('survival')">
+          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
+        </button>
       </div>
 
-      <!-- Gov Briefing Box -->
+      <!-- Restored Gov Briefing Box -->
       <div class="gov-alert-box">
         <div class="gov-alert-header">
           <i class="fa-solid fa-triangle-exclamation"></i>
@@ -783,8 +833,13 @@
         <button class="tab-btn" id="tab-btn-character" onclick="switchTab('character')">
           <i class="fa-solid fa-user-ninja"></i> 등장인물 (한서우)
         </button>
+        <!-- 커뮤니티 탭 추가 -->
         <button class="tab-btn comm-tab" id="tab-btn-community" onclick="switchTab('community')">
           <i class="fa-solid fa-users"></i> 생존자 커뮤니티
+        </button>
+        <!-- 생존 테스트 바로가기 탭 (기존 '오픈채팅 참여' 위치 대체) -->
+        <button class="tab-btn" id="tab-btn-survival" onclick="switchTab('survival')">
+          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
         </button>
       </nav>
 
@@ -846,235 +901,192 @@
         </div>
       </section>
 
-      <!-- TAB 2: 주요 시설 & 지도 (구글 맵 스타일 Leaflet.js 반영) -->
+      <!-- TAB 2: 주요 시설 & 지도 (Interactive Modals) -->
       <section id="locations" class="tab-content">
-        <!-- Interactive Leaflet Map Container -->
+        <!-- Tactical Blueprint Map -->
         <div class="tactical-map-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-weight: 700;">
-              <i class="fa-solid fa-map"></i> HWAYEON INTERACTIVE SATELLITE MAP (전체 26개소)
+              <i class="fa-solid fa-crosshairs"></i> HWAYEON CITY TACTICAL MAP
             </span>
-            <span class="badge badge-red">DRAG & ZOOM / CLICK MARKER</span>
+            <span class="badge badge-red">CLICK NODE FOR DETAILS</span>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">
-            * 구글 맵 방식처럼 마우스 드래그로 지도 이동, 휠/터치로 확대 및 축소가 가능합니다. 핀 마커를 클릭해 상세 정보를 확인하세요.
-          </p>
 
-          <!-- Real Interactive Map Canvas -->
-          <div id="leaflet-map"></div>
+          <!-- Clean Dark tile map (CartoDB Dark Matter, no place-name labels) -->
+          <div id="tacticalLeafletMap"></div>
+
+          <div class="map-grid-visual">
+            <div class="map-node" onclick="openLocationModal('school')">
+              <div class="map-node-icon"><i class="fa-solid fa-school"></i></div>
+              <strong>화연 고/중학교</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('cityhall')">
+              <div class="map-node-icon"><i class="fa-solid fa-building-flag"></i></div>
+              <strong>화연시청</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('military')">
+              <div class="map-node-icon"><i class="fa-solid fa-shield-cat"></i></div>
+              <strong>외곽 군 검문소</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('apt')">
+              <div class="map-node-icon"><i class="fa-solid fa-building-user"></i></div>
+              <strong>한빛아파트</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('hospital')">
+              <div class="map-node-icon"><i class="fa-solid fa-hospital"></i></div>
+              <strong>화연중앙병원</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('mart')">
+              <div class="map-node-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+              <strong>하나로마트</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('lab')">
+              <div class="map-node-icon"><i class="fa-solid fa-flask"></i></div>
+              <strong>제인바이오</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>화연선 지하철</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('park_station')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>화연대공원역 (2번역)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('marina')">
+              <div class="map-node-icon"><i class="fa-solid fa-anchor"></i></div>
+              <strong>화연천 수상 마리나 &amp; 강변 선착장</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('waterplant')">
+              <div class="map-node-icon"><i class="fa-solid fa-droplet"></i></div>
+              <strong>화연 수도사업소 (정수장)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('powerplant')">
+              <div class="map-node-icon"><i class="fa-solid fa-industry"></i></div>
+              <strong>화연 자원회수시설 (열병합발전소)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('firestation')">
+              <div class="map-node-icon"><i class="fa-solid fa-fire-extinguisher"></i></div>
+              <strong>화연소방서</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('busterminal')">
+              <div class="map-node-icon"><i class="fa-solid fa-bus"></i></div>
+              <strong>화연 시외버스터미널 &amp; 복합쇼핑몰</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('golfclub')">
+              <div class="map-node-icon"><i class="fa-solid fa-golf-ball-tee"></i></div>
+              <strong>화연CC 골프장</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('gasstation')">
+              <div class="map-node-icon"><i class="fa-solid fa-gas-pump"></i></div>
+              <strong>주유소 체인 (화연IC 인근)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('nursinghome')">
+              <div class="map-node-icon"><i class="fa-solid fa-house-medical"></i></div>
+              <strong>하늘요양병원</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('stadium')">
+              <div class="map-node-icon"><i class="fa-solid fa-dumbbell"></i></div>
+              <strong>화연공설운동장 / 체육관</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('iccheckpoint')">
+              <div class="map-node-icon"><i class="fa-solid fa-road-barrier"></i></div>
+              <strong>화연IC 및 대교 통제선</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('prison')">
+              <div class="map-node-icon"><i class="fa-solid fa-handcuffs"></i></div>
+              <strong>화연교도소</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('apartment_tower')">
+              <div class="map-node-icon"><i class="fa-solid fa-city"></i></div>
+              <strong>화연 푸르지오 라포레 (주상복합)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('villatown')">
+              <div class="map-node-icon"><i class="fa-solid fa-house-chimney"></i></div>
+              <strong>성운 빌라촌 &amp; 구도심 주택가</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('university')">
+              <div class="map-node-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <strong>화연국립대학교 캠퍼스</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('broadcast')">
+              <div class="map-node-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+              <strong>화연방송국 / 송신탑</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('cathedral')">
+              <div class="map-node-icon"><i class="fa-solid fa-church"></i></div>
+              <strong>화연중앙성당 / 메가처치</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('crematorium')">
+              <div class="map-node-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
+              <strong>화연화장장</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('trainstation')">
+              <div class="map-node-icon"><i class="fa-solid fa-train"></i></div>
+              <strong>화연역 (기차역)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway1')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 1번역 (서울방면)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway3')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 3번역 (화연시청)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway4')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 4번역 (화연중앙)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway5')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 5번역 (한빛)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway6')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 6번역 (하나로마트)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway7')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 7번역 (화연산업단지)</strong>
+            </div>
+            <div class="map-node" onclick="openLocationModal('subway8')">
+              <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
+              <strong>지하철 8번역 (화연IC)</strong>
+            </div>
+          </div>
         </div>
 
-        <!-- Location Cards Grid (전체 카드 목록) -->
-        <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.3rem; margin: 25px 0 15px;">
-          <i class="fa-solid fa-list-check" style="color: var(--accent-red-bright);"></i> 전체 시설 리스트 (클릭 시 상세 모달)
-        </h3>
+        <!-- Location Cards Grid -->
         <div class="grid-2">
-          <div class="card" onclick="openLocationModal('hanbit')">
+          <div class="card" onclick="openLocationModal('school')">
             <div class="card-title">
-              <span><i class="fa-solid fa-building-user" style="color: var(--accent-green);"></i> 한빛아파트 101~103동</span>
-              <span class="badge badge-green">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">방어 구축 완료. 1~3층 계단을 철거하고 4층 이상에서 주민들이 집단 거주 중. 메인 거점.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('grandpark')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-tree" style="color: var(--accent-green);"></i> 화연대공원역</span>
-              <span class="badge badge-green">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">지하철 2번역. 감염자 밀도가 낮아 안전 우회로로 활용 가능한 구간.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('marina')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-ship" style="color: var(--accent-green);"></i> 화연천 수상 마리나</span>
-              <span class="badge badge-green">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">육지 접근이 불가능한 지형적 특성으로 고립된 안전지대. 수상 이동수단 확보 요충지.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('univ')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-graduation-cap" style="color: var(--accent-yellow);"></i> 화연국립대학교</span>
+              <span><i class="fa-solid fa-school" style="color: var(--accent-yellow);"></i> 화연고등학교 / 중학교</span>
               <span class="badge badge-yellow">상세보기</span>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">40여 명의 생존자가 자체 농성 중인 자생 거점. 실험동 폭발 위험 상존.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('water')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-faucet-drip" style="color: var(--accent-yellow);"></i> 화연 수도사업소</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">깨끗한 물이라는 희소 자원 때문에 생존자 세력 간 쟁탈전이 예상되는 구역.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('power')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-bolt" style="color: var(--accent-yellow);"></i> 화연 자원회수시설</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">도시 전력망과 연결된 열병합발전소. 제어실 접근 시 특정 구역 전력 복구 가능.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">학생들이 강당과 교실을 바리케이드로 봉쇄함. 매점 식량 고갈 진행 중.</p>
           </div>
 
           <div class="card" onclick="openLocationModal('cityhall')">
             <div class="card-title">
-              <span><i class="fa-solid fa-building-flag" style="color: var(--accent-yellow);"></i> 화연시청</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">비상대책본부가 함락된 폐허. 지하 서버실에 전력망 제어 비상 코드가 보관됨.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('firestation')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-fire-extinguisher" style="color: var(--accent-yellow);"></i> 화연소방서</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">소방 장비(방화복, 산소통, 절단기) 풍부. 접근 시 감염 지대를 통과해야 함.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('mart')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-cart-shopping" style="color: var(--accent-red-bright);"></i> 하나로마트 화연점</span>
+              <span><i class="fa-solid fa-building-flag" style="color: var(--accent-red-bright);"></i> 화연시청</span>
               <span class="badge badge-red">상세보기</span>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">지하 물류창고에 미개봉 식량 다량 존재. 입구를 무장 세력이 점거함.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">비상대책본부가 함락된 폐허. 지하 서버실에 전력망 제어 비상 코드가 존재.</p>
           </div>
 
-          <div class="card" onclick="openLocationModal('terminal')">
+          <div class="card" onclick="openLocationModal('military')">
             <div class="card-title">
-              <span><i class="fa-solid fa-bus" style="color: var(--accent-red-bright);"></i> 시외버스터미널 & 쇼핑몰</span>
+              <span><i class="fa-solid fa-shield-cat" style="color: var(--accent-red-bright);"></i> 외곽 군 검문소</span>
               <span class="badge badge-red">상세보기</span>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 고위험 위험 구역.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">도시 전체를 감싼 봉쇄선. 무인 포탑이 가동 중이며 경고 없이 사격됨.</p>
           </div>
 
-          <div class="card" onclick="openLocationModal('golf')">
+          <div class="card" onclick="openLocationModal('apt')">
             <div class="card-title">
-              <span><i class="fa-solid fa-flag" style="color: var(--accent-yellow);"></i> 화연CC 골프장</span>
-              <span class="badge badge-yellow">상세보기</span>
+              <span><i class="fa-solid fa-building-user" style="color: var(--accent-green);"></i> 한빛아파트</span>
+              <span class="badge badge-green">상세보기</span>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">외부와 단절된 준요새 지형. 상류층 출신 생존자들이 폐쇄적으로 점거 중.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('gasstation')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-gas-pump" style="color: var(--accent-red-bright);"></i> 주유소 체인 (화연IC)</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">연료 확보 가치가 매우 높으나 폭발 위험 상존. 차량 이동 핵심 거점.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('lab')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-flask" style="color: var(--accent-red-bright);"></i> 제인바이오 연구소</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">사태의 진원지. 변종 바이러스 유출 연구시설로 치료 단서가 남아있을 가능성.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('hospital')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-hospital" style="color: var(--accent-red-bright);"></i> 화연중앙병원</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">발병 초기 환자 폭주 지점. 3단계 변이체(사냥꾼) 발생 가능성이 가장 높음.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('sanatorium')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-notes-medical" style="color: var(--accent-yellow);"></i> 하늘요양병원</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">거동 불가 환자 다수 방치. 정서적·윤리적 딜레마를 마주하는 장소.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('school')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-school" style="color: var(--accent-red-bright);"></i> 화연고 / 화연중학교</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">초기 학생들의 바리케이드 봉쇄가 실패하여 거대 좀비 둥지로 변모함.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('stadium')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-trophy" style="color: var(--accent-red-bright);"></i> 화연공설운동장</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">대규모 임시 대피소였으나 붕괴. 수백 명이 몰렸던 만큼 군집 감염체 다수.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('checkpoint')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-shield-cat" style="color: var(--accent-red-bright);"></i> 화연IC 군 통제선</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">도시 차단 군 방어선이 뚫린 곳. 외부의 더 큰 위협이 유입되는 관문.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('prison')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-lock" style="color: var(--accent-red-bright);"></i> 화연교도소</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">탈옥 재소자들이 자체 세력화된 곳으로 감염체보다 사람이 더 위험함.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('prugio')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-building" style="color: var(--accent-red-bright);"></i> 푸르지오 라포레</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">이동이 제한된 '세로형 지옥' 초고층 주상복합. 고층에 고립 생존자 존재.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('villa')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-house-chimney" style="color: var(--accent-yellow);"></i> 성운 빌라촌</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">낮은 건물들이 밀집하여 옥상 공중 이동통로로 활용되는 은둔형 생존 구역.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('subway')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-train-subway" style="color: var(--accent-yellow);"></i> 지하철 네트워크</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">8개 역으로 구성된 지하 이동망. 산성비를 피할 수 있으나 일부 붕괴 위기.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('broadcast')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-tower-cell" style="color: var(--accent-yellow);"></i> 화연방송국</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">단파 통신 핵심 시설. 송신탑 재가동 시 생존자 네트워크 구축 가능.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('church')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-church" style="color: var(--accent-red-bright);"></i> 화연중앙성당</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">종교적 광기와 아포칼립스가 결합된 광신도 집단의 근거지 구역.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('crematory')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-skull-crossbones" style="color: var(--accent-red-bright);"></i> 화연화장장</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">초기 시신 처리 시도가 실패한 지점. 도시 내 가장 그로테스크한 최악의 지대.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('station')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-train" style="color: var(--accent-yellow);"></i> 화연역 (기차역)</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">광역철도 역사. 외부 도시와의 연결 관문으로 탈출 서사의 주요 통로.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">101~103동. 계단을 철거하고 4층 이상에서 주민들이 집단 거주 중.</p>
           </div>
         </div>
       </section>
@@ -1198,7 +1210,7 @@
         </div>
       </section>
 
-      <!-- TAB 5: 생존자 커뮤니티 -->
+      <!-- TAB 5: 생존자 커뮤니티 (새로 바뀐 커뮤니티 페이지) -->
       <section id="community" class="tab-content">
         <div class="comm-board-container">
           <div class="comm-header">
@@ -1213,7 +1225,7 @@
             * 통신 마비 전 생존자들이 실시간으로 정보를 공유하고 멘탈을 다잡는 비상 안테나 게시판입니다.
           </p>
 
-          <!-- Post 1 -->
+          <!-- Post 1: 생필품 실패 썰 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">뻘글/분통</span>
@@ -1248,7 +1260,7 @@
             </div>
           </div>
 
-          <!-- Post 2 -->
+          <!-- Post 2: 베란다 줄낚시 물물교환 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">생존/훈훈</span>
@@ -1276,7 +1288,7 @@
             </div>
           </div>
 
-          <!-- Post 3 -->
+          <!-- Post 3: 캔/유리조각 알람 트랩 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">팁/정보</span>
@@ -1304,7 +1316,7 @@
             </div>
           </div>
 
-          <!-- Post 4 -->
+          <!-- Post 4: 아포칼립스 레시피 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">정보/생활</span>
@@ -1332,7 +1344,7 @@
             </div>
           </div>
 
-          <!-- Post 5 -->
+          <!-- Post 5: 소리 안 나는 도구의 중요성 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">경고/필독</span>
@@ -1361,7 +1373,7 @@
             </div>
           </div>
 
-          <!-- Post 6 -->
+          <!-- Post 6: 옥상 무전기 소통 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">잡담/감동</span>
@@ -1390,7 +1402,7 @@
             </div>
           </div>
 
-          <!-- Post 7 -->
+          <!-- Post 7: 거울/시계 이야기 -->
           <div class="post-card">
             <div class="post-meta">
               <span class="post-tag">생존/멘탈</span>
@@ -1425,6 +1437,46 @@
           </div>
         </div>
       </section>
+
+      <!-- TAB 6: 생존 테스트 바로가기 (기존 인트로 퀴즈를 탭으로 이동) -->
+      <section id="survival" class="tab-content">
+        <div class="tactical-map-box" style="max-width: 700px; margin: 0 auto;">
+
+          <div id="survivalIntro" style="text-align: center; padding: 10px 0;">
+            <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 10px; letter-spacing: 1px;">
+              <i class="fa-solid fa-shield-halved" style="color: var(--accent-red-bright);"></i> 화연시 생존 가능성 종합 진단
+            </h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">발병 72시간 경과 · 5문항에 응답하면 당신의 생존 확률이 산출됩니다.</p>
+            <button class="gate-btn" onclick="startIntroQuiz()">
+              <i class="fa-solid fa-play"></i> 생존 가능성 테스트 시작 (5문항)
+            </button>
+          </div>
+
+          <div id="intro-quiz-box" class="intro-quiz-box" style="position: static; margin: 0 auto; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.3rem;" id="quizQTitle">[진단 Q1]</h3>
+              <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 0.85rem;" id="quizProgress">1 / 5</span>
+            </div>
+
+            <p style="color: #ddd; font-size: 0.95rem; margin-bottom: 15px;" id="quizQText">질문 내용이 표시됩니다.</p>
+
+            <div id="quizOptions"></div>
+
+            <!-- Result Screen -->
+            <div id="quizResult" style="display: none; text-align: center; margin-top: 15px;">
+              <p style="color: var(--text-muted); font-size: 0.85rem;">측정된 화연시 생존 가능성</p>
+              <div id="quizScoreDisplay" style="font-family: var(--font-tech); font-size: 3.2rem; color: var(--accent-red-bright); font-weight: 900;">85%</div>
+              <p id="quizScoreComment" style="color: #ccc; margin: 12px 0 20px; font-size: 0.9rem; line-height: 1.5; word-break: keep-all;">
+                결과 메시지가 여기에 출력됩니다.
+              </p>
+              <button class="gate-btn" onclick="restartSurvivalQuiz()">
+                <i class="fa-solid fa-rotate-right"></i> 다시 테스트하기
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
     </div>
 
     <footer>
@@ -1432,7 +1484,7 @@
     </footer>
   </div>
 
-  <!-- Location Detail Modal (장소 상세 모달) -->
+  <!-- Location Detail Modal -->
   <div class="modal-overlay" id="locationModal">
     <div class="modal-card">
       <span class="modal-close" onclick="closeLocationModal()">&times;</span>
@@ -1448,7 +1500,7 @@
     </div>
   </div>
 
-  <!-- Character Detail Modal (등장인물 상세 모달) -->
+  <!-- Character Detail Modal -->
   <div class="modal-overlay" id="characterModal">
     <div class="modal-card">
       <span class="modal-close" onclick="closeCharacterModal()">&times;</span>
@@ -1464,10 +1516,10 @@
     </div>
   </div>
 
-  <!-- Leaflet.js Interactive Map Engine -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- JavaScript Core -->
+  <!-- JavaScript -->
   <script>
     // Timer
     let seconds = 259200;
@@ -1533,10 +1585,119 @@
     let currentIntroQ = 0;
     let userScore = 0;
 
+    // Wake-up cinematic sequence (replaces the old quiz-on-entry flow)
+    const wakePhrases = [
+      "신호 감지 중...",
+      "...깨어나",
+      "생존자 확인됨",
+      "그들이 다가온다",
+      "움직이지 마",
+      "통신 두절 임박",
+      "72:00:00",
+      "접속 완료"
+    ];
+
+    function startWakeSequence() {
+      const btn = document.getElementById('wakeBtn');
+      const introScreen = document.getElementById('intro-screen');
+      if (!introScreen || introScreen.dataset.waking === '1') return;
+      introScreen.dataset.waking = '1';
+
+      btn.disabled = true;
+      btn.style.opacity = '0.35';
+      btn.style.pointerEvents = 'none';
+
+      playStaticSound();
+      introScreen.classList.add('waking');
+      flashGlitchTexts();
+
+      setTimeout(() => {
+        introScreen.style.transition = 'opacity 0.9s ease';
+        introScreen.style.opacity = '0';
+        setTimeout(enterMainSite, 900);
+      }, 3400);
+    }
+
+    function flashGlitchTexts() {
+      const el = document.getElementById('glitchTextOverlay');
+      if (!el) return;
+      let i = 0;
+      const totalFlashes = wakePhrases.length * 2;
+      const iv = setInterval(() => {
+        el.textContent = wakePhrases[i % wakePhrases.length];
+        el.style.opacity = '1';
+        setTimeout(() => { el.style.opacity = '0'; }, 180);
+        i++;
+        if (i >= totalFlashes) clearInterval(iv);
+      }, 300);
+    }
+
+    // Procedurally generated static / low drone sound (no external audio file needed)
+    function playStaticSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const duration = 3.2;
+
+        // White noise burst (radio static)
+        const bufferSize = Math.floor(duration * ctx.sampleRate);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, ctx.currentTime);
+        noiseGain.gain.linearRampToValueAtTime(0.32, ctx.currentTime + 0.25);
+        noiseGain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 1.6);
+        noiseGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+        noise.connect(noiseGain).connect(ctx.destination);
+
+        // Low creepy drone underneath the static
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(55, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(34, ctx.currentTime + duration);
+
+        const oscGain = ctx.createGain();
+        oscGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        oscGain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.5);
+        oscGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+        osc.connect(oscGain).connect(ctx.destination);
+
+        noise.start();
+        osc.start();
+        noise.stop(ctx.currentTime + duration + 0.1);
+        osc.stop(ctx.currentTime + duration + 0.1);
+      } catch (e) {
+        console.log('오디오 재생을 지원하지 않는 환경입니다.', e);
+      }
+    }
+
+    // Survival Test (now lives inside the "생존 테스트 바로가기" tab)
     function startIntroQuiz() {
-      document.getElementById('intro-step1').style.display = 'none';
+      currentIntroQ = 0;
+      userScore = 0;
+      document.getElementById('survivalIntro').style.display = 'none';
       document.getElementById('intro-quiz-box').style.display = 'block';
+
+      document.getElementById('quizQTitle').style.display = '';
+      document.getElementById('quizProgress').style.display = '';
+      document.getElementById('quizQText').style.display = '';
+      document.getElementById('quizOptions').style.display = '';
+      document.getElementById('quizResult').style.display = 'none';
+
       renderIntroQuestion();
+    }
+
+    function restartSurvivalQuiz() {
+      document.getElementById('intro-quiz-box').style.display = 'none';
+      document.getElementById('survivalIntro').style.display = 'block';
     }
 
     function renderIntroQuestion() {
@@ -1596,8 +1757,7 @@
       document.getElementById('main-site').style.display = 'block';
     }
 
-    // Dynamic Tab Switching
-    let mapInitialized = false;
+    // Dynamic Tab Switching (Overview, Locations, Infected, Character, Community, Survival Test)
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1608,231 +1768,186 @@
         targetBtn.classList.add('active');
       }
 
-      // If switching to location map, initialize or resize map
+      // Initialize the tactical map the first time the locations tab is opened
       if (tabId === 'locations') {
-        if (!mapInitialized) {
-          initLeafletMap();
-          mapInitialized = true;
-        } else if (leafletMap) {
-          setTimeout(() => { leafletMap.invalidateSize(); }, 200);
-        }
+        setTimeout(initTacticalMap, 50);
       }
 
+      // Smooth scroll back to tabs area
       document.querySelector('.nav-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ==========================================================================
-    // LEAFLET INTERACTIVE MAP SYSTEM (Google Map Style Dark Mode)
-    // ==========================================================================
-    let leafletMap;
-    const mapCoordinates = {
-      // 중심점 근처 및 가상의 화연시 좌표계 (위도, 경도 기반)
-      hanbit: { lat: 37.5665, lng: 126.9780, icon: "fa-building-user" },
-      grandpark: { lat: 37.5615, lng: 126.9720, icon: "fa-tree" },
-      marina: { lat: 37.5580, lng: 126.9650, icon: "fa-ship" },
-      univ: { lat: 37.5750, lng: 126.9680, icon: "fa-graduation-cap" },
-
-      water: { lat: 37.5720, lng: 126.9850, icon: "fa-faucet-drip" },
-      power: { lat: 37.5680, lng: 126.9920, icon: "fa-bolt" },
-      cityhall: { lat: 37.5630, lng: 126.9830, icon: "fa-building-flag" },
-      firestation: { lat: 37.5590, lng: 126.9890, icon: "fa-fire-extinguisher" },
-
-      mart: { lat: 37.5550, lng: 126.9760, icon: "fa-cart-shopping" },
-      terminal: { lat: 37.5520, lng: 126.9820, icon: "fa-bus" },
-      golf: { lat: 37.5800, lng: 126.9950, icon: "fa-flag" },
-      gasstation: { lat: 37.5450, lng: 126.9710, icon: "fa-gas-pump" },
-
-      lab: { lat: 37.5780, lng: 126.9600, icon: "fa-flask" },
-      hospital: { lat: 37.5690, lng: 126.9750, icon: "fa-hospital" },
-      sanatorium: { lat: 37.5820, lng: 126.9730, icon: "fa-notes-medical" },
-      school: { lat: 37.5600, lng: 126.9960, icon: "fa-school" },
-
-      stadium: { lat: 37.5490, lng: 126.9890, icon: "fa-trophy" },
-      checkpoint: { lat: 37.5420, lng: 126.9650, icon: "fa-shield-cat" },
-      prison: { lat: 37.5850, lng: 126.9880, icon: "fa-lock" },
-      prugio: { lat: 37.5645, lng: 126.9740, icon: "fa-building" },
-
-      villa: { lat: 37.5710, lng: 126.9620, icon: "fa-house-chimney" },
-      subway: { lat: 37.5620, lng: 126.9790, icon: "fa-train-subway" },
-      broadcast: { lat: 37.5670, lng: 126.9680, icon: "fa-tower-cell" },
-      church: { lat: 37.5740, lng: 126.9800, icon: "fa-church" },
-
-      crematory: { lat: 37.5880, lng: 126.9620, icon: "fa-skull-crossbones" },
-      station: { lat: 37.5500, lng: 126.9770, icon: "fa-train" }
-    };
-
-    function initLeafletMap() {
-      // Center on Hwayeon City
-      leafletMap = L.map('leaflet-map').setView([37.5665, 126.9780], 13);
-
-      // OpenStreetMap Base Tiles (Styled with Dark Mode via CSS)
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 16,
-        minZoom: 12,
-        attribution: '© OpenStreetMap contributors | Hwayeon Tactical Map'
-      }).addTo(leafletMap);
-
-      // Add Markers for All 26 Locations
-      Object.keys(locationCoordinates).forEach(key => {
-        const item = locationCoordinates[key];
-        const detail = locationDetails[key];
-
-        if (item && detail) {
-          // Custom Circle Icon
-          const customIcon = L.divIcon({
-            className: 'custom-map-icon',
-            html: `<i class="fa-solid ${item.icon}"></i>`,
-            iconSize: [32, 32],
-            iconAnchor: [16, 16]
-          });
-
-          // Marker & Interactive Popup
-          const marker = L.marker([item.lat, item.lng], { icon: customIcon }).addTo(leafletMap);
-
-          const popupContent = `
-            <div style="text-align:center;">
-              <div class="map-pop-title">${detail.title}</div>
-              <div style="font-size:0.8rem; margin-bottom:4px;">${detail.danger}</div>
-              <button class="map-pop-btn" onclick="openLocationModal('${key}')">상세정보 보기</button>
-            </div>
-          `;
-
-          marker.bindPopup(popupContent);
-        }
-      });
-    }
-
-    // Location Detail Modal Data
+    // Modal Details for Locations Map
     const locationDetails = {
-      hanbit: {
-        title: "한빛아파트 101~103동",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 생존자 메인 거점</span>",
-        body: "방어 구축 완료. 1~3층 계단을 철거하고 4층 이상에서 주민들이 집단 거주 중. 메인 배경지이자 주인공 및 한서우의 메인 거점입니다."
-      },
-      grandpark: {
-        title: "화연대공원역",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 지하철 2번역</span>",
-        body: "감염자 밀도가 낮아 안전 우회로로 활용 가능한 구간입니다."
-      },
-      marina: {
-        title: "화연천 수상 마리나 & 강변 선착장",
-        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 수상 요충지</span>",
-        body: "육지 접근이 불가능한 지형적 특성으로 고립된 안전지대. 보트나 수상 이동수단 확보 시 전략적 요충지입니다."
-      },
-      univ: {
-        title: "화연국립대학교 캠퍼스",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자생 소도시형 거점</span>",
-        body: "40여 명의 생존자가 자체 농성 중. 실험동에 남은 화학물질로 인한 폭발 잠재 위험이 존재합니다."
-      },
-      water: {
-        title: "화연 수도사업소 (정수장)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 전략 자원지</span>",
-        body: "깨끗한 물이라는 희소 자원 때문에 다른 생존자 집단과의 세력 쟁탈전이 예상되는 구역입니다."
-      },
-      power: {
-        title: "화연 자원회수시설",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 열병합발전소</span>",
-        body: "도시 전력망과 연결된 발전 설비. 제어실 접근 및 재가동 시 특정 구역 전력 복구가 가능합니다."
+      school: {
+        title: "화연고등학교 / 중학교",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 보통] 생존 학생 상주</span>",
+        body: "학생들이 책상과 의자로 강당을 봉쇄해 임시 거점을 구축했습니다. 매점 식량은 고갈되었지만 기숙사 3층에 물자가 남아있습니다."
       },
       cityhall: {
-        title: "화연시청 및 임시통제본부",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 비상대책본부 폐허</span>",
-        body: "지하 서버실에 전력망 제어 비상 코드가 보관되어 있습니다. 내부에 변이체가 존재할 가능성이 있습니다."
+        title: "화연시청",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 높음] 행정 서버 존</span>",
+        body: "발병 초기 비상대책본부가 위치했으나 사태 2일차에 완전 함락되었습니다. 지하 서버실의 메인 컴퓨터에는 비상 승인 코드가 보관되어 있습니다."
       },
-      firestation: {
-        title: "화연소방서",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 자원지</span>",
-        body: "방화복, 산소통, 절단기 등 소방 장비가 풍부하나 접근 시 감염 지대를 통과해야 합니다."
+      military: {
+        title: "외곽 군 검문소",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 치명적] 무차별 발포 구역</span>",
+        body: "화연시 외곽을 둘러싼 대형 철조망과 방호벽. 접근 시 자동 사격 포탑과 계엄군에 의해 무차별 사격이 실행됩니다."
       },
-      mart: {
-        title: "하나로마트 화연점",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 자원 밀집지</span>",
-        body: "1층은 아비규환 상태. 지하 물류창고는 미개봉 식량과 물자가 다량 남아있는 고가치·고위험 지역입니다."
-      },
-      terminal: {
-        title: "화연 시외버스터미널 & 쇼핑몰",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 약탈 구역</span>",
-        body: "약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 위험 구역입니다."
-      },
-      golf: {
-        title: "화연CC 골프장",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 준요새 지형</span>",
-        body: "외부와 단절된 지형. 상류층 출신 생존자들이 먼저 자리를 잡고 텃세를 부리는 장소입니다."
-      },
-      gasstation: {
-        title: "주유소 체인 (화연IC 인근)",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 연료 거점</span>",
-        body: "연료 확보 가치가 매우 높지만 폭발 위험이 상존합니다. 차량 이동 루트 확보 시 핵심 거점."
-      },
-      lab: {
-        title: "제인바이오 (Jane Bio) 연구소",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: Ground Zero] 발원지</span>",
-        body: "사태의 진원지. 신경계 변종 바이러스가 유출된 비밀 연구시설로 백신이나 치료 단서가 남아있을 가능성이 있습니다."
+      apt: {
+        title: "한빛아파트 (101~103동)",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전] 생존자 주요 거점</span>",
+        body: "주민들이 1~3층 계단을 파괴하고 4층 이상을 점거 중입니다. 옥상 집수 장치로 물 확보가 가능하나 식량이 부족합니다."
       },
       hospital: {
         title: "화연중앙병원",
-        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 치명적 위험지대</span>",
-        body: "발병 1일차 대규모 환자 폭주 지점. 3단계 변이체(사냥꾼) 발생 가능성이 가장 높은 최악의 장소입니다."
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 극상] 3단계 사냥꾼 소굴</span>",
+        body: "의료 물품의 핵심 공급처. 고열 환자들이 몰려 대규모 감염이 일어났으며 시력을 잃은 '사냥꾼' 감염체가 상주합니다."
       },
-      sanatorium: {
+      mart: {
+        title: "하나로마트",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 경계] 무장 세력 점거</span>",
+        body: "도시 내 식량이 가장 풍부한 마트. 무장 생존자 무리가 입구를 통제하고 통행료를 강요합니다."
+      },
+      lab: {
+        title: "제인바이오 비밀 연구소",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: Ground Zero] 발원지</span>",
+        body: "바이러스가 유출된 장소. 항체 원액 데이터가 존재하지만 4단계 특수 변종 감염체가 득실거립니다."
+      },
+      subway: {
+        title: "화연선 지하철 (8개 역)",
+        danger: "<span style='color: var(--text-muted);'>[위험도: 미정] 지하 이동 통로</span>",
+        body: "지상 감염체와 산성비를 피할 수 있는 지하 선로. 암흑 상태이며 일부 구간은 붕괴 위기입니다."
+      },
+      park_station: {
+        title: "화연대공원역 (2번역)",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전]</span>",
+        body: "지하철 2번역. 감염자 밀도가 낮아 안전 우회로로 활용 가능한 구간입니다."
+      },
+      marina: {
+        title: "화연천 수상 마리나 &amp; 강변 선착장",
+        danger: "<span style='color: var(--accent-green);'>[위험도: 안전]</span>",
+        body: "육지 접근이 불가능한 지형적 특성으로 고립된 안전지대입니다. 보트나 수상 이동수단 확보 시 전략적 요충지가 될 수 있습니다."
+      },
+      waterplant: {
+        title: "화연 수도사업소 (정수장)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "접근 자체는 쉬우나, 깨끗한 물이라는 희소 자원 때문에 다른 생존자 집단과의 세력 쟁탈전이 예상되는 곳입니다."
+      },
+      powerplant: {
+        title: "화연 자원회수시설 (열병합발전소)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "도시 전력망과 연결된 발전 설비입니다. 제어실 접근 및 재가동 시 특정 구역 전력 복구 가능성이 존재합니다."
+      },
+      firestation: {
+        title: "화연소방서",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "소방 장비(방화복, 산소통, 절단기 등)가 풍부하게 남아있으나, 위치상 접근하려면 감염 지대를 통과해야 하는 구조입니다."
+      },
+      busterminal: {
+        title: "화연 시외버스터미널 &amp; 복합쇼핑몰",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "약탈자 무리와 감염체가 뒤섞여 유혈 충돌이 잦은 구역입니다. 생존자 간 갈등이 실제로 벌어지는 무대이기도 합니다."
+      },
+      golfclub: {
+        title: "화연CC 골프장",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "외부와 단절된 폐쇄적 준요새 지형입니다. 상류층 출신 생존자들이 먼저 자리를 잡고 텃세를 부릴 가능성이 있습니다."
+      },
+      gasstation: {
+        title: "주유소 체인 (화연IC 인근)",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "연료 확보라는 측면에서 가치는 매우 높지만, 폭발 위험이 상존하는 지역입니다. 차량 이동 루트 확보 시 핵심 거점이 됩니다."
+      },
+      nursinghome: {
         title: "하늘요양병원",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 방치된 병원</span>",
-        body: "거동이 불편한 채 방치된 환자들이 다수 존재하며, 정서적·윤리적 딜레마를 다루는 장소입니다."
-      },
-      school: {
-        title: "화연고등학교 & 화연중학교",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 좀비 둥지</span>",
-        body: "초기 학생들의 바리케이드 봉쇄가 실패하여 거대 좀비 둥지로 변모한 장소입니다."
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "감염 확산 속도는 느리지만, 거동이 불편한 채 방치된 환자들이 다수 존재합니다. 전투보다는 정서적·윤리적 딜레마를 다루기 좋은 장소입니다."
       },
       stadium: {
-        title: "화연공설운동장/체육관",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 붕괴된 대피소</span>",
-        body: "대규모 임시 대피소였으나 붕괴. 한때 수백 명이 모였던 만큼 규모가 큰 위험지대입니다."
+        title: "화연공설운동장 / 체육관",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "학교와는 별개로 운영된 대규모 임시 대피소였으나 붕괴했습니다. 한때 수백 명이 모였던 만큼 규모가 큰 위험지대입니다."
       },
-      checkpoint: {
+      iccheckpoint: {
         title: "화연IC 및 대교 통제선",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 군 방어선</span>",
-        body: "도시 차단 군 방어선이 뚫린 곳. 외부의 더 큰 위협이 유입될 수 있는 복선 성격의 장소입니다."
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "도시를 외부와 차단하던 군 방어선이 뚫린 곳입니다. 외부의 더 큰 위협이 유입될 수 있는 복선 성격의 장소입니다."
       },
       prison: {
         title: "화연교도소",
-        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 무법지대</span>",
-        body: "탈옥 재소자들이 자체 세력화된 곳으로 감염체보다 사람이 더 위험한 지역입니다."
+        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
+        body: "재소자들이 탈옥 후 자체적으로 세력화했습니다. 감염체보다 사람이 더 위험한 무법지대입니다."
       },
-      prugio: {
-        title: "화연 푸르지오 라포레",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 초고층 주상복합</span>",
-        body: "위아래 이동이 극히 제한된 '세로형 지옥'. 고층에 고립된 생존자들이 존재합니다."
+      apartment_tower: {
+        title: "화연 푸르지오 라포레 (주상복합)",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "초고층 건물 특성상 위아래 이동이 극히 제한된 '세로형 지옥'입니다. 고층에 고립된 생존자들이 존재합니다."
       },
-      villa: {
-        title: "성운 빌라촌 & 구도심 주택가",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 공중 이동통로</span>",
-        body: "낮은 건물들이 다닥다닥 붙어있어 옥상과 옥상을 잇는 이동통로로 배회하는 은둔형 생존자 구역입니다."
+      villatown: {
+        title: "성운 빌라촌 &amp; 구도심 주택가",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "낮은 건물들이 다닥다닥 붙어있어 옥상과 옥상을 잇는 공중 이동통로로 배회하는 은둔형 생존자가 존재하는 구역입니다."
       },
-      subway: {
-        title: "화연 지하철 네트워크 (1~8번역)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 가변] 지하 이동통로</span>",
-        body: "1번(접근불가), 2번(안전 우회로), 3번(시청연결), 4번(감염자 최다), 5번(한빛), 6번(마트연결), 7번(연구소연결), 8번(탈출관문)으로 구성되어 있습니다."
+      university: {
+        title: "화연국립대학교 캠퍼스",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "40여 명의 생존자가 자체적으로 농성 중인 거점입니다. 실험동에 남은 화학물질로 인한 폭발 잠재 위험이 존재합니다."
       },
       broadcast: {
-        title: "화연방송국/송신탑",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 단파 통신 시설</span>",
-        body: "옥상 무전 7번 채널과 연결되는 열쇠 장소. 송신탑 재가동 시 생존자 네트워크 구축이 가능합니다."
+        title: "화연방송국 / 송신탑",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "단파 통신의 핵심 시설입니다. '옥상 무전 7번 채널'과 연결되는 후반부 열쇠 장소로, 재가동 시 도시 전체 생존자 네트워크 구축이 가능해집니다."
       },
-      church: {
-        title: "화연중앙성당/메가처치",
-        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험] 광신도 근거지</span>",
-        body: "종교적 광기와 아포칼립스가 결합된 광신도 집단의 근거지 구역입니다."
+      cathedral: {
+        title: "화연중앙성당 / 메가처치",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "광신도 집단의 근거지일 가능성이 있는 구역입니다. 종교적 광기와 아포칼립스가 결합된 별도 세력이 활동 중입니다."
       },
-      crematory: {
+      crematorium: {
         title: "화연화장장",
-        danger: "<span style='color: var(--text-muted);'>[위험도: 극상] 최악의 지대</span>",
-        body: "초기 시신 처리 시도가 실패한 지점. 도시 내에서 가장 그로테스크한 공포 지역입니다."
+        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
+        body: "초기 감염 확산을 막기 위한 시신 처리 시도가 실패한 지점입니다. 도시 내에서 가장 그로테스크한 최악의 지대입니다."
       },
-      station: {
+      trainstation: {
         title: "화연역 (기차역)",
-        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의] 광역철도 역사</span>",
-        body: "외부 도시와의 연결 관문 역할로 탈출 서사나 외부 세력 유입의 통로로 활용되는 곳입니다."
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "지하철과는 별개의 광역철도 역사입니다. 외부 도시와의 연결 관문 역할로, 탈출 서사나 외부 세력 유입의 통로로 활용 가능합니다."
+      },
+      subway1: {
+        title: "지하철 1번역 (서울방면)",
+        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
+        body: "완전 붕괴로 접근이 불가능한 구간입니다."
+      },
+      subway3: {
+        title: "지하철 3번역 (화연시청)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "화연시청 지하 서버실과 연결되는 구간입니다."
+      },
+      subway4: {
+        title: "지하철 4번역 (화연중앙)",
+        danger: "<span style='color: #ff1a1a;'>[위험도: 치명적]</span>",
+        body: "감염자가 가장 많이 밀집된 구간으로, 반드시 회피해야 합니다."
+      },
+      subway5: {
+        title: "지하철 5번역 (한빛)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "일부 구간만 가동 중인 한빛아파트 인근 역입니다."
+      },
+      subway6: {
+        title: "지하철 6번역 (하나로마트)",
+        danger: "<span style='color: var(--accent-red-bright);'>[위험도: 위험]</span>",
+        body: "하나로마트로 이어지는 침투 우회로로 활용 가능한 구간입니다."
+      },
+      subway7: {
+        title: "지하철 7번역 (화연산업단지)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "제인바이오 연구소로 접근할 수 있는 경로입니다."
+      },
+      subway8: {
+        title: "지하철 8번역 (화연IC)",
+        danger: "<span style='color: var(--accent-yellow);'>[위험도: 주의]</span>",
+        body: "도시 탈출을 위한 최종 관문 구간입니다."
       }
     };
 
@@ -1843,12 +1958,6 @@
         document.getElementById('modalDanger').innerHTML = `위험도 상태: ${data.danger}`;
         document.getElementById('modalBody').innerHTML = data.body;
         document.getElementById('locationModal').style.display = 'flex';
-
-        // Pan map to location if map exists
-        if (leafletMap && locationCoordinates[key]) {
-          const coord = locationCoordinates[key];
-          leafletMap.setView([coord.lat, coord.lng], 15);
-        }
       }
     }
 
@@ -1856,7 +1965,84 @@
       document.getElementById('locationModal').style.display = 'none';
     }
 
-    // Character Details
+    // Tactical Map: CartoDB Dark Matter (No Labels) tile layer via Leaflet.
+    // Initialized lazily the first time the "주요 시설 & 지도" tab is opened,
+    // since Leaflet needs a visible container to size itself correctly.
+    let tacticalMap = null;
+    function initTacticalMap() {
+      const mapEl = document.getElementById('tacticalLeafletMap');
+      if (!mapEl || typeof L === 'undefined') return;
+
+      if (!tacticalMap) {
+        const center = [37.5065, 127.0025]; // 화연시 (가상 좌표)
+        tacticalMap = L.map('tacticalLeafletMap', {
+          center: center,
+          zoom: 13,
+          scrollWheelZoom: false
+        });
+
+        // CartoDB Dark Matter, No-Labels: clean dark tiles with no city/place names
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(tacticalMap);
+
+        const nodes = [
+          { key: 'school',   name: '화연 고/중학교',   icon: '<i class="fa-solid fa-school"></i>',        lat: 37.5115, lng: 126.9975 },
+          { key: 'cityhall', name: '화연시청',          icon: '<i class="fa-solid fa-building-flag"></i>', lat: 37.5065, lng: 127.0025 },
+          { key: 'military', name: '외곽 군 검문소',    icon: '<i class="fa-solid fa-shield-cat"></i>',    lat: 37.4985, lng: 127.0125 },
+          { key: 'apt',      name: '한빛아파트',        icon: '<i class="fa-solid fa-building-user"></i>', lat: 37.5145, lng: 127.0085 },
+          { key: 'hospital', name: '화연중앙병원',      icon: '<i class="fa-solid fa-hospital"></i>',      lat: 37.5045, lng: 126.9945 },
+          { key: 'mart',     name: '하나로마트',        icon: '<i class="fa-solid fa-cart-shopping"></i>', lat: 37.5095, lng: 127.0135 },
+          { key: 'lab',      name: '제인바이오',        icon: '<i class="fa-solid fa-flask"></i>',         lat: 37.4955, lng: 126.9955 },
+          { key: 'subway',   name: '화연선 지하철',     icon: '<i class="fa-solid fa-train-subway"></i>',  lat: 37.5025, lng: 127.0075 },
+          { key: 'park_station', name: '화연대공원역 (2번역)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.5065, lng: 127.0200 },
+          { key: 'marina', name: '화연천 수상 마리나 &amp; 강변 선착장', icon: '<i class="fa-solid fa-anchor"></i>', lat: 37.5120, lng: 127.0304 },
+          { key: 'waterplant', name: '화연 수도사업소 (정수장)', icon: '<i class="fa-solid fa-droplet"></i>', lat: 37.5214, lng: 127.0379 },
+          { key: 'powerplant', name: '화연 자원회수시설 (열병합발전소)', icon: '<i class="fa-solid fa-industry"></i>', lat: 37.5158, lng: 127.0156 },
+          { key: 'firestation', name: '화연소방서', icon: '<i class="fa-solid fa-fire-extinguisher"></i>', lat: 37.5254, lng: 127.0188 },
+          { key: 'busterminal', name: '화연 시외버스터미널 &amp; 복합쇼핑몰', icon: '<i class="fa-solid fa-bus"></i>', lat: 37.5364, lng: 127.0167 },
+          { key: 'golfclub', name: '화연CC 골프장', icon: '<i class="fa-solid fa-golf-ball-tee"></i>', lat: 37.5204, lng: 127.0046 },
+          { key: 'gasstation', name: '주유소 체인 (화연IC 인근)', icon: '<i class="fa-solid fa-gas-pump"></i>', lat: 37.5293, lng: 126.9990 },
+          { key: 'nursinghome', name: '하늘요양병원', icon: '<i class="fa-solid fa-house-medical"></i>', lat: 37.5364, lng: 126.9883 },
+          { key: 'stadium', name: '화연공설운동장 / 체육관', icon: '<i class="fa-solid fa-dumbbell"></i>', lat: 37.5180, lng: 126.9926 },
+          { key: 'iccheckpoint', name: '화연IC 및 대교 통제선', icon: '<i class="fa-solid fa-road-barrier"></i>', lat: 37.5218, lng: 126.9810 },
+          { key: 'prison', name: '화연교도소', icon: '<i class="fa-solid fa-handcuffs"></i>', lat: 37.5214, lng: 126.9671 },
+          { key: 'apartment_tower', name: '화연 푸르지오 라포레 (주상복합)', icon: '<i class="fa-solid fa-city"></i>', lat: 37.5099, lng: 126.9855 },
+          { key: 'villatown', name: '성운 빌라촌 &amp; 구도심 주택가', icon: '<i class="fa-solid fa-house-chimney"></i>', lat: 37.5065, lng: 126.9737 },
+          { key: 'university', name: '화연국립대학교 캠퍼스', icon: '<i class="fa-solid fa-graduation-cap"></i>', lat: 37.4988, lng: 126.9637 },
+          { key: 'broadcast', name: '화연방송국 / 송신탑', icon: '<i class="fa-solid fa-tower-broadcast"></i>', lat: 37.5000, lng: 126.9870 },
+          { key: 'cathedral', name: '화연중앙성당 / 메가처치', icon: '<i class="fa-solid fa-church"></i>', lat: 37.4912, lng: 126.9810 },
+          { key: 'crematorium', name: '화연화장장', icon: '<i class="fa-solid fa-skull-crossbones"></i>', lat: 37.4802, lng: 126.9798 },
+          { key: 'trainstation', name: '화연역 (기차역)', icon: '<i class="fa-solid fa-train"></i>', lat: 37.4934, lng: 126.9963 },
+          { key: 'subway1', name: '지하철 1번역 (서울방면)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.4837, lng: 126.9990 },
+          { key: 'subway3', name: '지하철 3번역 (화연시청)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.4747, lng: 127.0073 },
+          { key: 'subway4', name: '지하철 4번역 (화연중앙)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.4934, lng: 127.0087 },
+          { key: 'subway5', name: '지하철 5번역 (한빛)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.4876, lng: 127.0188 },
+          { key: 'subway6', name: '지하철 6번역 (하나로마트)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.4853, lng: 127.0324 },
+          { key: 'subway7', name: '지하철 7번역 (화연산업단지)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.5000, lng: 127.0180 },
+          { key: 'subway8', name: '지하철 8번역 (화연IC)', icon: '<i class="fa-solid fa-train-subway"></i>', lat: 37.5010, lng: 127.0304 }
+        ];
+
+        nodes.forEach(n => {
+          const divIcon = L.divIcon({
+            className: '',
+            html: `<div class="tactical-marker-inner">${n.icon}</div>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+          });
+          const marker = L.marker([n.lat, n.lng], { icon: divIcon }).addTo(tacticalMap);
+          marker.bindTooltip(n.name, { direction: 'top', offset: [0, -12], className: 'tactical-tooltip' });
+          marker.on('click', () => openLocationModal(n.key));
+        });
+      }
+
+      // Ensure correct sizing once the tab (and thus the container) becomes visible
+      setTimeout(() => tacticalMap.invalidateSize(), 100);
+    }
+
+    // Character Details (등장인물 상세 정보 - 추후 내용 추가 예정)
     const characterDetails = {
       kangdohyun:   { title: "강도현", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
       imbaekheon:   { title: "임백헌", role: "역할: 미정", body: "상세 정보는 추후 업데이트될 예정입니다." },
