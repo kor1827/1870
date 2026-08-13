@@ -150,6 +150,124 @@
     }
     .tv-blackout.err-red { background: #240000; }
 
+    /* ==========================================================================
+       긴급재난문자 + CCTV 감시화면 인트로 시퀀스
+       ========================================================================== */
+    .intro-phase {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 16;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s linear;
+    }
+    .intro-phase.show { opacity: 1; }
+
+    /* --- 1단계: 긴급재난문자 --- */
+    #disasterAlertScreen { background: #000; }
+    #disasterAlertScreen.buzz { animation: disaster-buzz 0.12s steps(1) 3; }
+    @keyframes disaster-buzz {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(2px, -2px); }
+    }
+    .disaster-lines {
+      width: 100%;
+      max-width: 560px;
+      font-family: var(--font-tech);
+      color: #eaeaea;
+      font-size: clamp(0.92rem, 3vw, 1.1rem);
+      line-height: 1.9;
+      text-align: left;
+    }
+    .disaster-line { white-space: pre-wrap; word-break: keep-all; min-height: 1.4em; }
+    .disaster-line.warn { color: var(--accent-red-bright); }
+    .disaster-line.final {
+      color: var(--accent-red-bright);
+      font-family: var(--font-heading);
+      font-size: clamp(1.35rem, 5vw, 2rem);
+      margin-top: 14px;
+      letter-spacing: 2px;
+      animation: signal-jitter 0.09s infinite steps(2, jump-start);
+    }
+    .disaster-line .type-cursor {
+      display: inline-block;
+      width: 8px; height: 1em;
+      background: #eaeaea;
+      vertical-align: -2px;
+      margin-left: 2px;
+      animation: cursor-blink 0.6s steps(1) infinite;
+    }
+    @keyframes cursor-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+    /* --- 2단계: CCTV 감시화면 --- */
+    #cctvScreen { background: rgba(0, 0, 0, 0.12); }
+    #cctvScreen .cctv-hud {
+      position: absolute;
+      top: 22px; left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-tech);
+      font-size: 0.78rem;
+      color: #d5ffd5;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+      letter-spacing: 1px;
+    }
+    .cctv-cam-label { display: flex; align-items: center; gap: 6px; }
+    .cctv-rec-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ff3b3b;
+      animation: rec-blink 0.5s steps(1) infinite;
+    }
+    .cctv-timestamp { opacity: 0.85; }
+    .cctv-status-text {
+      position: absolute;
+      bottom: 14vh; left: 0; width: 100%;
+      text-align: center;
+      font-family: var(--font-tech);
+      font-size: clamp(1rem, 3.4vw, 1.35rem);
+      color: #ff5252;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255, 82, 82, 0.7);
+      opacity: 0;
+    }
+    .cctv-status-text.show { opacity: 1; }
+    .cctv-terminated-text {
+      font-family: var(--font-heading);
+      font-size: clamp(1.25rem, 4.6vw, 2.1rem);
+      color: var(--accent-red-bright);
+      letter-spacing: 2px;
+      opacity: 0;
+      text-shadow: 0 0 20px rgba(229, 57, 53, 0.9);
+    }
+    .cctv-terminated-text.show { opacity: 1; animation: signal-jitter 0.09s infinite steps(2, jump-start); }
+
+    /* CCTV 단계에서 노이즈 캔버스에 옅은 초록빛 감시카메라 톤을 입힘 */
+    #tvStaticCanvas.cctv-tint { filter: grayscale(0.4) sepia(0.3) hue-rotate(60deg) saturate(1.6) brightness(0.9); }
+
+    /* 실루엣이 무한반복 대신 한 번만 화면을 지나가도록 트리거하는 클래스 */
+    .apoc-silhouette.silhouette-play { opacity: 0; animation: silhouette-lurch 2s ease-in-out 1; }
+
+    /* 이미지 파일이 아직 저장소에 없을 때, 깨진 아이콘 대신 보여주는 대체 박스 */
+    .img-fallback {
+      width: 100%; aspect-ratio: 16 / 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      background: repeating-linear-gradient(45deg, #16181c, #16181c 10px, #1a1c20 10px, #1a1c20 20px);
+      border: 1px dashed var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 16px;
+    }
+    .img-fallback i { font-size: 1.8rem; color: var(--accent-red-bright); }
+
     /* Thin horizontal slices that tear sideways, like a bad channel signal */
     .tv-tear-slice {
       position: absolute;
@@ -930,10 +1048,8 @@
     <canvas id="tvStaticCanvas"></canvas>
     <div class="tv-tracking-bar"></div>
     <div class="tv-blackout" id="tvBlackout"></div>
-    <div class="apoc-silhouette" style="left: 12%;"></div>
-    <div class="apoc-silhouette" style="right: 18%; animation-delay: 1.2s;"></div>
-    <div class="glitch-text-overlay" id="glitchTextOverlay"></div>
-    <div class="tv-chrome-label"><span class="dot"></span>NO SIGNAL · CH 07</div>
+    <div class="apoc-silhouette" id="silhouetteL" style="left: 12%;"></div>
+    <div class="apoc-silhouette" id="silhouetteR" style="right: 18%;"></div>
 
     <!-- Wake-up Title Screen -->
     <div id="intro-step1" style="z-index: 2;">
@@ -942,6 +1058,21 @@
       <button class="gate-btn" id="wakeBtn" onclick="startWakeSequence()">
         <i class="fa-solid fa-power-off"></i> 신호 수신 (클릭하여 깨어나기)
       </button>
+    </div>
+
+    <!-- 1단계: 긴급재난문자 (타이핑 연출) -->
+    <div id="disasterAlertScreen" class="intro-phase">
+      <div class="disaster-lines" id="disasterLines"></div>
+    </div>
+
+    <!-- 2단계: CCTV 감시화면 -->
+    <div id="cctvScreen" class="intro-phase">
+      <div class="cctv-hud">
+        <span class="cctv-cam-label"><span class="cctv-rec-dot"></span>CAM 04</span>
+        <span class="cctv-timestamp" id="cctvTimestamp">2026-08-13 03:41:17</span>
+      </div>
+      <div class="cctv-status-text" id="cctvStatusText"></div>
+      <div class="cctv-terminated-text" id="cctvTerminatedText">CONNECTION TERMINATED BY REMOTE HOST</div>
     </div>
   </div>
 
@@ -1531,7 +1662,7 @@
           </div>
 
           <div class="grid-2" style="margin-top: 20px; align-items: start;">
-            <img src="assets/hero/hanseowoo_72hours.jpg" alt="한서우 - 72 HOURS" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); grid-row: span 2;">
+            <img src="assets/hero/hanseowoo_72hours.jpg" alt="한서우 - 72 HOURS" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); grid-row: span 2;" onerror="handleImgError(this, '이미지 준비중 · assets/hero/hanseowoo_72hours.jpg 파일을 저장소에 업로드해주세요')">
             <div>
               <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 선택적 다정함</h4>
               <p style="font-size: 0.9rem; color: var(--text-muted);">다른 생존자들에게는 눈길조차 주지 않거나 철저히 무관심하고 차가운 밀실주의자이지만, 오직 주인공 앞에서만 세상 무해하고 다정해집니다.</p>
@@ -2055,7 +2186,165 @@
 
     let tvStaticRAF = null;
 
-    function startWakeSequence() {
+    // 이미지 파일이 실제 저장소 경로에 없어 로드에 실패했을 때, 깨진 아이콘 대신 안내 박스로 대체
+    function handleImgError(img, label) {
+      const fallback = document.createElement('div');
+      fallback.className = 'img-fallback';
+      const extraStyle = img.getAttribute('style') || '';
+      fallback.setAttribute('style', extraStyle);
+      fallback.innerHTML = '<i class="fa-solid fa-image-slash"></i><span>' + label + '</span>';
+      img.replaceWith(fallback);
+    }
+
+    // 작은 지연을 Promise로 감싸는 헬퍼
+    function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    // 한 글자씩 타이핑되는 효과 (긴급재난문자 연출용)
+    function typeLine(el, text, speed) {
+      speed = speed || 26;
+      return new Promise(resolve => {
+        let i = 0;
+        el.textContent = '';
+        const iv = setInterval(() => {
+          i++;
+          el.textContent = text.slice(0, i);
+          if (i >= text.length) { clearInterval(iv); resolve(); }
+        }, speed);
+      });
+    }
+
+    // 재난문자 수신음 (삐- 삐- 삐- 3연속 비프)
+    function playDisasterBeep() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        [0, 0.35, 0.7].forEach(t => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1000, ctx.currentTime + t);
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+          gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + t + 0.02);
+          gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + t + 0.28);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(ctx.currentTime + t);
+          osc.stop(ctx.currentTime + t + 0.3);
+        });
+      } catch (e) { /* 오디오 미지원 환경은 조용히 무시 */ }
+    }
+
+    // 1단계: 긴급재난문자가 한 줄씩 타이핑되다가, 마지막에 소름 끼치는 한 줄로 마무리
+    async function runDisasterPhase() {
+      const screen = document.getElementById('disasterAlertScreen');
+      const linesWrap = document.getElementById('disasterLines');
+      linesWrap.innerHTML = '';
+      screen.classList.add('show');
+      playDisasterBeep();
+
+      const lines = [
+        { text: '[긴급재난문자]', cls: '' },
+        { text: '화연시 전역 감염 확산 경보 발령', cls: 'warn' },
+        { text: '즉시 실내로 대피하고 문을 잠그십시오', cls: 'warn' },
+        { text: '외부 접촉 시 감염 위험이 있습니다', cls: '' },
+        { text: '재전송 중...', cls: '' },
+        { text: '수신 실패', cls: 'warn' },
+        { text: '재전송 중...', cls: '' },
+        { text: '...', cls: '' }
+      ];
+
+      for (const line of lines) {
+        const p = document.createElement('div');
+        p.className = 'disaster-line' + (line.cls ? ' ' + line.cls : '');
+        linesWrap.appendChild(p);
+        await typeLine(p, line.text, 24);
+        await wait(260);
+      }
+
+      await wait(200);
+      screen.classList.add('buzz');
+      const finalLine = document.createElement('div');
+      finalLine.className = 'disaster-line final';
+      linesWrap.appendChild(finalLine);
+      await typeLine(finalLine, '당신 근처에도 있습니다.', 45);
+
+      await wait(1000);
+      screen.classList.remove('show');
+      screen.classList.remove('buzz');
+      await wait(200);
+    }
+
+    // 2단계: CCTV 감시화면 - 실루엣이 스쳐 지나가고, 신호가 끊기다가 강제 종료됨
+    async function runCctvPhase() {
+      const screen = document.getElementById('cctvScreen');
+      const statusText = document.getElementById('cctvStatusText');
+      const terminatedText = document.getElementById('cctvTerminatedText');
+      const timestampEl = document.getElementById('cctvTimestamp');
+      const canvas = document.getElementById('tvStaticCanvas');
+      const blackout = document.getElementById('tvBlackout');
+
+      screen.classList.add('show');
+      canvas.classList.add('cctv-tint');
+      startTvStaticNoise();
+      playStaticSound();
+
+      // 실시간처럼 흘러가는 가짜 타임스탬프
+      let fakeSeconds = 0;
+      const baseDate = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const tsInterval = setInterval(() => {
+        fakeSeconds++;
+        const d = new Date(baseDate.getTime() + fakeSeconds * 1000);
+        timestampEl.textContent = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      }, 1000);
+
+      await wait(500);
+
+      // 실루엣이 화면 가장자리를 한 번 스쳐 지나감
+      const sL = document.getElementById('silhouetteL');
+      if (sL) {
+        sL.classList.add('silhouette-play');
+        setTimeout(() => sL.classList.remove('silhouette-play'), 2100);
+      }
+
+      await wait(700);
+
+      // SIGNAL LOST / RECONNECTING... 이 불규칙하게 깜빡임
+      const flickerMsgs = ['SIGNAL LOST', 'RECONNECTING...', 'SIGNAL LOST', 'RECONNECTING...', 'SIGNAL LOST'];
+      for (const msg of flickerMsgs) {
+        statusText.textContent = msg;
+        statusText.classList.add('show');
+        await wait(260);
+        statusText.classList.remove('show');
+        await wait(110);
+      }
+
+      await wait(200);
+
+      // 프리즈 프레임: 노이즈가 멈추고 색이 왜곡된 채 화면이 굳음
+      stopTvStaticNoise();
+      canvas.style.opacity = '0.9';
+      canvas.style.filter = 'contrast(1.5) hue-rotate(15deg) saturate(2)';
+
+      terminatedText.classList.add('show');
+      await wait(1300);
+
+      // 하드 블랙아웃 컷
+      if (blackout) {
+        blackout.style.opacity = '1';
+        await wait(350);
+      }
+
+      clearInterval(tsInterval);
+      screen.classList.remove('show');
+      terminatedText.classList.remove('show');
+      canvas.classList.remove('cctv-tint');
+      canvas.style.filter = '';
+      canvas.style.opacity = '';
+      if (blackout) blackout.style.opacity = '0';
+    }
+
+    async function startWakeSequence() {
       const btn = document.getElementById('wakeBtn');
       const introScreen = document.getElementById('intro-screen');
       if (!introScreen || introScreen.dataset.waking === '1') return;
@@ -2064,33 +2353,29 @@
       btn.disabled = true;
       btn.style.opacity = '0.35';
       btn.style.pointerEvents = 'none';
+      document.getElementById('intro-step1').style.display = 'none';
 
       // 클릭 즉시 "잘못 누른" 듯한 하드 컷 - 붉은 프레임 + 완전 암전을 순간적으로 튕겨준다
       const blackout = document.getElementById('tvBlackout');
       if (blackout) {
         blackout.classList.add('err-red');
         blackout.style.opacity = '1';
-        setTimeout(() => { blackout.style.opacity = '0'; }, 70);
-        setTimeout(() => { blackout.style.opacity = '1'; }, 140);
-        setTimeout(() => {
-          blackout.style.opacity = '0';
-          blackout.classList.remove('err-red');
-        }, 220);
+        await wait(70);
+        blackout.style.opacity = '0';
+        await wait(70);
+        blackout.style.opacity = '1';
+        await wait(80);
+        blackout.style.opacity = '0';
+        blackout.classList.remove('err-red');
       }
 
-      playStaticSound();
-      introScreen.classList.add('waking');
-      flashGlitchTexts();
-      startTvStaticNoise();
-      triggerBlackoutCuts();
-      scrambleTitleText();
+      // 1단계: 긴급재난문자 -> 2단계: CCTV 감시화면 -> 사이트 진입
+      await runDisasterPhase();
+      await runCctvPhase();
 
-      setTimeout(() => {
-        stopTvStaticNoise();
-        introScreen.style.transition = 'opacity 0.9s ease';
-        introScreen.style.opacity = '0';
-        setTimeout(enterMainSite, 900);
-      }, 3400);
+      introScreen.style.transition = 'opacity 0.9s ease';
+      introScreen.style.opacity = '0';
+      setTimeout(enterMainSite, 900);
     }
 
     function flashGlitchTexts() {
