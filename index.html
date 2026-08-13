@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>화연(禾延) 아포칼립스 : 비상 통신망</title>
+  <title>화연(禾延) 아포칼립스 : 완전판</title>
   
   <!-- Google Fonts & FontAwesome CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,26 +19,17 @@
        1. Base & Reset
        ========================================================================== */
     :root {
-      --bg-main: #06090e;
-      --bg-card: #0c121c;
-      --bg-card-hover: #141e2e;
-      --text-main: #d1f4ff;
-      --text-muted: #64829f;
-      
-      /* Neon Blueprint & Satellite Teal Theme */
-      --cyan-bright: #00f3ff;
-      --cyan-glow: rgba(0, 243, 255, 0.4);
-      --cyan-dim: #008b99;
-      --navy-bg: #091322;
-      
+      --bg-main: #0f1012;
+      --bg-card: #16181c;
+      --bg-card-hover: #1f2228;
+      --text-main: #e0e0e0;
+      --text-muted: #9e9e9e;
       --accent-red: #e53935;
       --accent-red-bright: #ff5252;
       --accent-green: #00e676;
       --accent-yellow: #ffb300;
-      
-      --border-cyan: rgba(0, 243, 255, 0.3);
-      --border-hover: rgba(0, 243, 255, 0.8);
-      
+      --border-color: rgba(229, 57, 53, 0.25);
+      --border-hover: rgba(255, 82, 82, 0.6);
       --font-heading: 'Black Han Sans', sans-serif;
       --font-tech: 'Orbitron', sans-serif;
       --font-body: 'Noto Sans KR', sans-serif;
@@ -61,21 +52,21 @@
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), 
-                  linear-gradient(90deg, rgba(0, 243, 255, 0.03), rgba(0, 255, 128, 0.01), rgba(0, 100, 255, 0.03));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
       z-index: 999;
       background-size: 100% 3px, 6px 100%;
       pointer-events: none;
-      opacity: 0.85;
+      opacity: 0.8;
     }
 
     /* ==========================================================================
-       2. Intro Screen & Startup Glitch Animation
+       2. Intro Screen & Creepy Glitch Animation (Eerie Zombie Glitch)
        ========================================================================== */
     #intro-screen {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: #020408;
+      background: #020000;
       z-index: 10000;
       display: flex;
       flex-direction: column;
@@ -89,17 +80,17 @@
     @keyframes crt-turn-on {
       0% {
         transform: scale(1, 0.002) scaleX(0);
-        filter: brightness(30);
+        filter: brightness(30) contrast(200%);
         opacity: 1;
       }
       50% {
         transform: scale(1, 0.005) scaleX(1);
-        filter: brightness(10);
+        filter: brightness(10) contrast(150%);
         opacity: 1;
       }
       100% {
         transform: scale(1, 1) scaleX(1);
-        filter: brightness(1);
+        filter: brightness(1) contrast(100%);
         opacity: 1;
       }
     }
@@ -107,54 +98,54 @@
     .static-bg {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.05), rgba(2, 4, 8, 0.95) 2px);
-      animation: static-flicker 0.12s infinite;
+      background: repeating-radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.08), rgba(0, 0, 0, 0.95) 2px);
+      animation: static-flicker 0.08s infinite;
       pointer-events: none;
     }
 
     @keyframes static-flicker {
-      0% { opacity: 0.7; }
-      50% { opacity: 0.95; }
-      100% { opacity: 0.8; }
+      0% { opacity: 0.7; transform: translate(0, 0); }
+      50% { opacity: 0.95; transform: translate(-1px, 1px); }
+      100% { opacity: 0.8; transform: translate(1px, -1px); }
     }
 
     .intro-title-kanji {
       font-family: var(--font-heading);
-      font-size: clamp(3rem, 10vw, 6rem);
-      color: var(--cyan-bright);
-      text-shadow: 0 0 25px var(--cyan-glow);
-      letter-spacing: 4px;
+      font-size: clamp(3.2rem, 10vw, 6.5rem);
+      color: var(--accent-red-bright);
+      text-shadow: 0 0 30px rgba(229, 57, 53, 0.9);
+      letter-spacing: 6px;
       margin-bottom: 10px;
       position: relative;
     }
 
     .intro-sub {
-      color: var(--text-muted);
+      color: #ff8a80;
       font-size: 1.1rem;
       margin-bottom: 30px;
       letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255,0,0,0.5);
     }
 
     .gate-btn {
-      background: var(--navy-bg);
-      color: var(--cyan-bright);
-      border: 1px solid var(--cyan-bright);
+      background: var(--accent-red);
+      color: #fff;
+      border: 1px solid var(--accent-red-bright);
       padding: 16px 36px;
       font-size: 1.1rem;
       font-weight: 800;
       font-family: var(--font-body);
       border-radius: 4px;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+      box-shadow: 0 0 25px rgba(229, 57, 53, 0.7);
       transition: all 0.3s ease;
       z-index: 2;
     }
 
     .gate-btn:hover {
-      background: var(--cyan-bright);
-      color: #000;
+      background: var(--accent-red-bright);
       transform: scale(1.05);
-      box-shadow: 0 0 35px var(--cyan-bright);
+      box-shadow: 0 0 40px rgba(255, 82, 82, 0.9);
     }
 
     /* Glitch Animation */
@@ -167,13 +158,13 @@
     }
     .glitch::before {
       left: -2px;
-      text-shadow: 2px 0 var(--cyan-bright);
-      animation: glitch-anim 2.5s infinite linear alternate-reverse;
+      text-shadow: 3px 0 var(--accent-red-bright);
+      animation: glitch-anim 1.5s infinite linear alternate-reverse;
     }
     .glitch::after {
       left: 2px;
-      text-shadow: -2px 0 var(--accent-red-bright);
-      animation: glitch-anim2 1.8s infinite linear alternate-reverse;
+      text-shadow: -3px 0 #00ffff;
+      animation: glitch-anim2 1.2s infinite linear alternate-reverse;
     }
 
     @keyframes glitch-anim {
@@ -198,32 +189,31 @@
     #main-site { display: none; }
 
     .emergency-bar {
-      background: #081628;
-      color: var(--cyan-bright);
+      background: #8b0000;
+      color: #fff;
       font-size: 0.85rem;
       font-weight: 600;
       padding: 8px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--cyan-bright);
+      border-bottom: 1px solid var(--accent-red);
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
     }
 
     .ticker-text { display: flex; align-items: center; gap: 10px; }
     .pulsing-dot {
       width: 10px; height: 10px;
-      background-color: var(--cyan-bright);
+      background-color: var(--accent-red-bright);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--cyan-bright);
+      box-shadow: 0 0 10px var(--accent-red-bright);
       animation: pulse 1.2s infinite;
     }
     @keyframes pulse {
       0% { transform: scale(0.95); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.3; }
+      50% { transform: scale(1.25); opacity: 0.4; }
       100% { transform: scale(0.95); opacity: 1; }
     }
 
@@ -232,16 +222,16 @@
       background: rgba(0,0,0,0.6);
       padding: 4px 10px;
       border-radius: 4px;
-      border: 1px solid var(--cyan-bright);
-      color: var(--cyan-bright);
+      border: 1px solid var(--accent-red-bright);
+      color: var(--accent-red-bright);
       letter-spacing: 1px;
     }
 
     .hero-section {
       text-align: center;
       padding: 50px 20px 35px;
-      background: radial-gradient(circle at center, rgba(0, 243, 255, 0.12) 0%, rgba(6, 9, 14, 1) 80%);
-      border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+      background: radial-gradient(circle at center, rgba(229, 57, 53, 0.18) 0%, rgba(15, 16, 18, 1) 75%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .hero-title {
@@ -249,14 +239,14 @@
       font-size: clamp(2.2rem, 6vw, 3.8rem);
       color: #fff;
       letter-spacing: 2px;
-      text-shadow: 0 0 20px var(--cyan-glow);
+      text-shadow: 0 0 15px rgba(229, 57, 53, 0.6);
     }
 
     .gov-alert-box {
       max-width: 850px;
       margin: 20px auto 0;
-      background: rgba(12, 18, 28, 0.9);
-      border-left: 4px solid var(--cyan-bright);
+      background: rgba(22, 24, 28, 0.9);
+      border-left: 4px solid var(--accent-red);
       border-radius: 4px;
       padding: 16px 20px;
       text-align: left;
@@ -265,7 +255,7 @@
     }
 
     .gov-alert-header {
-      color: var(--cyan-bright);
+      color: var(--accent-red-bright);
       font-weight: 700;
       margin-bottom: 6px;
       display: flex;
@@ -283,9 +273,9 @@
     }
 
     .env-card {
-      background: rgba(12, 18, 28, 0.9);
-      border: 1px solid var(--border-cyan);
-      border-left: 3px solid var(--cyan-bright);
+      background: rgba(22, 24, 28, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-left: 3px solid var(--accent-red);
       padding: 10px 14px;
       border-radius: 4px;
     }
@@ -317,22 +307,25 @@
       border: none;
     }
 
-    .cta-survival { 
-      background: var(--navy-bg); 
-      color: var(--cyan-bright); 
-      border: 1px solid var(--cyan-bright);
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); 
+    /* 수정: 생존 테스트 바로가기 버튼 */
+    .cta-survival {
+      background: var(--accent-red);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(229, 57, 53, 0.5);
     }
-    .cta-survival:hover { transform: translateY(-2px); background: var(--cyan-bright); color: #000; }
+    .cta-survival:hover { transform: translateY(-2px); background: var(--accent-red-bright); }
 
-    .cta-novel { background: var(--accent-red); color: #fff; box-shadow: 0 0 15px rgba(229, 57, 53, 0.4); }
-    .cta-novel:hover { transform: translateY(-2px); background: var(--accent-red-bright); }
+    .cta-novel { background: #333; color: #fff; border: 1px solid #555; }
+    .cta-novel:hover { transform: translateY(-2px); background: #444; }
 
     .cta-community { background: #03cf5d; color: #fff; box-shadow: 0 0 15px rgba(3, 207, 93, 0.3); }
     .cta-community:hover { transform: translateY(-2px); background: #22e279; }
 
+    .cta-kakao { background: #fee500; color: #191919; box-shadow: 0 0 15px rgba(254, 229, 0, 0.3); }
+    .cta-kakao:hover { transform: translateY(-2px); background: #fff04d; }
+
     /* ==========================================================================
-       4. Tabs & Content
+       4. Tabs & Timeline System
        ========================================================================== */
     .container { max-width: 1100px; margin: 0 auto; padding: 20px 20px 60px; }
 
@@ -342,13 +335,13 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 35px;
-      border-bottom: 2px solid rgba(0, 243, 255, 0.15);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
       padding-bottom: 12px;
     }
 
     .tab-btn {
       background: var(--bg-card);
-      border: 1px solid var(--border-cyan);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text-muted);
       padding: 12px 20px;
       font-size: 0.95rem;
@@ -361,18 +354,16 @@
       gap: 8px;
     }
 
-    .tab-btn:hover { background: var(--bg-card-hover); color: #fff; border-color: var(--cyan-bright); }
+    .tab-btn:hover { background: var(--bg-card-hover); color: #fff; border-color: var(--border-color); }
     .tab-btn.active {
-      background: var(--cyan-bright);
-      color: #000;
-      font-weight: 800;
-      border-color: var(--cyan-bright);
-      box-shadow: 0 0 20px var(--cyan-glow);
+      background: var(--accent-red);
+      color: #fff;
+      border-color: var(--accent-red-bright);
+      box-shadow: 0 0 15px rgba(229, 57, 53, 0.4);
     }
 
     .tab-btn.comm-tab.active {
       background: #03cf5d;
-      color: #fff;
       border-color: #22e279;
       box-shadow: 0 0 15px rgba(3, 207, 93, 0.4);
     }
@@ -381,12 +372,40 @@
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* Quiz Box inside Tab */
+    .quiz-box-card {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-red-bright);
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 750px;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(229, 57, 53, 0.25);
+      text-align: left;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 14px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-align: left;
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .option-btn:hover { background: rgba(229, 57, 53, 0.25); border-color: var(--accent-red-bright); color: #fff; }
+
     /* Timeline Styling */
     .timeline {
       position: relative;
       padding-left: 20px;
       margin-top: 25px;
-      border-left: 2px solid var(--cyan-bright);
+      border-left: 2px solid var(--accent-red);
     }
 
     .timeline-item { position: relative; margin-bottom: 25px; padding-left: 15px; }
@@ -396,20 +415,20 @@
       left: -26px; top: 4px;
       width: 10px; height: 10px;
       border-radius: 50%;
-      background: var(--cyan-bright);
-      box-shadow: 0 0 10px var(--cyan-bright);
+      background: var(--accent-red-bright);
+      box-shadow: 0 0 8px var(--accent-red-bright);
     }
 
-    .timeline-date { font-family: var(--font-tech); color: var(--cyan-bright); font-size: 0.85rem; font-weight: 700; }
+    .timeline-date { font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 0.85rem; font-weight: 700; }
     .timeline-title { color: #fff; font-weight: 700; margin: 2px 0; }
     .timeline-desc { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* Cards Grid */
+    /* Cards & Map Grid */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
     .card {
       background: var(--bg-card);
-      border: 1px solid var(--border-cyan);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 22px;
       transition: all 0.3s ease;
@@ -417,9 +436,9 @@
     }
 
     .card:hover {
-      border-color: var(--cyan-bright);
+      border-color: var(--border-hover);
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0, 243, 255, 0.25);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
     }
 
     .card-title {
@@ -433,66 +452,63 @@
     }
 
     .badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 3px; font-family: var(--font-tech); font-weight: 700; }
-    .badge-cyan { background: rgba(0, 243, 255, 0.15); color: var(--cyan-bright); border: 1px solid var(--cyan-bright); }
     .badge-red { background: rgba(229, 57, 53, 0.2); color: var(--accent-red-bright); border: 1px solid var(--accent-red); }
     .badge-yellow { background: rgba(255, 179, 0, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
 
     /* ==========================================================================
-       5. Leaflet Interactive Map Styling (Blueprint & Satellite Theme)
+       5. Leaflet Interactive Map Styling (No-Label Dark Tactical Map)
        ========================================================================== */
     .tactical-map-box {
-      background: #040912;
-      border: 1px solid var(--cyan-bright);
+      background: #090a0c;
+      border: 1px solid rgba(229, 57, 53, 0.4);
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 30px;
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.2);
     }
 
     #leaflet-map {
       width: 100%;
       height: 480px;
       border-radius: 6px;
-      border: 1px solid var(--cyan-dim);
+      border: 1px solid var(--border-color);
       margin-top: 15px;
-      background-color: #060e1a;
+      background-color: #0d1117;
       z-index: 10;
     }
 
-    /* Custom Leaflet Cyan Marker Icon Style */
+    /* Custom Leaflet Marker Icon Style */
     .custom-map-icon {
-      background: rgba(6, 14, 26, 0.95);
-      border: 2px solid var(--cyan-bright);
+      background: rgba(22, 24, 28, 0.9);
+      border: 2px solid var(--accent-red-bright);
       border-radius: 50%;
-      color: var(--cyan-bright);
+      color: #fff;
       display: flex !important;
       justify-content: center;
       align-items: center;
       font-size: 14px;
-      box-shadow: 0 0 12px var(--cyan-bright);
+      box-shadow: 0 0 12px var(--accent-red-bright);
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
+      transition: transform 0.2s;
     }
 
     .custom-map-icon:hover {
       transform: scale(1.25);
-      background: var(--cyan-bright);
-      color: #000;
+      background: var(--accent-red);
     }
 
-    /* Leaflet Popup Style Override (Navy / Teal Theme) */
+    /* Leaflet Popup Style Override */
     .leaflet-popup-content-wrapper {
-      background: #091322;
+      background: var(--bg-card);
       color: var(--text-main);
-      border: 1px solid var(--cyan-bright);
+      border: 1px solid var(--accent-red-bright);
       border-radius: 6px;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+      box-shadow: 0 0 15px rgba(0,0,0,0.8);
       font-family: var(--font-body);
     }
 
     .leaflet-popup-tip {
-      background: var(--cyan-bright);
+      background: var(--accent-red-bright);
     }
 
     .map-pop-title {
@@ -505,9 +521,9 @@
     .map-pop-btn {
       display: inline-block;
       margin-top: 8px;
-      padding: 5px 12px;
-      background: var(--cyan-bright);
-      color: #000;
+      padding: 4px 10px;
+      background: var(--accent-red);
+      color: #fff;
       border-radius: 3px;
       font-size: 0.8rem;
       cursor: pointer;
@@ -515,37 +531,7 @@
       border: none;
     }
 
-    .map-pop-btn:hover { background: #fff; }
-
-    /* ==========================================================================
-       6. Interactive Quiz UI Box inside Tab
-       ========================================================================== */
-    .quiz-box-card {
-      background: var(--bg-card);
-      border: 1px solid var(--cyan-bright);
-      padding: 30px;
-      border-radius: 8px;
-      max-width: 750px;
-      margin: 0 auto;
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
-      text-align: left;
-    }
-
-    .option-btn {
-      background: rgba(0, 243, 255, 0.05);
-      border: 1px solid var(--border-cyan);
-      color: var(--text-main);
-      padding: 14px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      text-align: left;
-      transition: all 0.2s ease;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .option-btn:hover { background: rgba(0, 243, 255, 0.2); border-color: var(--cyan-bright); color: #fff; }
+    .map-pop-btn:hover { background: var(--accent-red-bright); }
 
     /* Modals System */
     .modal-overlay {
@@ -561,19 +547,19 @@
 
     .modal-card {
       background: var(--bg-card);
-      border: 2px solid var(--cyan-bright);
+      border: 2px solid var(--accent-red-bright);
       border-radius: 8px;
       max-width: 600px;
       width: 100%;
       padding: 25px;
-      box-shadow: 0 0 35px var(--cyan-glow);
+      box-shadow: 0 0 30px rgba(229, 57, 53, 0.4);
       position: relative;
     }
 
     .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
     .modal-close:hover { color: #fff; }
 
-    /* Community Section */
+    /* Integrated Community UI */
     .comm-board-container {
       background: var(--bg-card);
       border: 2px solid var(--accent-green);
@@ -625,7 +611,7 @@
       padding: 30px 20px;
       color: var(--text-muted);
       font-size: 0.85rem;
-      border-top: 1px solid rgba(0, 243, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       margin-top: 60px;
     }
 
@@ -639,16 +625,30 @@
 <body>
 
   <!-- ==========================================================================
-       1. GATEKEEPER INTRO SCREEN (Glitch & CRT Wake Effect)
+       1. GATEKEEPER INTRO SCREEN (Glitch & CRT Wake & OpenChat Focus)
        ========================================================================== -->
   <div id="intro-screen">
     <div class="static-bg"></div>
 
     <div id="intro-step1" style="z-index: 2;">
       <div class="intro-title-kanji glitch" data-text="화연 (禾延)">화연 (禾延)</div>
-      <p class="intro-sub">발병 72시간 경과 · 화연시 비상 위성 스캔 네트워크 연결 중</p>
+      <p class="intro-sub"><i class="fa-solid fa-biohazard"></i> 경고: 바이러스 확산 72시간 경과 · 생존자 통신망 신호 감지</p>
+      
+      <!-- 수정 반영: 첫 접속 시 오픈채팅 모달/진입 연결 -->
+      <div style="background: rgba(22, 24, 28, 0.95); border: 1px solid var(--accent-red-bright); padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto 25px; box-shadow: 0 0 30px rgba(229,57,53,0.3);">
+        <p style="color: #fff; font-size: 1rem; margin-bottom: 12px; font-weight: 700;">
+          <i class="fa-solid fa-comments" style="color: #fee500;"></i> 생존자 비상 오픈채팅방 연결
+        </p>
+        <p style="color: #aaa; font-size: 0.88rem; margin-bottom: 15px;">
+          화연시 통신망이 완전히 끊어지기 전, 오픈채팅방에 접속하여 실시간 비상 대책 및 생존 신호를 공유하세요.
+        </p>
+        <a href="#" target="_blank" class="cta-btn cta-kakao" style="justify-content: center; width: 100%; text-decoration: none;">
+          <i class="fa-solid fa-comment"></i> 오픈채팅 카카오톡 진입하기
+        </a>
+      </div>
+
       <button class="gate-btn" onclick="enterMainSite()">
-        <i class="fa-solid fa-satellite-dish"></i> 비상 통신망 접속하기
+        <i class="fa-solid fa-radiation"></i> 비상 위성 네트워크 접속 (메인 이동)
       </button>
     </div>
   </div>
@@ -662,7 +662,7 @@
     <div class="emergency-bar">
       <div class="ticker-text">
         <span class="pulsing-dot"></span>
-        <span>[재난방송] 화연시 전역 바이러스 경보 발령중 (위성 데이터 수신중)</span>
+        <span>[재난방송] 화연시 전역 바이러스 경보 발령중 (통신망 두절 직전)</span>
       </div>
       <div class="timer-badge" id="elapsedTimer">72:00:00</div>
     </div>
@@ -673,8 +673,8 @@
       <p style="color: var(--text-muted); margin-top: 6px;">발병 72시간째, 통신망 두절 임박. 살아남아라.</p>
 
       <!-- Action Buttons (CTA) -->
+      <!-- 수정 반영: 오픈채팅 -> 생존 테스트 바로가기 버튼 위치 및 동작 구성 -->
       <div class="cta-buttons">
-        <!-- 수정 반영: 오픈채팅 -> 생존 테스트 바로가기 -->
         <button class="cta-btn cta-survival" onclick="switchTab('survival-test')">
           <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
         </button>
@@ -712,7 +712,7 @@
           <div class="env-val">8% (마비 직전)</div>
         </div>
         <div class="env-card">
-          <div class="env-label"><i class="fa-solid fa-droplet-slash" style="color: var(--cyan-bright);"></i> 상수도 수질</div>
+          <div class="env-label"><i class="fa-solid fa-droplet-slash" style="color: #00bcd4;"></i> 상수도 수질</div>
           <div class="env-val" style="color: var(--accent-red-bright);">치명적 오염</div>
         </div>
       </div>
@@ -721,16 +721,13 @@
     <div class="container">
 
       <!-- Main Navigation Tabs -->
+      <!-- 수정 반영: 요구하신 정확한 탭 순서 적용 (개요배경, 주요시설, 감염자도감, 등장인물, 생존자 커뮤니티, 생존 테스트바로가기) -->
       <nav class="nav-tabs">
         <button class="tab-btn active" id="tab-btn-overview" onclick="switchTab('overview')">
           <i class="fa-solid fa-earth-americas"></i> 개요 & 배경
         </button>
         <button class="tab-btn" id="tab-btn-locations" onclick="switchTab('locations')">
           <i class="fa-solid fa-map-location-dot"></i> 주요 시설 & 지도
-        </button>
-        <!-- 수정 반영: 오픈채팅 -> 생존 테스트 바로가기 탭 추가 -->
-        <button class="tab-btn" id="tab-btn-survival-test" onclick="switchTab('survival-test')">
-          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
         </button>
         <button class="tab-btn" id="tab-btn-infected" onclick="switchTab('infected')">
           <i class="fa-solid fa-biohazard"></i> 감염자 도감
@@ -741,14 +738,17 @@
         <button class="tab-btn comm-tab" id="tab-btn-community" onclick="switchTab('community')">
           <i class="fa-solid fa-users"></i> 생존자 커뮤니티
         </button>
+        <button class="tab-btn" id="tab-btn-survival-test" onclick="switchTab('survival-test')">
+          <i class="fa-solid fa-shield-halved"></i> 생존 테스트 바로가기
+        </button>
       </nav>
 
       <!-- TAB 1: 개요 & 배경 -->
       <section id="overview" class="tab-content active">
         <div class="grid-2">
-          <div class="card" onclick="playBeep(); alert('화연시 개요: 인구 35만의 차단된 중소도시입니다.')">
+          <div class="card" onclick="playEerieBeep(); alert('화연시 개요: 인구 35만의 차단된 중소도시입니다.')">
             <div class="card-title">
-              <span><i class="fa-solid fa-city" style="color: var(--cyan-bright);"></i> 무대: 경기도 화연시</span>
+              <span><i class="fa-solid fa-city" style="color: var(--accent-red-bright);"></i> 무대: 경기도 화연시</span>
             </div>
             <p style="color: var(--text-muted); margin-bottom: 12px;">인구 35만의 지방 도시. 외곽 고속도로와 다리가 군 병력에 의해 완전 차단되어 외부 물자 유입이 전면 중단된 상태입니다.</p>
             <ul style="padding-left: 20px; color: #ccc; font-size: 0.95rem;">
@@ -757,22 +757,22 @@
             </ul>
           </div>
 
-          <div class="card" onclick="playBeep(); alert('원인: 제인바이오 유출 바이러스.')">
+          <div class="card" onclick="playEerieBeep(); alert('원인: 제인바이오 유출 바이러스.')">
             <div class="card-title">
-              <span><i class="fa-solid fa-vial-virus" style="color: var(--cyan-bright);"></i> 발병 원인: 제인바이오 유출</span>
+              <span><i class="fa-solid fa-vial-virus" style="color: var(--accent-red-bright);"></i> 발병 원인: 제인바이오 유출</span>
             </div>
             <p style="color: var(--text-muted); margin-bottom: 12px;">신약 개발 기업 '제인바이오' 비밀 연구소에서 신경계 변종 바이러스 유출.</p>
-            <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 4px; border-left: 2px solid var(--cyan-bright);">
-              <p style="font-size: 0.85rem; color: var(--cyan-bright);"><strong>[감염 메커니즘]</strong></p>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 4px;">
+              <p style="font-size: 0.85rem; color: var(--accent-red-bright);"><strong>[감염 메커니즘]</strong></p>
               <p style="font-size: 0.85rem; color: #aaa;">잠복기 6~12시간. 초기에 고열과 공격성을 보이며, 뇌간이 마비되는 즉시 전염성 생체 병기로 변모함.</p>
             </div>
           </div>
         </div>
 
         <!-- Major Incidents Timeline -->
-        <div style="margin-top: 40px; background: var(--bg-card); padding: 25px; border-radius: 8px; border: 1px solid var(--border-cyan);">
+        <div style="margin-top: 40px; background: var(--bg-card); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color);">
           <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.4rem; margin-bottom: 10px;">
-            <i class="fa-solid fa-clock-rotate-left" style="color: var(--cyan-bright);"></i> 발병 주요 사건 타임라인 (Chronology)
+            <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-red-bright);"></i> 발병 주요 사건 타임라인 (Chronology)
           </h3>
           <p style="color: var(--text-muted); font-size: 0.85rem;">화연시 사태 발생 후 72시간 동안의 기록입니다.</p>
 
@@ -801,26 +801,25 @@
         </div>
       </section>
 
-      <!-- TAB 2: 주요 시설 & 지도 (네이비 & 청록색 블루프린트 / 위성 스캔 스타일) -->
+      <!-- TAB 2: 주요 시설 & 지도 -->
       <section id="locations" class="tab-content">
         <div class="tactical-map-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-family: var(--font-tech); color: var(--cyan-bright); font-weight: 700;">
-              <i class="fa-solid fa-satellite"></i> HWAYEON BLUEPRINT & SATELLITE SCAN (전체 26개소)[cite: 1]
+            <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-weight: 700;">
+              <i class="fa-solid fa-map"></i> HWAYEON INTERACTIVE SATELLITE MAP (전체 26개소)
             </span>
-            <span class="badge badge-cyan">SATELLITE SCAN ACTIVE</span>
+            <span class="badge badge-red">DRAG & ZOOM / CLICK MARKER</span>
           </div>
           <p style="color: var(--text-muted); font-size: 0.85rem;">
-            * 네이비 & 네온 청록색 전술 위성 스캔 지도입니다. 마우스 드래그로 이동, 핀 마커를 클릭하여 정보를 확인하세요.
+            * 구글 맵 방식처럼 마우스 드래그로 지도 이동, 휠/터치로 확대 및 축소가 가능합니다. 핀 마커를 클릭해 상세 정보를 확인하세요.
           </p>
 
-          <!-- Real Interactive Map Canvas -->
           <div id="leaflet-map"></div>
         </div>
 
         <!-- Location Cards Grid -->
         <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.3rem; margin: 25px 0 15px;">
-          <i class="fa-solid fa-list-check" style="color: var(--cyan-bright);"></i> 전체 시설 리스트 (클릭 시 상세 모달)
+          <i class="fa-solid fa-list-check" style="color: var(--accent-red-bright);"></i> 전체 시설 리스트 (클릭 시 상세 모달)
         </h3>
         <div class="grid-2">
           <div class="card" onclick="openLocationModal('hanbit')">
@@ -905,38 +904,10 @@
         </div>
       </section>
 
-      <!-- TAB 3: 생존 테스트 바로가기 (오픈채팅 대신 신규 배치된 탭) -->
-      <section id="survival-test" class="tab-content">
-        <div class="quiz-box-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-cyan); padding-bottom: 10px;">
-            <h3 style="font-family: var(--font-heading); color: var(--cyan-bright); font-size: 1.5rem;" id="tabQuizQTitle">
-              <i class="fa-solid fa-shield-halved"></i> [생존 가능성 진단 Q1]
-            </h3>
-            <span style="font-family: var(--font-tech); color: var(--cyan-bright); font-size: 1rem;" id="tabQuizProgress">1 / 5</span>
-          </div>
-
-          <p style="color: #fff; font-size: 1.1rem; margin-bottom: 20px;" id="tabQuizQText">질문 내용이 표시됩니다.</p>
-
-          <div id="tabQuizOptions"></div>
-
-          <!-- Result Screen inside Tab -->
-          <div id="tabQuizResult" style="display: none; text-align: center; margin-top: 20px;">
-            <p style="color: var(--text-muted); font-size: 0.95rem;">측정된 화연시 생존 가능성 종합 분석</p>
-            <div id="tabQuizScoreDisplay" style="font-family: var(--font-tech); font-size: 4rem; color: var(--cyan-bright); font-weight: 900; text-shadow: 0 0 25px var(--cyan-glow);">85%</div>
-            <p id="tabQuizScoreComment" style="color: #ccc; margin: 15px 0 25px; font-size: 1rem; line-height: 1.6; word-break: keep-all;">
-              결과 메시지가 출력됩니다.
-            </p>
-            <button class="gate-btn" onclick="resetTabQuiz()">
-              <i class="fa-solid fa-rotate-right"></i> 다시 테스트하기
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: 감염자 도감 -->
+      <!-- TAB 3: 감염자 도감 -->
       <section id="infected" class="tab-content">
         <div class="grid-2">
-          <div class="card" onclick="playBeep()">
+          <div class="card" onclick="playEerieBeep()">
             <div class="card-title">
               <span><i class="fa-solid fa-person-running" style="color: var(--accent-yellow);"></i> 1단계: 뜀박이</span>
               <span class="badge badge-yellow">위험도 보통</span>
@@ -944,7 +915,7 @@
             <p style="color: var(--text-muted);">감염 초기 상태. 신체 근육이 마비되지 않아 시각과 청각에 반응해 전속력으로 추격해옴.</p>
           </div>
 
-          <div class="card" onclick="playBeep()">
+          <div class="card" onclick="playEerieBeep()">
             <div class="card-title">
               <span><i class="fa-solid fa-person-walking" style="color: var(--accent-green);"></i> 2단계: 헤매기</span>
               <span class="badge badge-green">위험도 낮음</span>
@@ -952,7 +923,7 @@
             <p style="color: var(--text-muted);">발병 후 관절이 굳어 느리게 배회하는 유형. 단, 무리를 지으면 위협적.</p>
           </div>
 
-          <div class="card" onclick="playBeep()">
+          <div class="card" onclick="playEerieBeep()">
             <div class="card-title">
               <span><i class="fa-solid fa-skull" style="color: var(--accent-red-bright);"></i> 3단계: 사냥꾼</span>
               <span class="badge badge-red">위험도 높음</span>
@@ -960,7 +931,7 @@
             <p style="color: var(--text-muted);">시력을 잃은 대신 청각과 청각 반사가 극도로 발달. 어둠 속에서 벽을 타고 이동하기도 함.</p>
           </div>
 
-          <div class="card" onclick="playBeep()">
+          <div class="card" onclick="playEerieBeep()">
             <div class="card-title">
               <span><i class="fa-solid fa-biohazard" style="color: var(--accent-red-bright);"></i> 4단계: 특수 변종</span>
               <span class="badge badge-red">치명적</span>
@@ -970,38 +941,38 @@
         </div>
       </section>
 
-      <!-- TAB 5: 등장인물 (한서우) -->
+      <!-- TAB 4: 등장인물 (한서우) -->
       <section id="character" class="tab-content">
         <div class="card">
           <div class="profile-header" style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
-            <div class="profile-avatar" style="width: 80px; height: 80px; background: rgba(0,243,255,0.1); border: 2px solid var(--cyan-bright); border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-              <i class="fa-solid fa-user-gear" style="font-size: 2rem; color: var(--cyan-bright);"></i>
+            <div class="profile-avatar" style="width: 80px; height: 80px; background: rgba(229,57,53,0.2); border: 2px solid var(--accent-red-bright); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <i class="fa-solid fa-user-gear" style="font-size: 2rem; color: var(--accent-red-bright);"></i>
             </div>
             <div style="flex: 1;">
               <h2 style="color: #fff; font-size: 1.8rem; font-family: var(--font-heading);">한서우 (26세)</h2>
-              <p style="color: var(--cyan-bright); font-weight: 600;">생일: 4월 1일 (만우절)</p>
+              <p style="color: var(--accent-red-bright); font-weight: 600;">생일: 4월 1일 (만우절)</p>
               <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">능글맞고 유쾌한 평소 모습과, 위기 상황에서 급변하는 차갑고 정교한 면모의 갭모에 매력 소유자.</p>
             </div>
           </div>
 
-          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-left: 3px solid var(--cyan-bright); margin-bottom: 20px; font-style: italic; color: #ddd;">
+          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-left: 3px solid var(--accent-red-bright); margin-bottom: 20px; font-style: italic; color: #ddd;">
             "거짓말 같죠? 하필 생일날 세상이 망할 게 뭡니까. 그래도 쉽게 죽어줄 생각은 없는데요."
           </div>
 
           <div class="grid-2" style="margin-top: 20px;">
             <div>
-              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-wrench" style="color: var(--cyan-bright);"></i> 특기 및 능률</h4>
+              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-wrench" style="color: var(--accent-red-bright);"></i> 특기 및 능률</h4>
               <p style="font-size: 0.9rem; color: var(--text-muted);">손재주가 비상하여 폐품과 무전기를 조합해 함정이나 임시 무기를 조립함. 사격 및 기계 수리 감각 우수.</p>
             </div>
             <div>
-              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--cyan-bright);"></i> 성격 포인트</h4>
+              <h4 style="color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-masks-theater" style="color: var(--accent-red-bright);"></i> 성격 포인트</h4>
               <p style="font-size: 0.9rem; color: var(--text-muted);">평소 농담을 던지며 긴장을 풀어주지만, 적대 세력이나 감염체 앞에서는 장난기가 사라지고 계산적으로 변함.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- TAB 6: 생존자 커뮤니티 -->
+      <!-- TAB 5: 생존자 커뮤니티 -->
       <section id="community" class="tab-content">
         <div class="comm-board-container">
           <div class="comm-header">
@@ -1037,6 +1008,36 @@
           </div>
         </div>
       </section>
+
+      <!-- TAB 6: 생존 테스트 바로가기 (메인 탭에서 실행) -->
+      <!-- 수정 반영: 인트로 모달 대신 메인 웹사이트 내부에서 5문항 생존테스트 진행 -->
+      <section id="survival-test" class="tab-content">
+        <div class="quiz-box-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3 style="font-family: var(--font-heading); color: #fff; font-size: 1.5rem;" id="tabQuizQTitle">
+              <i class="fa-solid fa-shield-halved" style="color: var(--accent-red-bright);"></i> [생존 가능성 진단 Q1]
+            </h3>
+            <span style="font-family: var(--font-tech); color: var(--accent-red-bright); font-size: 1rem;" id="tabQuizProgress">1 / 5</span>
+          </div>
+
+          <p style="color: #ddd; font-size: 1.05rem; margin-bottom: 20px;" id="tabQuizQText">질문 내용이 표시됩니다.</p>
+
+          <div id="tabQuizOptions"></div>
+
+          <!-- Result Screen inside Tab -->
+          <div id="tabQuizResult" style="display: none; text-align: center; margin-top: 20px;">
+            <p style="color: var(--text-muted); font-size: 0.95rem;">측정된 화연시 생존 가능성 종합 분석</p>
+            <div id="tabQuizScoreDisplay" style="font-family: var(--font-tech); font-size: 4rem; color: var(--accent-red-bright); font-weight: 900; text-shadow: 0 0 25px rgba(229,57,53,0.8);">85%</div>
+            <p id="tabQuizScoreComment" style="color: #ccc; margin: 15px 0 25px; font-size: 1rem; line-height: 1.6; word-break: keep-all;">
+              결과 메시지가 출력됩니다.
+            </p>
+            <button class="gate-btn" onclick="resetTabQuiz()">
+              <i class="fa-solid fa-rotate-right"></i> 다시 테스트하기
+            </button>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <footer>
@@ -1044,12 +1045,12 @@
     </footer>
   </div>
 
-  <!-- Modal for Location Details -->
+  <!-- Location Detail Modal -->
   <div class="modal-overlay" id="locationModal">
     <div class="modal-card">
       <span class="modal-close" onclick="closeLocationModal()">&times;</span>
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-        <i class="fa-solid fa-location-dot" style="color: var(--cyan-bright); font-size: 1.5rem;"></i>
+        <i class="fa-solid fa-location-dot" style="color: var(--accent-red-bright); font-size: 1.5rem;"></i>
         <h3 id="modalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem;">장소명</h3>
       </div>
       <p id="modalDanger" style="margin-bottom: 15px; font-weight: 700;">위험도: -</p>
@@ -1065,36 +1066,48 @@
 
   <!-- JavaScript Core -->
   <script>
-    // Audio Context Sound Synthesizer (No external audio file dependencies)
+    // Creepy Apocalypse Web Audio Synthesizer (으스스한 바이러스/경보 소리 생성)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function playBeep(freq = 440, type = 'sine', duration = 0.08) {
+    function playEerieBeep() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // Low creepy heartbeat-like drone + glitch noise
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(80, audioCtx.currentTime); // Low creepy freq
+      osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.3);
+
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
       osc.connect(gain);
       gain.connect(audioCtx.destination);
+
       osc.start();
-      osc.stop(audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + 0.3);
     }
 
-    function playGlitchNoise() {
+    function playZombieGlitchSound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      const bufferSize = audioCtx.sampleRate * 0.15;
+      
+      // Radio static noise
+      const bufferSize = audioCtx.sampleRate * 0.25;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const output = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
         output[i] = Math.random() * 2 - 1;
       }
+
       const whiteNoise = audioCtx.createBufferSource();
       whiteNoise.buffer = buffer;
+
       const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
       whiteNoise.connect(gain);
       gain.connect(audioCtx.destination);
       whiteNoise.start();
@@ -1112,14 +1125,14 @@
     }
     setInterval(updateTimer, 1000);
 
-    // Enter Main Site Effect
+    // Enter Main Site
     function enterMainSite() {
-      playGlitchNoise();
+      playZombieGlitchSound();
       document.getElementById('intro-screen').style.display = 'none';
       document.getElementById('main-site').style.display = 'block';
     }
 
-    // Tab Quiz Data & Logic
+    // 5-Quiz Questions Data
     const introQuestions = [
       {
         title: "[생존 가능성 진단 Q1]",
@@ -1173,7 +1186,7 @@
 
     function renderTabQuiz() {
       const q = introQuestions[tabQuizCurrent];
-      document.getElementById('tabQuizQTitle').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${q.title}`;
+      document.getElementById('tabQuizQTitle').innerHTML = `<i class="fa-solid fa-shield-halved" style="color: var(--accent-red-bright);"></i> ${q.title}`;
       document.getElementById('tabQuizProgress').textContent = `${tabQuizCurrent + 1} / 5`;
       document.getElementById('tabQuizQText').textContent = q.text;
 
@@ -1190,7 +1203,7 @@
     }
 
     function selectTabAnswer(score) {
-      playBeep(600, 'triangle', 0.05);
+      playEerieBeep();
       tabQuizScore += score;
       tabQuizCurrent++;
 
@@ -1202,7 +1215,7 @@
     }
 
     function showTabQuizResult() {
-      playGlitchNoise();
+      playZombieGlitchSound();
       document.getElementById('tabQuizQTitle').style.display = 'none';
       document.getElementById('tabQuizProgress').style.display = 'none';
       document.getElementById('tabQuizQText').style.display = 'none';
@@ -1215,7 +1228,7 @@
       const commentElem = document.getElementById('tabQuizScoreComment');
 
       if (tabQuizScore >= 90) {
-        commentElem.innerHTML = "<strong style='color: var(--cyan-bright);'>[베테랑 생존자]</strong><br>냉철한 판단력을 겸비했습니다. 화연시 탈출 성공 확률이 매우 높습니다.";
+        commentElem.innerHTML = "<strong style='color: var(--accent-green);'>[베테랑 생존자]</strong><br>냉철한 판단력을 겸비했습니다. 화연시 탈출 성공 확률이 매우 높습니다.";
       } else if (tabQuizScore >= 70) {
         commentElem.innerHTML = "<strong style='color: var(--accent-yellow);'>[우수 생존자]</strong><br>기본 수칙을 잘 숙지하고 계시네요. 살아남을 가능성이 높습니다.";
       } else {
@@ -1224,7 +1237,7 @@
     }
 
     function resetTabQuiz() {
-      playBeep(400, 'sine', 0.08);
+      playEerieBeep();
       tabQuizCurrent = 0;
       tabQuizScore = 0;
       document.getElementById('tabQuizQTitle').style.display = 'block';
@@ -1238,7 +1251,7 @@
     // Dynamic Tab Switching
     let mapInitialized = false;
     function switchTab(tabId) {
-      playBeep(520, 'sine', 0.05);
+      playEerieBeep();
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
@@ -1264,9 +1277,7 @@
       document.querySelector('.nav-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ==========================================================================
-    // LEAFLET MAP (Navy / Cyan Blueprint & Satellite Style)
-    // ==========================================================================
+    // Leaflet Tactical Map Engine
     let leafletMap;
     const mapCoordinates = {
       hanbit: { lat: 37.5665, lng: 126.9780, icon: "fa-building-user" },
@@ -1282,7 +1293,7 @@
     };
 
     const locationDetails = {
-      hanbit: { title: "한빛아파트 101~103동", danger: "메인 생존자 거점", body: "1~3층 계단 철거 완료. 주민 집단 거주 중." },
+      hanbit: { title: "한빛아파트 101~103동", danger: "생존자 메인 거점", body: "1~3층 계단 철거 완료. 주민 집단 거주 중." },
       grandpark: { title: "화연대공원역", danger: "지하철 2번역", body: "안전 우회 이동 가능 구역." },
       marina: { title: "화연천 수상 마리나", danger: "수상 고립 안전지대", body: "수상 이동수단 확보 요충지." },
       univ: { title: "화연국립대학교", danger: "자생 거점", body: "40여 명의 생존자 농성 중." },
@@ -1300,7 +1311,6 @@
         attributionControl: false
       }).setView([37.5665, 126.9780], 13);
 
-      // CartoDB Dark Matter No Labels (Cyan Overlay Style Tile)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         maxZoom: 16, minZoom: 12, subdomains: 'abcd'
       }).addTo(leafletMap);
@@ -1322,7 +1332,7 @@
           const popupContent = `
             <div style="text-align:center;">
               <div class="map-pop-title">${detail.title}</div>
-              <div style="font-size:0.8rem; color:var(--cyan-bright); margin-bottom:4px;">${detail.danger}</div>
+              <div style="font-size:0.8rem; color:var(--accent-red-bright); margin-bottom:4px;">${detail.danger}</div>
               <button class="map-pop-btn" onclick="openLocationModal('${key}')">상세정보 보기</button>
             </div>
           `;
@@ -1333,18 +1343,18 @@
     }
 
     function openLocationModal(key) {
-      playBeep(700, 'sine', 0.06);
+      playEerieBeep();
       const detail = locationDetails[key];
       if (detail) {
         document.getElementById('modalTitle').textContent = detail.title;
-        document.getElementById('modalDanger').innerHTML = `위험도/상태: <span style="color: var(--cyan-bright);">${detail.danger}</span>`;
+        document.getElementById('modalDanger').innerHTML = `위험도/상태: <span style="color: var(--accent-red-bright);">${detail.danger}</span>`;
         document.getElementById('modalBody').textContent = detail.body;
         document.getElementById('locationModal').style.display = 'flex';
       }
     }
 
     function closeLocationModal() {
-      playBeep(300, 'sine', 0.05);
+      playEerieBeep();
       document.getElementById('locationModal').style.display = 'none';
     }
   </script>
