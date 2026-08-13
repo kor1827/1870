@@ -544,6 +544,11 @@
       border: 1px solid rgba(229, 57, 53, 0.3);
       background: #0a0a0c;
     }
+    /* Brighten/boost contrast on the base tiles only (markers/tooltips stay untouched)
+       so roads and blocks are actually visible against the dark background */
+    #tacticalLeafletMap .leaflet-tile-pane {
+      filter: brightness(1.65) contrast(1.25) saturate(1.15);
+    }
     .tactical-marker-inner {
       width: 30px; height: 30px;
       background: rgba(229, 57, 53, 0.92);
@@ -1052,41 +1057,6 @@
               <div class="map-node-icon"><i class="fa-solid fa-train-subway"></i></div>
               <strong>지하철 8번역 (화연IC)</strong>
             </div>
-          </div>
-        </div>
-
-        <!-- Location Cards Grid -->
-        <div class="grid-2">
-          <div class="card" onclick="openLocationModal('school')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-school" style="color: var(--accent-yellow);"></i> 화연고등학교 / 중학교</span>
-              <span class="badge badge-yellow">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">학생들이 강당과 교실을 바리케이드로 봉쇄함. 매점 식량 고갈 진행 중.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('cityhall')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-building-flag" style="color: var(--accent-red-bright);"></i> 화연시청</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">비상대책본부가 함락된 폐허. 지하 서버실에 전력망 제어 비상 코드가 존재.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('military')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-shield-cat" style="color: var(--accent-red-bright);"></i> 외곽 군 검문소</span>
-              <span class="badge badge-red">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">도시 전체를 감싼 봉쇄선. 무인 포탑이 가동 중이며 경고 없이 사격됨.</p>
-          </div>
-
-          <div class="card" onclick="openLocationModal('apt')">
-            <div class="card-title">
-              <span><i class="fa-solid fa-building-user" style="color: var(--accent-green);"></i> 한빛아파트</span>
-              <span class="badge badge-green">상세보기</span>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">101~103동. 계단을 철거하고 4층 이상에서 주민들이 집단 거주 중.</p>
           </div>
         </div>
       </section>
@@ -1977,7 +1947,7 @@
         const center = [37.5065, 127.0025]; // 화연시 (가상 좌표)
         tacticalMap = L.map('tacticalLeafletMap', {
           center: center,
-          zoom: 13,
+          zoom: 14,
           scrollWheelZoom: false
         });
 
