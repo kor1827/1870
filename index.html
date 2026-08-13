@@ -4,7 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>화연(禾延) 아포칼립스 : 완전판</title>
-  
+
+  <!-- 파비콘 (외부 이미지 파일 없이 SVG 데이터로 삽입: 붉은 해골 아이콘) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%230f1012'/%3E%3Cpath d='M50 18c-15 0-27 11-27 26 0 10 5 17 12 21v9c0 3 2 5 5 5h20c3 0 5-2 5-5v-9c7-4 12-11 12-21 0-15-12-26-27-26z' fill='%23e53935'/%3E%3Ccircle cx='39' cy='44' r='6' fill='%230f1012'/%3E%3Ccircle cx='61' cy='44' r='6' fill='%230f1012'/%3E%3Cpath d='M42 62l-4 8M58 62l4 8M50 62v10' stroke='%230f1012' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Open Graph / 카카오톡·페이스북 공유 미리보기 -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="화연(禾延) 아포칼립스">
+  <meta property="og:title" content="화연(禾延) 아포칼립스 : 완전판">
+  <meta property="og:description" content="D+72시간, 국가 시스템이 마비된 화연시. 잔존 계엄군, 아파트 자치 생존자, 종말론 광신도가 얽힌 좀비 아포칼립스 세계관 아카이브 — 등장인물, 세력, 감염체, 전술 지도를 한눈에.">
+  <meta property="og:image" content="https://kor1827.github.io/1870/assets/hero/hanseowoo_72hours.jpg">
+  <meta property="og:url" content="https://kor1827.github.io/1870/">
+  <meta property="og:locale" content="ko_KR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="화연(禾延) 아포칼립스 : 완전판">
+  <meta name="twitter:description" content="D+72시간, 국가 시스템이 마비된 화연시. 잔존 계엄군, 아파트 자치 생존자, 종말론 광신도가 얽힌 좀비 아포칼립스 세계관 아카이브.">
+  <meta name="twitter:image" content="https://kor1827.github.io/1870/assets/hero/hanseowoo_72hours.jpg">
+
   <!-- Google Fonts & FontAwesome CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -620,6 +638,16 @@
     .badge-yellow { background: rgba(255, 179, 0, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
     .badge-green { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
     .badge-black { background: rgba(0, 0, 0, 0.55); color: #ff4d4d; border: 1px solid #555; }
+
+    /* Faction Relationship Diagram (세력 관계도) */
+    .relation-diagram-card { margin-bottom: 24px; cursor: default; }
+    .relation-diagram-card:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
+    .relation-svg-wrap { width: 100%; max-width: 760px; margin: 10px auto 0; }
+    .relation-svg-wrap svg { width: 100%; height: auto; display: block; }
+    .relation-legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; justify-content: center; font-size: 0.8rem; color: var(--text-muted); }
+    .relation-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .relation-legend i.line-swatch { display: inline-block; width: 22px; height: 0; border-top: 3px dashed var(--accent-red-bright); }
+    .relation-legend i.line-swatch.warn { border-top-color: var(--accent-yellow); }
 
     /* Tactical Map Visualizer */
     .tactical-map-box {
@@ -1365,6 +1393,75 @@
       <!-- TAB: 세력 및 집단 -->
       <section id="factions" class="tab-content">
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">D+72시간은 국가 시스템이 마비된 직후이므로, 거대한 연합보다는 '생존 목적의 잔존 세력 및 군소 집단'이 형성되는 극초기 단계입니다.</p>
+
+        <!-- 세력 관계도: 군(임백헌) vs 아파트 생존자(조종철) vs 종교집단(구원자) 대립 구도 -->
+        <div class="card relation-diagram-card">
+          <div class="card-title">
+            <span><i class="fa-solid fa-diagram-project" style="color: var(--accent-red-bright);"></i> 3대 세력 관계도 (D+72h)</span>
+            <span class="badge badge-red">화연시 삼파전</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">화연시의 주도권을 두고 무력으로 통제하려는 <strong style="color:#ddd;">잔존 계엄군</strong>, 생존을 위해 문을 걸어 잠근 <strong style="color:#ddd;">한빛아파트 자치 생존자</strong>, 혼란을 파고들어 신도를 늘리는 <strong style="color:#ddd;">종말론 광신도</strong>가 서로를 견제하는 삼파전 구도입니다.</p>
+
+          <div class="relation-svg-wrap">
+            <svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg">
+              <!-- 연결선 (원보다 먼저 그려서 끝부분이 원 아래로 가려지도록 처리) -->
+              <line x1="390" y1="90" x2="140" y2="470" stroke="#e53935" stroke-width="2.5" stroke-dasharray="7,6" opacity="0.85"/>
+              <line x1="390" y1="90" x2="640" y2="470" stroke="#e53935" stroke-width="2.5" stroke-dasharray="7,6" opacity="0.85"/>
+              <line x1="140" y1="470" x2="640" y2="470" stroke="#ffb300" stroke-width="2.5" stroke-dasharray="7,6" opacity="0.85"/>
+
+              <!-- 관계 라벨: 군 - 아파트 -->
+              <g>
+                <rect x="70" y="240" width="200" height="46" rx="6" fill="#16181c" stroke="#e53935" stroke-opacity="0.5"/>
+                <text x="170" y="259" text-anchor="middle" fill="#ff5252" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700">감시 · 물자 강제 징발</text>
+                <text x="170" y="277" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">통제 강경파의 압박 대상</text>
+              </g>
+
+              <!-- 관계 라벨: 군 - 종교집단 -->
+              <g>
+                <rect x="510" y="240" width="200" height="46" rx="6" fill="#16181c" stroke="#e53935" stroke-opacity="0.5"/>
+                <text x="610" y="259" text-anchor="middle" fill="#ff5252" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700">치안 교란 세력 규정</text>
+                <text x="610" y="277" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">발견 즉시 소탕 대상</text>
+              </g>
+
+              <!-- 관계 라벨: 아파트 - 종교집단 -->
+              <g>
+                <rect x="290" y="497" width="200" height="46" rx="6" fill="#16181c" stroke="#ffb300" stroke-opacity="0.5"/>
+                <text x="390" y="516" text-anchor="middle" fill="#ffb300" font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="700">신도 포섭 시도</text>
+                <text x="390" y="534" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">산발적 충돌 · 잠재적 위협</text>
+              </g>
+
+              <!-- 노드: 잔존 계엄군 (임백헌) -->
+              <g>
+                <circle cx="390" cy="90" r="58" fill="#16181c" stroke="#ff5252" stroke-width="2.5"/>
+                <text x="390" y="75" text-anchor="middle" fill="#ff5252" font-family="'Font Awesome 6 Free'" font-weight="900" font-size="22">&#xf3ed;</text>
+                <text x="390" y="98" text-anchor="middle" fill="#fff" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="700">잔존 계엄군</text>
+                <text x="390" y="117" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">지휘관: 임백헌</text>
+              </g>
+
+              <!-- 노드: 한빛아파트 자치 생존자 (조종철) -->
+              <g>
+                <circle cx="140" cy="470" r="58" fill="#16181c" stroke="#00e676" stroke-width="2.5"/>
+                <text x="140" y="455" text-anchor="middle" fill="#00e676" font-family="'Font Awesome 6 Free'" font-weight="900" font-size="22">&#xe4d8;</text>
+                <text x="140" y="478" text-anchor="middle" fill="#fff" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="700">한빛아파트</text>
+                <text x="140" y="497" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">대표: 조종철</text>
+              </g>
+
+              <!-- 노드: 종말론 광신도 (구원자) -->
+              <g>
+                <circle cx="640" cy="470" r="58" fill="#16181c" stroke="#ff1a1a" stroke-width="2.5"/>
+                <text x="640" y="455" text-anchor="middle" fill="#ff1a1a" font-family="'Font Awesome 6 Free'" font-weight="900" font-size="22">&#xf06d;</text>
+                <text x="640" y="478" text-anchor="middle" fill="#fff" font-family="'Noto Sans KR', sans-serif" font-size="13" font-weight="700">종말론 광신도</text>
+                <text x="640" y="497" text-anchor="middle" fill="#9e9e9e" font-family="'Noto Sans KR', sans-serif" font-size="11">교주: 구원자</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="relation-legend">
+            <span><i class="line-swatch"></i> 전면 대립 · 적대 관계</span>
+            <span><i class="line-swatch warn"></i> 긴장 · 잠재적 충돌</span>
+          </div>
+        </div>
+
         <div class="grid-2">
           <div class="card">
             <div class="card-title">
