@@ -169,6 +169,44 @@
     }
     .intro-phase.show { opacity: 1; }
 
+    /* --- 인트로 스킵 버튼 (재난문자 수신 화면 우상단) --- */
+    .intro-skip-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.68);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .intro-skip-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .intro-skip-btn:hover {
+      background: rgba(0, 0, 0, 0.55);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #fff;
+    }
+    .intro-skip-btn i { font-size: 0.66rem; }
+
     /* --- 긴급재난문자 폭주 잠금화면 --- */
     #disasterAlertScreen {
       background: radial-gradient(ellipse at 50% 30%, #1a1a1c 0%, #050505 75%);
@@ -585,8 +623,10 @@
     .intro-title-kanji {
       font-family: var(--font-heading);
       font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 900;
       color: var(--accent-red-bright);
       text-shadow: 0 0 20px rgba(229, 57, 53, 0.8);
+      -webkit-text-stroke: 1.5px var(--accent-red-bright);
       letter-spacing: 4px;
       margin-bottom: 10px;
       position: relative;
@@ -1208,8 +1248,62 @@
       position: relative;
     }
 
-    .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+    .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; z-index: 2; }
     .modal-close:hover { color: #fff; }
+
+    /* --- 등장인물 상세 모달: 페이지 분할 + 닫기 버튼 항상 보이도록 고정 레이아웃 --- */
+    .char-modal-card {
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      padding: 25px 25px 18px;
+    }
+    .char-modal-scroll {
+      overflow-y: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding-right: 2px;
+    }
+    .char-modal-scroll::-webkit-scrollbar { width: 5px; }
+    .char-modal-scroll::-webkit-scrollbar-track { background: transparent; }
+    .char-modal-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 999px; }
+    .char-modal-footer {
+      flex-shrink: 0;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+    .char-modal-pager {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+    .char-pager-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+    .char-pager-btn:hover:not(:disabled) { background: rgba(229, 57, 53, 0.2); border-color: var(--border-hover); }
+    .char-pager-btn:disabled { opacity: 0.3; cursor: default; }
+    .char-pager-indicator {
+      font-family: var(--font-tech);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      min-width: 54px;
+      text-align: center;
+    }
 
     .option-btn {
       background: rgba(255, 255, 255, 0.05);
@@ -1266,6 +1360,9 @@
 
     <!-- 1단계: 실제 긴급재난문자 수신 화면 (잠금화면 사실적 재현) -->
     <div id="disasterAlertScreen" class="intro-phase phone-phase">
+      <button type="button" class="intro-skip-btn" id="introSkipBtn" onclick="skipIntro()">
+        스킵하기 <i class="fa-solid fa-forward"></i>
+      </button>
       <div class="phone-mock">
         <div class="phone-clock">
           <div class="phone-time" id="phoneTime">03:41</div>
@@ -1298,8 +1395,8 @@
 
       <!-- Action Buttons (CTA) -->
       <div class="cta-buttons">
-        <a href="#" target="_blank" class="cta-btn cta-novel">
-          <i class="fa-solid fa-book-open"></i> 원작 소설 바로가기
+        <a href="https://share.crack.wrtn.ai/3begs1" target="_blank" rel="noopener" class="cta-btn cta-novel">
+          <i class="fa-solid fa-book-open"></i> 작품 바로가기
         </a>
         <!-- 생존자 커뮤니티 버튼 (누르면 지도 탭처럼 해당 탭으로 이동) -->
         <button class="cta-btn cta-community" onclick="switchTab('community')">
@@ -1927,13 +2024,6 @@
               <p style="color: var(--text-muted); font-size: 0.9rem;">29세 · 간호사 · 거점의 유일한 의료 자원, 냉철한 결벽증 소유자</p>
             </div>
           </div>
-          <div class="card char-card" onclick="openCharacterModal('kangdaesik')">
-            <img src="assets/characters/kangdaesik.jpg" alt="강대식" class="char-card-photo">
-            <div class="char-card-body">
-              <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 강대식</span></div>
-              <p style="color: var(--text-muted); font-size: 0.9rem;">52세 · 상가 건물주 · 공포에 잠식되어 제 몫부터 챙기는 소시민</p>
-            </div>
-          </div>
           <div class="card char-card" onclick="openCharacterModal('leeeunchae')">
             <img src="assets/characters/leeeunchae.jpg" alt="이은채" class="char-card-photo">
             <div class="char-card-body">
@@ -1946,13 +2036,6 @@
             <div class="char-card-body">
               <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 윤상하</span></div>
               <p style="color: var(--text-muted); font-size: 0.9rem;">28세 · 대학병원 레지던트 · 이성적이고 계산적인 의료 백업</p>
-            </div>
-          </div>
-          <div class="card char-card" onclick="openCharacterModal('choitaejin')">
-            <img src="assets/characters/choitaejin.jpg" alt="최태진" class="char-card-photo">
-            <div class="char-card-body">
-              <div class="card-title"><span><i class="fa-solid fa-user" style="color: var(--accent-red-bright);"></i> 최태진</span></div>
-              <p style="color: var(--text-muted); font-size: 0.9rem;">78세 · 베트남전 참전 용사 출신 · 냉혹한 현실주의 조언자</p>
             </div>
           </div>
           <div class="card char-card" onclick="openCharacterModal('guwonja')">
@@ -2257,18 +2340,31 @@
 
   <!-- Character Detail Modal -->
   <div class="modal-overlay" id="characterModal">
-    <div class="modal-card">
+    <div class="modal-card char-modal-card">
       <span class="modal-close" onclick="closeCharacterModal()">&times;</span>
-      <img id="charModalPhoto" src="" alt="" class="char-modal-photo" style="display:none;">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-        <i class="fa-solid fa-user" style="color: var(--accent-red-bright); font-size: 1.5rem;"></i>
-        <h3 id="charModalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem;">이름</h3>
+      <div class="char-modal-scroll" id="charModalScroll">
+        <img id="charModalPhoto" src="" alt="" class="char-modal-photo" style="display:none;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <i class="fa-solid fa-user" style="color: var(--accent-red-bright); font-size: 1.5rem;"></i>
+          <h3 id="charModalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem;">이름</h3>
+        </div>
+        <p id="charModalRole" style="margin-bottom: 15px; font-weight: 700;">역할: -</p>
+        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; color: #ccc; font-size: 0.95rem; line-height: 1.6;" id="charModalBody">
+          설명 내용
+        </div>
       </div>
-      <p id="charModalRole" style="margin-bottom: 15px; font-weight: 700;">역할: -</p>
-      <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; color: #ccc; font-size: 0.95rem; line-height: 1.6;" id="charModalBody">
-        설명 내용
+      <div class="char-modal-footer">
+        <div class="char-modal-pager" id="charModalPager">
+          <button type="button" class="char-pager-btn" id="charModalPrevBtn" onclick="changeCharacterPage(-1)" aria-label="이전 페이지">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span class="char-pager-indicator" id="charModalPageIndicator">1 / 1</span>
+          <button type="button" class="char-pager-btn" id="charModalNextBtn" onclick="changeCharacterPage(1)" aria-label="다음 페이지">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <button class="gate-btn" style="width: 100%; padding: 10px;" onclick="closeCharacterModal()">닫기</button>
       </div>
-      <button class="gate-btn" style="width: 100%; margin-top: 20px; padding: 10px;" onclick="closeCharacterModal()">닫기</button>
     </div>
   </div>
 
@@ -2478,15 +2574,27 @@
       });
     }
 
+    // 인트로(재난문자 폭주) 스킵 여부
+    let introSkipped = false;
+    function skipIntro() {
+      if (introSkipped) return;
+      introSkipped = true;
+      const skipBtn = document.getElementById('introSkipBtn');
+      if (skipBtn) skipBtn.classList.remove('visible');
+    }
+
     // 클릭 후 긴급재난문자가 폭주한다. 처음에는 천천히, 점점 더 빠르게 쌓인다.
     async function runDisasterPhase() {
       const screen = document.getElementById('disasterAlertScreen');
       const stack = document.getElementById('phoneNotifStack');
+      const skipBtn = document.getElementById('introSkipBtn');
       if (!screen || !stack) return;
 
+      introSkipped = false;
       stack.innerHTML = '';
       stack.classList.add('alert-overflow');
       screen.classList.add('show');
+      if (skipBtn) skipBtn.classList.add('visible');
 
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
@@ -2532,6 +2640,7 @@
 
       const total = 70;
       for (let i = 0; i < total; i++) {
+        if (introSkipped) break;
         const base = alerts[i % alerts.length];
         const kind = i > 8 ? 'critical' : base[0];
         const appLabel = kind === 'info' ? '안전안내문자' : '긴급재난문자';
@@ -2577,11 +2686,14 @@
         await wait(delay);
       }
 
-      // 마지막 문자만 잠깐 남겨두고 진동이 끝난 뒤 본편으로 진입.
-      await wait(3100);
+      // 마지막 문자만 잠깐 남겨두고 진동이 끝난 뒤 본편으로 진입. (스킵 시 즉시 진입)
+      if (!introSkipped) {
+        await wait(3100);
+      }
       screen.classList.remove('show');
       stack.classList.remove('alert-overflow');
-      await wait(250);
+      if (skipBtn) skipBtn.classList.remove('visible');
+      await wait(introSkipped ? 50 : 250);
     }
 
     async function startWakeSequence() {
@@ -3183,12 +3295,6 @@
         role: "나이: 29세 / 성별: 여성 / 직업: 간호사 (종합병원 응급실 근무 경력) / 거주지: 한빛아파트 102동 302호",
         body: `<b style='color:#fff;'>외형</b><br>자연스럽게 틀어 올린 헝클어진 흑발 업스타일 헤어, 턱을 괴고 있는 서늘하면서도 지적인 눈빛. 결벽증때문에 하얀 장갑을 끼고 있는 손과 깔끔한 블랙 자켓, 어깨에 멘 붉은색 백팩이 대비되는 모습.<br><br><b style='color:#fff;'>성격</b><br>냉철하고 이성적이며 쉽게 동요하지 않는 성향. 생존 위기 속에서도 침착하게 부상자를 돌보지만, 타인에게 쉽게 정을 주지 않는 단호함과 예민함을 지님. 결벽증.<br><br><b style='color:#fff;'>역할 및 관계</b><br>거점 내의 부상자 치료 및 의약품 관리 담당. 조종철의 지휘 아래 생존자들의 건강을 관리하며 의료 지원을 총괄함.<br><br><b style='color:#fff;'>배경</b><br>화연시 종합병원 응급실에서 일하다가 사태 초기부터 밀려드는 부상자와 감염자들을 마주함. 병원이 무너진 후 아파트 거점으로 합류했으며, 한정된 의약품 속에서 생과 사를 냉정하게 가르는 의료 지원 시스템을 유지하는 인물.`
       },
-      kangdaesik: {
-        title: "강대식",
-        photo: "assets/characters/kangdaesik.jpg",
-        role: "나이: 52세 / 성별: 남성 / 직업: 아파트 상가 건물주 (전직 부동산 임대업) / 거주지: 한빛아파트 101동 703호",
-        body: `<b style='color:#fff;'>외형</b><br>살집 있는 체형에 늘 불안한 눈빛으로 주변을 살핌. 원래 입던 값비싼 브랜드 옷차림이 지금은 꾀죄죄하게 낡아 대비를 이룸.<br><br><b style='color:#fff;'>성격</b><br>공포에 잠식된 소시민. "내 가족 먼저"라는 논리로 물자를 몰래 쟁여두거나 남몰래 이기적인 선택을 하는 인물. 완전한 악인은 아니고, 극한 상황에서 무너진 평범한 사람에 가까움.<br><br><b style='color:#fff;'>역할 및 관계</b><br>조종철의 리더십에 은근히 반발하며 거점 내부 갈등을 유발하는 축. 위기 상황마다 자기 몫을 먼저 챙기려 해서 다른 생존자들과 마찰이 잦음.<br><br><b style='color:#fff;'>배경</b><br>사태 전엔 상가 임대료로 여유롭게 살던 인물. 모든 걸 잃을지도 모른다는 공포 앞에서 인간성의 밑바닥이 드러나며, 훗날 자신의 선택 때문에 누군가 희생되는 걸 목격하고 크게 흔들리는 서사 여지가 있음.`
-      },
       leeeunchae: {
         title: "이은채",
         photo: "assets/characters/leeeunchae.jpg",
@@ -3201,12 +3307,6 @@
         role: "나이: 28세 / 성별: 남성 / 직업: 대학병원 레지던트 (의사) / 거주지: 한빛아파트 103동 407호",
         body: `<b style='color:#fff;'>외형</b><br>깔끔하게 넘긴 흑발과 지적인 매력을 더하는 은테 안경, 서늘하면서도 가라앉은 눈빛. 창백할 정도로 하얀 피부와 날렵한 턱선, 단정한 흰색 셔츠 차림으로 이지적인 분위기를 풍김.<br><br><b style='color:#fff;'>성격</b><br>철저하게 이성적이고 감정에 휘둘리지 않는 냉철한 성향. 타인에게 쉽게 마음을 열지 않으며, 비상 상황에서도 예리한 분석력으로 손익을 따지는 계산적이고 차가운 면모.<br><br><b style='color:#fff;'>역할 및 관계</b><br>거점 내의 부조리나 갈등 속에서 박아름과 협력하는 의료 백업 인물.<br><br><b style='color:#fff;'>배경</b><br>화연시 종합병원에서 수련을 받던 중 사태를 맞이함. 감염 사태의 본질을 의학적·과학적 관점에서 분석하며, 거점 내부에서 자신의 생존과 실리를 최우선으로 삼고 은밀하게 움직이는 인물.`
       },
-      choitaejin: {
-        title: "최태진",
-        photo: "assets/characters/choitaejin.jpg",
-        role: "나이: 78세 / 성별: 남성 / 직업: 은퇴 (베트남전 참전 용사 출신) / 거주지: 한빛아파트 103동 201호",
-        body: `<b style='color:#fff;'>외형</b><br>백발에 마른 체구지만 꼿꼿한 자세, 깊게 팬 주름과 흔들림 없는 눈빛. 낡았지만 손질이 잘 된 카키색 재킷을 입고 다니며, 지팡이 대신 늘 짧은 목봉을 짚고 다님.<br><br><b style='color:#fff;'>성격</b><br>처음부터 끝까지 건조하고 냉정함. "감상에 빠질 시간 없다"는 태도로 죽음과 희생을 계산적으로 받아들임. 다른 생존자들이 감정적으로 무너질 때, 유일하게 "누굴 버릴지" 같은 잔인한 판단을 대신 내려주는 존재.<br><br><b style='color:#fff;'>역할 및 관계</b><br>조종철의 따뜻한 리더십과 대비되는 차가운 현실주의 축. 전략적 판단이 필요한 순간마다 조언자 역할을 하지만, 그 조언은 늘 냉혹함을 동반함.<br><br><b style='color:#fff;'>배경</b><br>젊은 시절 참전 경험으로 이미 한 번 지옥을 겪어본 인물. 그때 얻은 "살아남는 자와 죽는 자는 정해져 있다"는 신념이 지금 이 재앙 앞에서도 그대로 적용되고 있으며, 감정을 배제한 채 생존만을 최우선 목표로 삼음.`
-      },
       guwonja: {
         title: "구원자",
         photo: "assets/characters/guwonja.jpg",
@@ -3215,12 +3315,55 @@
       }
     };
 
+    // 등장인물 상세 설명이 길어 한 화면에 다 안 보이는 문제 해결:
+    // "외형/성격/역할 및 관계/배경" 같은 항목 단위(<br><br> 구분)로 잘라 여러 페이지로 나눠 보여준다.
+    let charModalPages = [];
+    let charModalPageIndex = 0;
+
+    function paginateCharacterBody(bodyHtml) {
+      const sections = bodyHtml.split('<br><br>').map(s => s.trim()).filter(Boolean);
+      const perPage = 2; // 항목 2개씩 한 페이지
+      const pages = [];
+      for (let i = 0; i < sections.length; i += perPage) {
+        pages.push(sections.slice(i, i + perPage).join('<br><br>'));
+      }
+      return pages.length ? pages : [bodyHtml];
+    }
+
+    function renderCharacterPage() {
+      const bodyEl = document.getElementById('charModalBody');
+      const indicatorEl = document.getElementById('charModalPageIndicator');
+      const prevBtn = document.getElementById('charModalPrevBtn');
+      const nextBtn = document.getElementById('charModalNextBtn');
+      const pagerEl = document.getElementById('charModalPager');
+      const scrollEl = document.getElementById('charModalScroll');
+      if (!bodyEl) return;
+
+      bodyEl.innerHTML = charModalPages[charModalPageIndex] || '';
+      if (indicatorEl) indicatorEl.textContent = (charModalPageIndex + 1) + ' / ' + charModalPages.length;
+      if (prevBtn) prevBtn.disabled = charModalPageIndex === 0;
+      if (nextBtn) nextBtn.disabled = charModalPageIndex === charModalPages.length - 1;
+      if (pagerEl) pagerEl.style.display = charModalPages.length > 1 ? 'flex' : 'none';
+      if (scrollEl) scrollEl.scrollTop = 0;
+    }
+
+    function changeCharacterPage(delta) {
+      const next = charModalPageIndex + delta;
+      if (next < 0 || next >= charModalPages.length) return;
+      charModalPageIndex = next;
+      renderCharacterPage();
+    }
+
     function openCharacterModal(key) {
       const data = characterDetails[key];
       if (data) {
         document.getElementById('charModalTitle').textContent = data.title;
         document.getElementById('charModalRole').textContent = data.role;
-        document.getElementById('charModalBody').innerHTML = data.body;
+
+        charModalPages = paginateCharacterBody(data.body);
+        charModalPageIndex = 0;
+        renderCharacterPage();
+
         const photoEl = document.getElementById('charModalPhoto');
         if (data.photo) {
           photoEl.src = data.photo;
